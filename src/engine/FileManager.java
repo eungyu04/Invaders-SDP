@@ -70,6 +70,7 @@ public final class FileManager {
 		InputStream inputStream = null;
 
 		try {
+
 			inputStream = DrawManager.class.getClassLoader()
 					.getResourceAsStream("graphics");
 			char c;
