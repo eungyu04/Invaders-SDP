@@ -79,8 +79,13 @@ public class DrawManager {
 		/**HEART Graphics Produced by Nice HUD Team*/
 		Heart, //Please have the Nice HUD team fix it. - Enemy team
 		/**Item*/
-		Item //by enemy team
+		Item, //by enemy team
 		/** Player Lives. */
+		/** Item */
+		ItemAttackSpeed,
+		ItemBomb,
+		ItemBarrier,
+		ItemRecovery
 	};
 
 	/**

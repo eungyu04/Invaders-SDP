@@ -10,6 +10,8 @@ import engine.DrawManager.SpriteType;
 import Enemy.PiercingBulletPool;
 // Import PlayerGrowth class
 import Enemy.PlayerGrowth;
+import inventory_develop.Bomb;
+import inventory_develop.ShipStatus;
 /**
  * Implements a ship, to be controlled by the player.
  * 
@@ -18,12 +20,13 @@ import Enemy.PlayerGrowth;
  */
 public class Ship extends Entity {
 
+	private static final ShipStatus shipstatus = new ShipStatus(2,750,-6);
 	/** Time between shots. */
-	private static final int SHOOTING_INTERVAL = 750;
+	private int SHOOTING_INTERVAL = shipstatus.getSHOOTING_INTERVAL();
 	/** Speed of the bullets shot by the ship. */
-	private static final int BULLET_SPEED = -6;
+	private int BULLET_SPEED = shipstatus.getBULLET_SPEED();
 	/** Movement of the ship for each unit of time. */
-	private static final int SPEED = 2;
+	private int SPEED = shipstatus.getSpeed();
 	
 	/** Minimum time between shots. */
 	private Cooldown shootingCooldown;
@@ -54,6 +57,15 @@ public class Ship extends Entity {
 
 		this.destructionCooldown = Core.getCooldown(1000);
 	}
+	/* Status_update */
+	public void SetStatus(final int Speed_Level, final int SHOOTING_INTERVAL_Level,
+								final int BULLET_SPEED_Level) {
+		shipstatus.SetStatus(Speed_Level,SHOOTING_INTERVAL_Level, BULLET_SPEED_Level);
+		this.SHOOTING_INTERVAL = shipstatus.getSHOOTING_INTERVAL();
+		this.BULLET_SPEED = shipstatus.getBULLET_SPEED();
+		this.SPEED = shipstatus.getSpeed();
+	}
+
 
 
 	/**
@@ -95,6 +107,10 @@ public class Ship extends Entity {
 					growth.getBulletSpeed(), // Use PlayerGrowth for bullet speed
 					2 // Number of enemies the bullet can pierce
 			));
+// 			this.shootingCooldown.reset();
+// 			bullets.add(BulletPool.getBullet(positionX + this.width / 2,
+// 					positionY, BULLET_SPEED));
+// 			Bomb.setCanShoot(false);
 			return true;
 		}
 		return false;

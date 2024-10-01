@@ -58,6 +58,7 @@ public final class Core {
 	/** Difficulty settings for level 7. */
 	private static final GameSettings SETTINGS_LEVEL_7 =
 			new GameSettings(8, 7, 2, 500);
+
 	
 	/** Frame to draw the screen on. */
 	private static Frame frame;
@@ -82,6 +83,7 @@ public final class Core {
 	 */
 	public static void main(final String[] args) {
 		try {
+
 			LOGGER.setUseParentHandlers(false);
 
 			fileHandler = new FileHandler("log");

@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import Enemy.PiercingBullet;
 import Enemy.HpEnemyShip;
+import inventory_develop.Bomb;
 import screen.Screen;
 import engine.Cooldown;
 import engine.Core;
@@ -355,13 +356,17 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 *            Ship to be destroyed.
 	 */
 	public final void destroy(final EnemyShip destroyedShip) {
-		for (List<EnemyShip> column : this.enemyShips)
-			for (int i = 0; i < column.size(); i++)
-				if (column.get(i).equals(destroyedShip)) {
-					column.get(i).destroy();
-					this.logger.info("Destroyed ship in ("
-							+ this.enemyShips.indexOf(column) + "," + i + ")");
-				}
+			if (Bomb.getIsBomb()) {
+				Bomb.destroyByBomb(enemyShips, destroyedShip, this.logger);
+			}else {
+				for (List<EnemyShip> column : this.enemyShips)
+					for (int i = 0; i < column.size(); i++)
+						if (column.get(i).equals(destroyedShip)) {
+							column.get(i).destroy();
+							this.logger.info("Destroyed ship in ("
+									+ this.enemyShips.indexOf(column) + "," + i + ")");
+						}
+			}
 
 		// Updates the list of ships that can shoot the player.
 		if (this.shooters.contains(destroyedShip)) {
