@@ -96,8 +96,8 @@ public class ItemManager {
                     break;
                 case ItemCoin:
                     try {
-                        Core.getCurrencyManager().addCurrency(1);
-                        logger.info("You get coin");
+                        Core.getCurrencyManager().addCurrency(10);
+                        logger.info("You get coin (10$)");
                     } catch (IOException e) {
                         logger.warning("Couldn't load currency!");
                     }
@@ -110,7 +110,9 @@ public class ItemManager {
     public void addItemRecycle(Item item) {
         recyclableItems.add(item);
         String itemLog = item.getSpriteType().toString().toLowerCase().substring(4);
-        this.logger.info("get " + itemLog + " item");   // Change log for each item
+        if (!itemLog.equals("coin")) {
+            this.logger.info("get " + itemLog + " item");   // Change log for each item
+        }
     }
 
     public void removeAllReItems(){

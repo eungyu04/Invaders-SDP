@@ -2,6 +2,8 @@ package CtrlS;
 
 import engine.Core;
 import engine.GameState;
+// item level Bonus
+import inventory_develop.ShipStatus;
 
 public class RoundState {
     private final GameState prevState;
@@ -13,6 +15,10 @@ public class RoundState {
     private final float roundHitRate;
     private final long roundTime;
 
+    private ShipStatus shipStatus;
+    private static double levelBonus2 = 1;
+
+
     public RoundState(GameState prevState, GameState currState) {
         this.prevState = prevState;
         this.currState = currState;
@@ -22,6 +28,10 @@ public class RoundState {
         this.roundHitRate = roundShipsDestroyed / (float) roundBulletsShot;
         this.roundTime = currState.getTime() - prevState.getTime();
         this.roundCurrency = calculateCurrency();
+
+        //Coin Bonus increase by Level
+        shipStatus = new ShipStatus();
+        shipStatus.loadStatus();
     }
 
     private int calculateCurrency() {
@@ -59,6 +69,11 @@ public class RoundState {
         }
         currency += timeBonus;
 
+        if (levelBonus2 > 1){
+            currency = (int) (currency * levelBonus2);
+            Core.getLogger().info("item level bonus occurs (" + (int) ((levelBonus2 - 1) * 100) + "%).");
+        }
+
         return currency;
     }
 
@@ -76,5 +91,9 @@ public class RoundState {
 
     public int getRoundCurrency() {
         return roundCurrency;
+    }
+
+    public void levelBonusIN(){
+        levelBonus2 += shipStatus.getCoinIn();
     }
 }

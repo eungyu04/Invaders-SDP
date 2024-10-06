@@ -6,8 +6,6 @@ import engine.GameState;
 
 import java.io.IOException;
 import java.util.logging.Logger;
-// item level Bonus
-import inventory_develop.ShipStatus;
 
 
 
@@ -19,9 +17,6 @@ public final class CurrencyManager {
     private static Logger logger;
     private static FileManager fileManager;
 
-    private ShipStatus shipStatus;
-    private static double levelBonus = 10;
-
     /**
      * private constructor.
      */
@@ -29,9 +24,6 @@ public final class CurrencyManager {
         fileManager = Core.getFileManager();
         logger = Core.getLogger();
 
-        //Coin Bonus increase
-        shipStatus = new ShipStatus();
-        shipStatus.loadStatus();
     }
 
     /**
@@ -97,10 +89,6 @@ public final class CurrencyManager {
         else {
             return false;
         }
-      
-        currency = (int) (currency * levelBonus);
-
-        return currency;
     }
 
     // Team-Ctrl-S(Currency)
@@ -108,7 +96,4 @@ public final class CurrencyManager {
         return fileManager.loadGem();
     }
 
-    public void levelBonusIN(){
-        levelBonus += shipStatus.getCoinIn();
-    }
 }
