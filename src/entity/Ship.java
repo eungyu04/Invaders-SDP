@@ -8,42 +8,47 @@ import Enemy.PiercingBullet;
 import engine.Cooldown;
 import engine.Core;
 import engine.DrawManager.SpriteType;
-import inventory_develop.Bomb;
+
 import Enemy.PiercingBulletPool;
 // Sound Operator
 import Sound_Operator.SoundManager;
 // Import PlayerGrowth class
 import Enemy.PlayerGrowth;
 // Import NumberOfBullet class
-import inventory_develop.NumberOfBullet;
+//import inventory_develop.NumberOfBullet;
 // Import ShipStatus class
-import inventory_develop.ItemBarrierAndHeart;
 import inventory_develop.ShipStatus;
 /**
  * Implements a ship, to be controlled by the player.
- *
+ * 
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- *
+ * 
  */
 public class Ship extends Entity {
+
+	/** Time between shots. */
+	private static final int SHOOTING_INTERVAL = 750;
+	/** Speed of the bullets shot by the ship. */
+	private static final int BULLET_SPEED = -6;
+	/** Movement of the ship for each unit of time. */
+	private static final int SPEED = 2;
+	
 	/** Minimum time between shots. */
 	private Cooldown shootingCooldown;
 	/** Time spent inactive between hits. */
 	private Cooldown destructionCooldown;
 	/** PlayerGrowth 인스턴스 / PlayerGrowth instance */
 	private PlayerGrowth growth;
-	/** ShipStaus instance*/
-	private ShipStatus shipStatus;
-	/** Item */
-	private ItemBarrierAndHeart item;
 	// Sound Operator
 	private static SoundManager sm;
+	/** ShipStaus instance*/
+	private ShipStatus shipStatus;
 	/** NumberOfBullet instance*/
-	private NumberOfBullet numberOfBullet;
+//	private NumberOfBullet NBPool = new NumberOfBullet();
 
 	/**
 	 * Constructor, establishes the ship's properties.
-	 *
+	 * 
 	 * @param positionX
 	 *            Initial position of the ship in the X axis.
 	 * @param positionY
@@ -65,8 +70,6 @@ public class Ship extends Entity {
 		this.shootingCooldown = Core.getCooldown(growth.getShootingDelay());
 
 		this.destructionCooldown = Core.getCooldown(1000);
-
-		this.numberOfBullet = new NumberOfBullet();
 	}
 
 	/**
@@ -88,37 +91,28 @@ public class Ship extends Entity {
 
 	/**
 	 * Shoots a bullet upwards.
-	 *
+	 * 
 	 * @param bullets
 	 *            List of bullets on screen, to add the new bullet.
 	 * @return Checks if the bullet was shot correctly.
 	 *
 	 * You can set Number of enemies the bullet can pierce at here.
 	 */
-	//Edit by Enemy and Inventory
+	//Edit by Enemy
 	public final boolean shoot(final Set<PiercingBullet> bullets) {
-
+		// Do not reset cooldown every time
 		if (this.shootingCooldown.checkFinished()) {
-
 			this.shootingCooldown.reset(); // Reset cooldown after shooting
-
 			// Sound Operator, Apply a Shooting sound
 			sm = SoundManager.getInstance();
 			sm.playES("My_Gun_Shot");
-
-			// Use NumberOfBullet to generate bullets
-			Set<PiercingBullet> newBullets = numberOfBullet.addBullet(
+			// Add a piercing bullet fired by the player's ship.
+			bullets.add(PiercingBulletPool.getPiercingBullet(
 					positionX + this.width / 2,
 					positionY,
 					growth.getBulletSpeed(), // Use PlayerGrowth for bullet speed
-					Bomb.getCanShoot()
-			);
-
-			// now can't shoot bomb
-			Bomb.setCanShoot(false);
-
-			// Add new bullets to the set
-			bullets.addAll(newBullets);
+					2 // Number of enemies the bullet can pierce
+			));
 
 			return true;
 		}
@@ -151,7 +145,7 @@ public class Ship extends Entity {
 
 	/**
 	 * Checks if the ship is destroyed.
-	 *
+	 * 
 	 * @return True if the ship is currently destroyed.
 	 */
 	public final boolean isDestroyed() {
@@ -184,29 +178,24 @@ public class Ship extends Entity {
 	//Edit by Enemy
 	public void decreaseShootingDelay() {
 		growth.decreaseShootingDelay(shipStatus.getSuootingInIn());
-		System.out.println(growth.getShootingDelay());
 		this.shootingCooldown = Core.getCooldown(growth.getShootingDelay()); // Apply new shooting delay
 	}
 
 	/**
 	 * Getter for the ship's speed.
-	 *
+	 * 
 	 * @return Speed of the ship.
 	 */
 	public final int getSpeed() {
-		return growth.getMoveSpeed();
+		return SPEED;
 	}
-
+	
 	/**
 	 * Calculates and returns the attack speed in bullets per second.
 	 *
 	 * @return Attack speed (bullets per second).
 	 */
 	public final double getAttackSpeed() {
-		return 1000.0 / growth.getShootingDelay();
+		return 1000.0 / SHOOTING_INTERVAL;
 	}
-
-	public PlayerGrowth getPlayerGrowth() {
-		return growth;
-	}	// Team Inventory(Item)
 }

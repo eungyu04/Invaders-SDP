@@ -23,7 +23,6 @@ public final class CurrencyManager {
     private CurrencyManager() {
         fileManager = Core.getFileManager();
         logger = Core.getLogger();
-
     }
 
     /**
@@ -95,5 +94,4 @@ public final class CurrencyManager {
     public int getGem() throws IOException {
         return fileManager.loadGem();
     }
-
 }

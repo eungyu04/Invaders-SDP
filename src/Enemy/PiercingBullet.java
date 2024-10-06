@@ -26,7 +26,6 @@ public class PiercingBullet extends Bullet {
     public PiercingBullet(final int positionX, final int positionY, final int speed, int piercingCount) {
         super(positionX, positionY, speed);  // Piercing bullets do not use isPiercing flag anymore.
         this.piercingCount = piercingCount;
-        setSprite();    // team Inventory
     }
 
     /**

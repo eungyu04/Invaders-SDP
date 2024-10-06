@@ -161,7 +161,7 @@ public final class Core {
 							+ " game screen at " + FPS + " fps.");
 					frame.setScreen(currentScreen);
 					LOGGER.info("Closing game screen.");
-          
+
 					gameState = ((GameScreen) currentScreen).getGameState();
 
 					roundState = new RoundState(prevState, gameState);
