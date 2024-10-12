@@ -10,47 +10,61 @@ public class RoundState {
     private final GameState currState;
     private final int roundScore;
     private final int roundBulletsShot;
-    private final int roundShipsDestroyed;
-    private final int roundCurrency;
+    private final int roundHitCount;
+    private final int roundCoin;
+    private final int roundCoinItemsCollected;
+
     private final float roundHitRate;
     private final long roundTime;
 
     private ShipStatus shipStatus;   //inventory team
-    private static double levelBonus2 = 1;
+    private static double statBonus = 1;
+    private static final int COIN_ITEM_VALUE = 10;
 
     public RoundState(GameState prevState, GameState currState) {
         this.prevState = prevState;
         this.currState = currState;
         this.roundScore = currState.getScore() - prevState.getScore();
         this.roundBulletsShot = currState.getBulletsShot() - prevState.getBulletsShot();
-        this.roundShipsDestroyed = currState.getShipsDestroyed() - prevState.getShipsDestroyed();
-        this.roundHitRate = roundShipsDestroyed / (float) roundBulletsShot;
+        this.roundHitCount = currState.getHitCount() - prevState.getHitCount();
+        this.roundHitRate = roundHitCount / (float) roundBulletsShot;
         this.roundTime = currState.getTime() - prevState.getTime();
-        this.roundCurrency = calculateCurrency();
+        this.roundCoinItemsCollected = currState.getCoinItemsCollected() - prevState.getCoinItemsCollected();
+        this.roundCoin = calculateCoin();
 
         //Coin Bonus increase by Level
         shipStatus = new ShipStatus();
         shipStatus.loadStatus();
     }
 
-    private int calculateCurrency() {
+    private int calculateCoin() {
+        int coin, baseCoin, bonusCoin = 0;
 
-        int baseCurrency = roundScore / 10;
-        int levelBonus = baseCurrency * currState.getLevel();
-        int currency = baseCurrency + levelBonus;
+        // Calculate baseCoin
+        int coinItemsCollectedValue = COIN_ITEM_VALUE * this.roundCoinItemsCollected;
+        int scoreCoin = roundScore / 10;
+        baseCoin = coinItemsCollectedValue + scoreCoin;
+        Core.getLogger().info("base coin = coinItemsCollectedValue(" + coinItemsCollectedValue + ") + scoreCoin(" + scoreCoin + ") = " + baseCoin);
 
+        // levelBonus
+        int levelBonus = (baseCoin / 10) * currState.getLevel();
+
+        // accuracyBonus
+        int accuracyBonus = 0;
         if (roundHitRate > 0.9) {
-            currency += (int) (currency * 0.3); // 30% 보너스 지급
+            accuracyBonus += (int) (baseCoin * 0.3);
             Core.getLogger().info("hitRate bonus occurs (30%).");
         } else if (roundHitRate > 0.8) {
-            currency += (int) (currency * 0.2); // 20% 보너스 지급
+            accuracyBonus += (int) (baseCoin * 0.2);
             Core.getLogger().info("hitRate bonus occurs (20%).");
+        } else if (roundHitRate > 0.7) {
+            accuracyBonus += (int) (baseCoin * 0.1);
+            Core.getLogger().info("hitRate bonus occurs (10%).");
         }
 
-        // Round clear time in seconds
-        // DEBUGGING NEEDED(playTime)
-        long timeDifferenceInSeconds = (currState.getTime() - prevState.getTime()) / 1000;
 
+        // clearTimeBonus
+        long timeDifferenceInSeconds = (currState.getTime() - prevState.getTime()) / 1000;
         int timeBonus = 0;
 
         /*
@@ -66,14 +80,17 @@ public class RoundState {
         } else if (timeDifferenceInSeconds <= 100) {
             timeBonus = 10;
         }
-        currency += timeBonus;
 
-        if (levelBonus2 > 1){
-            currency = (int) (currency * levelBonus2);
-            Core.getLogger().info("item level bonus occurs (" + (int) ((levelBonus2 - 1) * 100) + "%).");
+        // If it's not Game Over, apply bonus
+        if(currState.getLivesRemaining() > 0) {
+            bonusCoin += levelBonus + accuracyBonus + timeBonus;
+            Core.getLogger().info("Bonus occurs! level bonus: " + levelBonus + ", accuracy bonus: " + accuracyBonus + ", time bonus: " + timeBonus);
         }
 
-        return currency;
+        // Apply stat bonus
+        coin = (int) ((baseCoin + bonusCoin) * statBonus);
+        Core.getLogger().info("coin = ((baseCoin(" + baseCoin + ") + bonusCoin(" + bonusCoin + ")) * statBonus(" + statBonus + ") = " + coin);
+        return coin;
     }
 
     public int getRoundScore() {
@@ -88,11 +105,13 @@ public class RoundState {
         return roundTime;
     }
 
-    public int getRoundCurrency() {
-        return roundCurrency;
+    public int getRoundCoin() {
+        return roundCoin;
     }
 
-    public void levelBonusIN(){
-        levelBonus2 += shipStatus.getCoinIn();
+    public int getRoundCoinItemsCollected() { return roundCoinItemsCollected; }
+
+    public void statBonusIN(){
+        statBonus += shipStatus.getCoinIn();
     }
 }

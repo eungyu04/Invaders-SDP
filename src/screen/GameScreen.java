@@ -119,10 +119,17 @@ public class GameScreen extends Screen {
 	private static SoundManager sm;
 
 	// Team-Ctrl-S(Currency)
-	/** Total currency **/
-	private int currency;
+	/** Total coin **/
+	private int coin;
 	/** Total gem **/
 	private int gem;
+	/** Total hitCount **/		//CtrlS
+	private int hitCount;
+	/** Unique id for shot of bullets **/ //CtrlS
+	private int fire_id;
+	/** Set of fire_id **/
+	private Set<Integer> processedFireBullet;
+
 	/** Score calculation. */
 	private ScoreManager scoreManager;    //clove
 	/** Check start-time*/
@@ -134,9 +141,12 @@ public class GameScreen extends Screen {
 	private AchievementConditions achievementConditions;
 	private int fastKill;
 
+	/** CtrlS: Count the number of coin collected in game */
+	private int coinItemsCollected;
+
 	/**
 	 * Constructor, establishes the properties of the screen.
-	 *
+	 * 
 	 * @param gameState
 	 *            Current game state.
 	 * @param gameSettings
@@ -166,8 +176,11 @@ public class GameScreen extends Screen {
 		this.shipsDestroyed = gameState.getShipsDestroyed();
 		this.item = new ItemBarrierAndHeart();	// team Inventory
 		this.feverTimeItem = new FeverTimeItem(); // team Inventory
-		this.currency = gameState.getCurrency(); // Team-Ctrl-S(Currency)
+		this.coin = gameState.getCoin(); // Team-Ctrl-S(Currency)
 		this.gem = gameState.getGem(); // Team-Ctrl-S(Currency)
+		this.hitCount = gameState.getHitCount(); //CtrlS
+		this.fire_id = 0; //CtrlS - fire_id means the id of bullet that shoot already. It starts from 0.
+		this.processedFireBullet = new HashSet<>(); //CtrlS - initialized the processedFireBullet
 
 		/**
 		* Added by the Level Design team
@@ -181,6 +194,7 @@ public class GameScreen extends Screen {
 		this.scoreManager = gameState.scoreManager; //Team Clove
 		this.statistics = new Statistics(); //Team Clove
 		this.achievementConditions = new AchievementConditions();
+		this.coinItemsCollected = gameState.getCoinItemsCollected(); // CtrlS
 	}
 
 	/**
@@ -265,6 +279,7 @@ public class GameScreen extends Screen {
 			this.obstacles.removeAll(obstaclesToRemove);
 
 			if (!this.ship.isDestroyed()) {
+
 				boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT)
 						|| inputManager.isKeyDown(KeyEvent.VK_D);
 				boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT)
@@ -284,8 +299,11 @@ public class GameScreen extends Screen {
 					this.backgroundMoveLeft = true;
 				}
 				if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
-					if (this.ship.shoot(this.bullets))
+					if (this.ship.shoot(this.bullets)) {
 						this.bulletsShot++;
+						this.fire_id++;
+						this.logger.info("Bullet's fire_id is " + fire_id);
+					}
 			}
 
 			if (this.enemyShipSpecial != null) {
@@ -323,12 +341,13 @@ public class GameScreen extends Screen {
 		draw();
 
 		/**
-		* Added by the Level Design team
+		* Added by the Level Design team and edit by team Enemy
+		* Changed the conditions for the game to end  by team Enemy
 		*
 		* Counts and checks if the number of waves destroyed match the intended number of waves for this level
 		* Spawn another wave
 		**/
-		if (this.enemyShipFormation.isEmpty() && waveCounter < this.gameSettings.getWavesNumber()) {
+		if (getRemainingEnemies() == 0 && waveCounter < this.gameSettings.getWavesNumber()) {
 
 			waveCounter++;
 			this.initialize();
@@ -336,11 +355,12 @@ public class GameScreen extends Screen {
 		}
 
 		/**
-		* Wave counter condition added by the Level Design team
+		* Wave counter condition added by the Level Design team*
+		* Changed the conditions for the game to end  by team Enemy
 		*
 		* Checks if the intended number of waves for this level was destroyed
 		* **/
-		if ((this.enemyShipFormation.isEmpty() || this.lives == 0)
+		if ((getRemainingEnemies() == 0 || this.lives == 0)
 		&& !this.levelFinished
 		&& waveCounter == this.gameSettings.getWavesNumber()) {
 			this.levelFinished = true;
@@ -465,7 +485,11 @@ public class GameScreen extends Screen {
 			bullet.update();
 			if (bullet.getPositionY() < SEPARATION_LINE_HEIGHT
 					|| bullet.getPositionY() > this.height-70) // ko jesung / HUD team
+                {
+				//Ctrl-S : set true of CheckCount if the bullet is planned to recycle.
+				bullet.setCheckCount(true);
 				recyclable.add(bullet);
+			}
 		}
 		this.bullets.removeAll(recyclable);
 		PiercingBulletPool.recycle(recyclable); // Edited by Enemy
@@ -493,6 +517,8 @@ public class GameScreen extends Screen {
 							&& checkCollision(bullet, enemyShip)) {
 						this.scoreManager.addScore(enemyShip.getPointValue());    //clove
 						this.shipsDestroyed++;
+						// CtrlS - increase the hitCount for 1 kill
+						this.hitCount++;
 						this.enemyShipFormation.destroy(enemyShip);
 						recyclable.add(bullet);
 					}
@@ -501,6 +527,8 @@ public class GameScreen extends Screen {
 						&& checkCollision(bullet, this.enemyShipSpecial)) {
 					this.scoreManager.addScore(this.enemyShipSpecial.getPointValue());    //clove
 					this.shipsDestroyed++;
+					// CtrlS - increase the hitCount for 1 kill
+					this.hitCount++;
 					this.enemyShipSpecial.destroy();
 					this.enemyShipSpecialExplosionCooldown.reset();
 					recyclable.add(bullet);
@@ -544,7 +572,9 @@ public class GameScreen extends Screen {
 					}
 				}
 			} else {
-				for (EnemyShip enemyShip : this.enemyShipFormation)
+				// CtrlS - set fire_id of bullet.
+				bullet.setFire_id(fire_id);
+				for (EnemyShip enemyShip : this.enemyShipFormation) {
 					if (!enemyShip.isDestroyed()
 							&& checkCollision(bullet, enemyShip)) {
             
@@ -560,31 +590,64 @@ public class GameScreen extends Screen {
 							this.shipsDestroyed++;
 						}
 						//Drop item when MAGENTA color enemy destroyed
-						if(enemyShip.getColor() == Color.MAGENTA){
-							this.itemManager.dropItem(enemyShip,1,1);}
-						int CntAndPnt[] = this.enemyShipFormation._destroy(bullet, enemyShip);	// team Inventory
+						if (enemyShip.getColor() == Color.MAGENTA) {
+							this.itemManager.dropItem(enemyShip, 1, 1);
+						}
+						int CntAndPnt[] = this.enemyShipFormation._destroy(bullet, enemyShip, false);    // team Inventory
 						this.shipsDestroyed += CntAndPnt[0];
                         this.scoreManager.addScore(enemyShip.getPointValue()); //clove
                         this.score += CntAndPnt[1];
+
+						// CtrlS - If collision occur then check the bullet can process
+						if (!processedFireBullet.contains(bullet.getFire_id())) {
+							// CtrlS - increase hitCount if the bullet can count
+							if (bullet.isCheckCount()) {
+								hitCount++;
+								bullet.setCheckCount(false);
+								this.logger.info("Hit count!");
+								processedFireBullet.add(bullet.getFire_id()); // mark this bullet_id is processed.
+							}
+						}
 
 						bullet.onCollision(enemyShip); // Handle bullet collision with enemy ship
 
 						// Check PiercingBullet piercing count and add to recyclable if necessary
 						if (bullet.getPiercingCount() <= 0) {
+							//Ctrl-S : set true of CheckCount if the bullet is planned to recycle.
+							bullet.setCheckCount(true);
 							recyclable.add(bullet);
 						}
-
-
 					}
+					// Added by team Enemy.
+					// Enemy killed by Explosive enemy gives points too
+					if (enemyShip.isChainExploded()) {
+						if (enemyShip.getColor() == Color.MAGENTA) {
+							this.itemManager.dropItem(enemyShip, 1, 1);
+						}
+						this.score += enemyShip.getPointValue();
+						this.shipsDestroyed++;
+						enemyShip.setChainExploded(false); // resets enemy's chain explosion state.
+					}
+				}
 				if (this.enemyShipSpecial != null
 						&& !this.enemyShipSpecial.isDestroyed()
 						&& checkCollision(bullet, this.enemyShipSpecial)) {
-          
+
+					// inventory - Score points added when acquiring fever items
 					if (feverTimeItem.isActive()) {  //inventory
 						this.score += this.enemyShipSpecial.getPointValue() *2;
 					}
 					else{
 						this.score += this.enemyShipSpecial.getPointValue();
+
+					// CtrlS - If collision occur then check the bullet can process
+					if (!processedFireBullet.contains(bullet.getFire_id())) {
+						// CtrlS - If collision occur then increase hitCount and checkCount
+						if (bullet.isCheckCount()) {
+							hitCount++;
+							bullet.setCheckCount(false);
+							this.logger.info("Hit count!");
+						}
 					}
 					this.scoreManager.addScore(this.enemyShipSpecial.getPointValue()); //clove
 					this.shipsDestroyed++;
@@ -595,6 +658,8 @@ public class GameScreen extends Screen {
 
 					// Check PiercingBullet piercing count for special enemy and add to recyclable if necessary
 					if (bullet.getPiercingCount() <= 0) {
+						//Ctrl-S : set true of CheckCount if the bullet is planned to recycle.
+						bullet.setCheckCount(true);
 						recyclable.add(bullet);
 					}
 
@@ -627,17 +692,15 @@ public class GameScreen extends Screen {
 
 		//Check item and ship collision
 		for(Item item : itemManager.items){
-			itemManager.OperateItem(checkCollision(item,ship)?item:null);
+			if (checkCollision(item, ship)) {
+				itemManager.OperateItem(item);
+				// CtrlS: Count coin
+				if (item.getSpriteType() == DrawManager.SpriteType.ItemCoin) coinItemsCollected++;
+				Core.getLogger().info("coin: " + coinItemsCollected);
+			}
 		}
 		itemManager.removeAllReItems();
 	}
-
-
-
-
-
-
-
 
 
 	/**
@@ -677,7 +740,7 @@ public class GameScreen extends Screen {
 	 */
 	public final GameState getGameState() {
 		return new GameState(this.level, this.scoreManager.getAccumulatedScore(), this.lives,
-				this.bulletsShot, this.shipsDestroyed, this.playTime, this.currency, this.gem); // Team-Ctrl-S(Currency)
+				this.bulletsShot, this.shipsDestroyed, this.playTime, this.coin, this.gem, this.hitCount, this.coinItemsCollected); // Team-Ctrl-S(Currency)
 	}
 	public int getLives() {
 		return lives;
