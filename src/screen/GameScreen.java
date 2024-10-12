@@ -547,8 +547,7 @@ public class GameScreen extends Screen {
 				for (EnemyShip enemyShip : this.enemyShipFormation)
 					if (!enemyShip.isDestroyed()
 							&& checkCollision(bullet, enemyShip)) {
-            
-						this.enemyShipFormation._destroy(bullet,enemyShip);
+
 						if(enemyShip.getHp() <= 0) {
 							//inventory_f fever time is activated, the score is doubled.
 							if(feverTimeItem.isActive()) {
