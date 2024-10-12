@@ -26,11 +26,18 @@ public class EnemyShip extends Entity {
 	private static final int BONUS_TYPE_POINTS = 100;
 
 	/** EnemyShip's health point */
-	private int hp; // Edited by Enemy
+	private int hp; // Add by team Enemy
+	/** EnemyShip's Initial x-coordinate **/
+	private int x; // Add by team Enemy
+	/** EnemyShip's Initial y=coordinate **/
+	private int y; // Add by team Enemy
+
 	/** Cooldown between sprite changes. */
 	private Cooldown animationCooldown;
 	/** Checks if the ship has been hit by a bullet. */
 	private boolean isDestroyed;
+	/** Checks if the ship is bombed */
+	private boolean isChainExploded;
 	/** Values of the ship, in points, when destroyed. */
 	private int pointValue;
 
@@ -50,13 +57,15 @@ public class EnemyShip extends Entity {
 
 
 	public EnemyShip(final int positionX, final int positionY,
-			final SpriteType spriteType,int hp) {// Edited by Enemy
+			final SpriteType spriteType,int hp,int x, int y) {// Edited by Enemy
 		super(positionX, positionY, 12 * 2, 8 * 2, HpEnemyShip.determineColor(hp));
 
-		this.hp = hp;// Edited by Enemy
+		this.hp = hp;// Add by team Enemy
 		this.spriteType = spriteType;
 		this.animationCooldown = Core.getCooldown(500);
 		this.isDestroyed = false;
+		this.x = x; // Add by team enemy
+		this.y = y; // Add by team enemy
 
 		switch (this.spriteType) {
 		case EnemyShipA1:
@@ -89,10 +98,12 @@ public class EnemyShip extends Entity {
 	public EnemyShip() {
 		super(-32, 60, 16 * 2, 7 * 2, Color.RED);
 
-		this.hp = 1; // Edited by Enemy
+		this.hp = 1; // Add by team Enemy
 		this.spriteType = SpriteType.EnemyShipSpecial;
 		this.isDestroyed = false;
 		this.pointValue = BONUS_TYPE_POINTS;
+		this.x = -2;  // Add by team Enemy
+		this.y = -2; // Add by team Enemy
 	}
 
 
@@ -186,7 +197,7 @@ public class EnemyShip extends Entity {
 	 * That enemyShip is moved to a constructor with the hp default of 1*/
 	public EnemyShip(final int positionX, final int positionY,
 					 final SpriteType spriteType){
-		this(positionX,positionY,spriteType,1);
+		this(positionX,positionY,spriteType,1,-2,-2);
 	}// Edited by Enemy
 
 	/**
@@ -196,17 +207,54 @@ public class EnemyShip extends Entity {
 	 */
 	public final int getHp() {
 		return this.hp;
-	}// Edited by Enemy
+	}// Added by team Enemy
 
 	/**
 	 * Setter for the Hp of the Enemy ship.
 	 *
 	 * @param hp
-	 * 			New hp of the Enemey ship.
+	 * 			New hp of the Enemy ship.
 	 */
 	public void setHp(int hp) {
 		this.hp = hp;
-	}// Edited by Enemy
+	}// Added by team Enemy
 
+	/**
+	 * Getter for the Initial x-coordinate of this EnemyShip.
+	 *
+	 * @return Initial x-coordinate of the ship.
+	 */
+	public int getX(){ return this.x;} // Add by team Enemy
 
+	/**
+	 * Getter for the Initial y-coordinate of this EnemyShip.
+	 *
+	 * @return Initial x-coordinate of the ship.
+	 */
+	public int getY(){ return this.y;} // Add by team Enemy
+
+	/**
+	 * Destroys ship, causing a chain explode.
+	 */
+	public final void chainExplode() { // Added by team Enemy
+		destroy();
+		setChainExploded(true);
+		setHp(0);
+	}
+
+	/**
+	 * Checks if the ship has been chain exploded.
+	 *
+	 * @return True if the ship has been chain exploded.
+	 */
+	public final boolean isChainExploded() {
+		return this.isChainExploded;
+	} // Added by team Enemy
+
+	/**
+	 * Setter for enemy ship's isChainExploded to false.
+	 */
+	public final void setChainExploded(boolean isChainExploded) {
+		this.isChainExploded = isChainExploded;
+	} // Added by team Enemy
 }

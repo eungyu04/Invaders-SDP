@@ -49,7 +49,7 @@ public final class Core {
 			new GameSettings(5, 5, 50, 2500, 1);
 	/** Difficulty settings for level 3. */
 	private static final GameSettings SETTINGS_LEVEL_3 =
-			new GameSettings(6, 5, 40, 1500, 1);
+			new GameSettings(1, 1, -8, 500, 1);
 	/** Difficulty settings for level 4. */
 	private static final GameSettings SETTINGS_LEVEL_4 =
 			new GameSettings(6, 6, 30, 1500, 2);
@@ -132,7 +132,9 @@ public final class Core {
 		int returnCode = 1;
 		do {
 			// Add playtime parameter - Soomin Lee / TeamHUD
-			gameState = new GameState(1, 0, MAX_LIVES, 0, 0, 0, 0, 0);
+			// Add hitCount parameter - Ctrl S
+			// Add coinItemsCollected parameter - Ctrl S
+			gameState = new GameState(1, 0, MAX_LIVES, 0, 0, 0, 0, 0, 0, 0);
 			switch (returnCode) {
 			case 1:
 				// Main menu.
@@ -156,7 +158,6 @@ public final class Core {
 							&& gameState.getLivesRemaining() < MAX_LIVES;
 
 					GameState prevState = gameState;
-
 					currentScreen = new GameScreen(gameState,
 							gameSettings.get(gameState.getLevel() - 1),
 							bonusLife, width, height, FPS);
@@ -179,9 +180,11 @@ public final class Core {
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed(),
 							gameState.getTime(),
-							gameState.getCurrency() + roundState.getRoundCurrency(),
-							gameState.getGem());
-					LOGGER.info("Round Currency: " + roundState.getRoundCurrency());
+							gameState.getCoin() + roundState.getRoundCoin(),
+							gameState.getGem(),
+							gameState.getHitCount(),
+							gameState.getCoinItemsCollected());
+          			LOGGER.info("Round Coin: " + roundState.getRoundCoin());
 					LOGGER.info("Round Hit Rate: " + roundState.getRoundHitRate());
 					LOGGER.info("Round Time: " + roundState.getRoundTime());
 
