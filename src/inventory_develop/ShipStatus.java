@@ -10,11 +10,13 @@ public class ShipStatus {
     private int SHOOTING_INTERVAL_increase;
     private int BULLET_SPEED_increase;
     private Double coin_increase;
+    private int feverTime_score_increase;// 피버타임 동안 점수 배수
 
     private Double pierce_probability;
     private Double hearth_probability;
     private Double bomb_probability;
     private Double shield_probability;
+    private Double feverTime_probability;// 피버타임 발생 확률
 
 
     Properties properties = new Properties();
@@ -35,6 +37,7 @@ public class ShipStatus {
             SHOOTING_INTERVAL_increase = Integer.parseInt(properties.getProperty("SHOOTING_INTERVAL.increase"));
             BULLET_SPEED_increase = Integer.parseInt(properties.getProperty("BULLET_SPEED.increase"));
             coin_increase = Double.parseDouble(properties.getProperty("CoinBonus.increase"));
+            //feverTime_score_increase = Integer.parseInt(properties.getProperty("feverTime.scoreMultiplier"));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -54,6 +57,8 @@ public class ShipStatus {
             hearth_probability = Double.parseDouble(properties.getProperty("hearth.probability"));
             bomb_probability = Double.parseDouble(properties.getProperty("bomb.probability"));
             shield_probability = Double.parseDouble(properties.getProperty("shield.probability"));
+            feverTime_probability = Double.parseDouble(properties.getProperty("feverTime.probability"));
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -72,6 +77,7 @@ public class ShipStatus {
     public final double getCoinIn(){
         return coin_increase;
     }
+    public int getFeverScoreIn() { return feverTime_score_increase; }
 
     public final double getPierce_probability(){
         return pierce_probability;
@@ -85,6 +91,9 @@ public class ShipStatus {
     public final double getBomb_probability(){
         return bomb_probability;
     }
+     public Double getFeverTimeProbability() { return feverTime_probability; }
+
+
 
 
 }

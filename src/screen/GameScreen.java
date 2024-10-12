@@ -72,6 +72,7 @@ public class GameScreen extends Screen {
 	private ItemManager itemManager; //by Enemy team
 	/** Shield item */
 	private ItemBarrierAndHeart item;	// team Inventory
+	private FeverTimeItem feverTimeItem;
 	/** Current score. */
 	private int score;
 	/** Player lives left. */
@@ -164,6 +165,7 @@ public class GameScreen extends Screen {
 		this.bulletsShot = gameState.getBulletsShot();
 		this.shipsDestroyed = gameState.getShipsDestroyed();
 		this.item = new ItemBarrierAndHeart();	// team Inventory
+		this.feverTimeItem = new FeverTimeItem(); // team Inventory
 		this.currency = gameState.getCurrency(); // Team-Ctrl-S(Currency)
 		this.gem = gameState.getGem(); // Team-Ctrl-S(Currency)
 
@@ -310,6 +312,7 @@ public class GameScreen extends Screen {
 
 			this.item.updateBarrierAndShip(this.ship);	// team Inventory
 //			this.ship.update();					// team Inventory
+			this.feverTimeItem.update();
 			this.enemyShipFormation.update();
 			this.enemyShipFormation.shoot(this.bullets);
 		}
@@ -544,6 +547,18 @@ public class GameScreen extends Screen {
 				for (EnemyShip enemyShip : this.enemyShipFormation)
 					if (!enemyShip.isDestroyed()
 							&& checkCollision(bullet, enemyShip)) {
+            
+						this.enemyShipFormation._destroy(enemyShip);
+						if(enemyShip.getHp() <= 0) {
+							//inventory_f fever time is activated, the score is doubled.
+							if(feverTimeItem.isActive()) {
+								this.score += enemyShip.getPointValue()*2;
+							}
+							else{
+								this.score += enemyShip.getPointValue();
+							}
+							this.shipsDestroyed++;
+						}
 						//Drop item when MAGENTA color enemy destroyed
 						if(enemyShip.getColor() == Color.MAGENTA){
 							this.itemManager.dropItem(enemyShip,1,1);}
@@ -551,7 +566,6 @@ public class GameScreen extends Screen {
 						this.shipsDestroyed += CntAndPnt[0];
                         this.scoreManager.addScore(enemyShip.getPointValue()); //clove
                         this.score += CntAndPnt[1];
-
 
 						bullet.onCollision(enemyShip); // Handle bullet collision with enemy ship
 
@@ -565,6 +579,13 @@ public class GameScreen extends Screen {
 				if (this.enemyShipSpecial != null
 						&& !this.enemyShipSpecial.isDestroyed()
 						&& checkCollision(bullet, this.enemyShipSpecial)) {
+          
+					if (feverTimeItem.isActive()) {  //inventory
+						this.score += this.enemyShipSpecial.getPointValue() *2;
+					}
+					else{
+						this.score += this.enemyShipSpecial.getPointValue();
+					}
 					this.scoreManager.addScore(this.enemyShipSpecial.getPointValue()); //clove
 					this.shipsDestroyed++;
 					this.enemyShipSpecial.destroy();
@@ -672,6 +693,9 @@ public class GameScreen extends Screen {
 		return item;
 	}	// Team Inventory(Item)
 
+	public FeverTimeItem getFeverTimeItem() {
+		return feverTimeItem;
+	} // Team Inventory(Item)
 	/**
 	 * Check remaining enemies
 	 *
