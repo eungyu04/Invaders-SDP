@@ -50,8 +50,8 @@ public class ScoreScreen extends Screen {
 	private int nameCharSelected;
 	/** Time between changes in user selection. */
 	private Cooldown selectionCooldown;
-	/** Total coin earned this game */
-	private int coin; // Team-Ctrl-S(Currency)
+	/** Total currency earned this game */
+	private int currency; // Team-Ctrl-S(Currency)
 	/** User's Final Reached Level */ //Team Clove
 	private int level;
 
@@ -91,7 +91,7 @@ public class ScoreScreen extends Screen {
 		this.nameCharSelected = 0;
 		this.selectionCooldown = Core.getCooldown(SELECTION_TIME);
 		this.selectionCooldown.reset();
-		this.coin = gameState.getCoin(); // Team-Ctrl-S(Currency)
+		this.currency = gameState.getCurrency(); // Team-Ctrl-S(Currency)
 		this.gameState = gameState; // Team-Ctrl-S(Currency)
 		this.level = gameState.getLevel(); //Team Clove
 		this.statistics = new Statistics(); //Team Clove
@@ -139,7 +139,7 @@ public class ScoreScreen extends Screen {
 				if (this.isNewRecord) {
 					saveScore();
 				}
-				saveCoin(); // Team-Ctrl-S(Currency)
+				saveCurrency(); // Team-Ctrl-S(Currency)
 				saveStatistics(); //Team Clove
 				saveRecentScore(); // Team Clove
 			} else if (inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
@@ -149,7 +149,7 @@ public class ScoreScreen extends Screen {
 				if (this.isNewRecord) {
 					saveScore();
 				}
-				saveCoin(); // Team-Ctrl-S(Currency)
+				saveCurrency(); // Team-Ctrl-S(Currency)
 				saveStatistics(); //Team Clove
 				saveRecentScore(); // Team Clove
 			}
@@ -228,15 +228,15 @@ public class ScoreScreen extends Screen {
 	}
 
 	/**
-	 * Saves the coin into currency file
+	 * Saves the currency into currency file
 	 */
 	// Team-Ctrl-S(Currency)
-	private void saveCoin() {
+	private void saveCurrency() {
 		try {
-			Core.getCurrencyManager().addCoin(coin);
-			logger.info("You eared $" + coin);
+			Core.getCurrencyManager().addCurrency(currency);
+			logger.info("You eared $" + currency);
 		} catch (IOException e) {
-			logger.warning("Couldn't load coin!");
+			logger.warning("Couldn't load currency!");
         }
     }
 
@@ -249,7 +249,7 @@ public class ScoreScreen extends Screen {
 		drawManager.drawGameOver(this, this.inputDelay.checkFinished(),
 				this.isNewRecord);
 		drawManager.drawResults(this, this.score, this.livesRemaining,
-				this.shipsDestroyed, (float) this.gameState.getHitCount()
+				this.shipsDestroyed, (float) this.shipsDestroyed
 						/ this.bulletsShot, this.isNewRecord, this.gameState);
 
 		if (this.isNewRecord)

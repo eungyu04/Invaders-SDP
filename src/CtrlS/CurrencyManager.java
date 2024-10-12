@@ -37,22 +37,22 @@ public final class CurrencyManager {
     }
 
     /**
-     * Add an amount of money to the current coin.
+     * Add an amount of money to the current currency.
      */
-    public void addCoin(int amount) throws IOException {
-        int current_coin = fileManager.loadCoin();
-        amount += current_coin;
-        fileManager.saveCoin(amount);
+    public void addCurrency(int amount) throws IOException {
+        int current_currency = fileManager.loadCurrency();
+        amount += current_currency;
+        fileManager.saveCurrency(amount);
     }
 
     /**
-     * Consume as much coin as the amount you have (cannot spend more than you currently have).
+     * Consume as much money as the amount you have (cannot spend more than you currently have).
      */
-    public boolean spendCoin(int amount) throws IOException {
-        int current_coin = fileManager.loadCoin();
-        if (amount <= current_coin) {
-            current_coin -= amount;
-            fileManager.saveCoin(current_coin);
+    public boolean spendCurrency(int amount) throws IOException {
+        int current_currency = fileManager.loadCurrency();
+        if (amount <= current_currency) {
+            current_currency -= amount;
+            fileManager.saveCurrency(current_currency);
             return true;
         }
         else {
@@ -60,8 +60,8 @@ public final class CurrencyManager {
         }
     }
 
-    public int getCoin() throws IOException {
-        return fileManager.loadCoin();
+    public int getCurrency() throws IOException {
+        return fileManager.loadCurrency();
     }
 
     /**

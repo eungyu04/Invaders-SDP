@@ -8,6 +8,7 @@ import inventory_develop.FeverTimeItem;
 import screen.GameScreen;
 import engine.DrawManager;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -100,7 +101,12 @@ public class ItemManager {
                     ship.increaseBulletSpeed();
                     break;
                 case ItemCoin:
-                    this.logger.info("You get coin!");
+                    try {
+                        Core.getCurrencyManager().addCurrency(10);
+                        logger.info("You get coin (10$)");
+                    } catch (IOException e) {
+                        logger.warning("Couldn't load currency!");
+                    }
             }
 
             addItemRecycle(item);

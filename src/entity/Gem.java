@@ -1,15 +1,13 @@
-package CtrlS;
+package entity;
 
 import engine.DrawManager;
-import entity.Entity;
 
 import java.awt.*;
 
 public class Gem extends Entity {
-    DrawManager.SpriteType layeredSprite;
-
     public Gem() {
-        super(0, 0, 7 * 2, 6 * 2, Color.cyan);
+        super(0,0, 5 * 2, 5 * 2, Color.CYAN);
+
         this.spriteType = DrawManager.SpriteType.Gem;
     }
 }

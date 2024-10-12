@@ -3,10 +3,13 @@ package screen;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 
+import HUDTeam.DrawAchievementHud;
+import HUDTeam.DrawManagerImpl;
 import engine.Cooldown;
 import engine.Core;
 // Sound Operator
 import Sound_Operator.SoundManager;
+import entity.Gem;
 
 /**
  * Implements the title screen.
@@ -22,9 +25,8 @@ public class TitleScreen extends Screen {
 	/** Time between changes in user selection. */
 	private Cooldown selectionCooldown;
 
-	// CtrlS
-	private int coin;
-	private int gem;
+	private int currentCoin = 500;
+	private int cureentGem = 500;
 	// select One player or Two player
 	private int pnumSelectionCode; //produced by Starter
 	private int merchantState;
@@ -49,17 +51,16 @@ public class TitleScreen extends Screen {
 		this.selectionCooldown = Core.getCooldown(SELECTION_TIME);
 		this.selectionCooldown.reset();
 
-		// CtrlS: Set user's coin, gem
-        try {
-            this.coin = Core.getCurrencyManager().getCoin();
-			this.gem = Core.getCurrencyManager().getGem();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        // Sound Operator
+		// Sound Operator
 		SoundManager.getInstance().playBGM("mainMenu_bgm");
+		/**
+		 * require function that save and get players coin
+		 */
 
+//		try {
+//			this.currentCoin = Core.getFileManager().loadCurrentCoin();
+//		} catch (NumberFormatException | IOException e) {
+//			logger.warning("Couldn't load current coin!");
 	}
 
 	/**
@@ -135,18 +136,9 @@ public class TitleScreen extends Screen {
 
 			if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
 				if(returnCode == 4) {
-					// CtrlS: Attempt the purchase, apply the upgrade if successful. Log the event if it fails.
-                    try {
-                        if (Core.getCurrencyManager().spendCoin(50)) {
-							testStatUpgrade();
-							this.coin = Core.getCurrencyManager().getCoin(); // CtrlS: After spending coins, update this.coin with the reduced amount
-						} else {
-							Core.getLogger().info("You don't have enough coins!");
-						}
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    this.selectionCooldown.reset();
+					teststatUpgrade();
+					testCoinDiscounter();
+					this.selectionCooldown.reset();
 				}
 				else this.isRunning = false;
 		}
@@ -158,35 +150,30 @@ public class TitleScreen extends Screen {
 	 * runs when player do buying things
 	 * when store system is ready -- unwrap annotated code and rename this method
 	 */
-//	private void testCoinDiscounter(){
-//		if(this.currentCoin > 0){
-//			this.currentCoin -= 50;
-//		}
+	private void testCoinDiscounter(){
+		if(this.currentCoin > 0){
+			this.currentCoin -= 50;
+		}
 
 //		try{
 //			Core.getFileManager().saveCurrentCoin();
 //		} catch (IOException e) {
 //			logger.warning("Couldn't save current coin!");
 //		}
-//	}
+	}
 
 	/**
 	 * Shifts the focus to the next menu item.
 	 */
-	private void testStatUpgrade(){
-		// CtrlS: testStatUpgrade should only be called after coins are spent
-		if(this.merchantState == 1) {
-			// this.currentCoin -= 50;
-		}
-		else if(this.merchantState == 2) {
-			// this.currentCoin -= 50;
-		}
-		else if(this.merchantState == 3) {
-			// this.currentCoin -= 50;
-		}
-		else if(this.merchantState == 4) {
-			// this.currentCoin -= 50;
-		}
+	private void teststatUpgrade(){
+		if(this.merchantState == 1)
+			this.currentCoin -= 50;
+		else if(this.merchantState == 2)
+			this.currentCoin -= 50;
+		else if(this.merchantState == 3)
+			this.currentCoin -= 50;
+		else if(this.merchantState == 4)
+			this.currentCoin -= 50;
 
 
 	}
@@ -254,16 +241,21 @@ public class TitleScreen extends Screen {
 	 * Draws the elements associated with the screen.
 	 */
 	private void draw() {
+
+		int coin = this.currentCoin;
+		int gem = this.cureentGem;
 		drawManager.initDrawing(this);
+
+
 
 		drawManager.drawTitle(this);
 		drawManager.drawMenu(this, this.returnCode, this.pnumSelectionCode, this.merchantState);
-		// CtrlS
-		drawManager.drawCurrentCoin(this, coin);
-		drawManager.drawCurrentGem(this, gem);
+		drawManager.drawCurrentCoin(this,coin);
+		drawManager.drawCurrentGem(this,gem);
 
 		super.drawPost();
 		drawManager.completeDrawing(this);
 	}
+
 
 }

@@ -14,9 +14,9 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import CtrlS.RoundState;
-import CtrlS.Gem;
 import entity.AddSign;
 import entity.Coin;
+import entity.Gem;
 import inventory_develop.Bomb;
 import screen.Screen;
 import entity.Entity;
@@ -27,11 +27,11 @@ import level_design.Background;
 import javax.imageio.ImageIO;
 
 /**
- * Manages screen drawing.
- *
- * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- *
- */
+* Manages screen drawing.
+*
+* @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
+*
+*/
 public class DrawManager {
 
 	/** Singleton instance of the class. */
@@ -108,19 +108,19 @@ public class DrawManager {
 		//Produced by Starter Team
 		/** coin */
 		Coin,
+		/** gem */
+		Gem,
 		/** add sign */
 		AddSign,
-		/** Gem - Added by CtrlS */
-		Gem,
 		Obstacle
 	};
 
 	/**
-	 * Private constructor.
-	 *
-	 * Modifying Access Restrictor to public
-	 * - HUDTeam - LeeHyunWoo
-	 */
+	* Private constructor.
+	*
+	* Modifying Access Restrictor to public
+	* - HUDTeam - LeeHyunWoo
+	*/
 	public DrawManager() {
 		fileManager = Core.getFileManager();
 		logger = Core.getLogger();
@@ -146,8 +146,8 @@ public class DrawManager {
 			spriteMap.put(SpriteType.Heart, new boolean[13][8]);
 			spriteMap.put(SpriteType.Boss, new boolean[24][16]); //by Enemy team
 			spriteMap.put(SpriteType.Coin, new boolean[5][5]); //by Starter Team
+			spriteMap.put(SpriteType.Gem, new boolean[5][5]); //by Starter Team
 			spriteMap.put(SpriteType.AddSign, new boolean[5][5]); //by Starter Team
-			spriteMap.put(SpriteType.Gem, new boolean[7][6]); // CtrlS: res/graphics, line 20
 			//by Item team
 			spriteMap.put(SpriteType.ItemHeart, new boolean[7][5]);
 			spriteMap.put(SpriteType.ItemBarrier, new boolean[9][10]);
@@ -450,7 +450,7 @@ public class DrawManager {
 	 *            If the score is a new high score.
 	 */
 
-	//Ctrl S - add Coin String
+	//Ctrl S - add Currency String
 	public void drawResults(final Screen screen, final int score,
 							final int livesRemaining, final int shipsDestroyed,
 							final float accuracy, final boolean isNewRecord, final GameState gameState) {
@@ -459,7 +459,7 @@ public class DrawManager {
 		String shipsDestroyedString = "enemies destroyed " + shipsDestroyed;
 		String accuracyString = String
 				.format("accuracy %.2f%%", accuracy * 100);
-		String coinString = "Earned  $ " + gameState.getCoin() + "  Coins!";
+		String currencyString = "Earned  $ " + gameState.getCurrency() + "  Coins!";
 
 		int height = isNewRecord ? 4 : 2;
 
@@ -474,7 +474,7 @@ public class DrawManager {
 						* 4);
 		drawCenteredRegularString(screen, accuracyString, screen.getHeight()
 				/ height + fontRegularMetrics.getHeight() * 6);
-		drawCenteredRegularString(screen, coinString, screen.getHeight()
+		drawCenteredRegularString(screen, currencyString, screen.getHeight()
 				/ height + fontRegularMetrics.getHeight() * 8);
 	}
 
@@ -728,11 +728,7 @@ public class DrawManager {
 				rectWidth, rectHeight);
 		backBufferGraphics.setColor(Color.GREEN);
 		if (number >= 4)
-			// Adjust the numbers here to match the appropriate boss levels.
-			if (level == 3) { // Edited by team Enemy // ex) (level == 3 || level == 6 || level == 9)
-				drawCenteredBigString(screen, "BOSS",
-						screen.getHeight() / 2 + fontBigMetrics.getHeight() / 3);
-			} else if (!bonusLife) {
+			if (!bonusLife) {
 				drawCenteredBigString(screen, "Level " + level,
 						screen.getHeight() / 2
 								+ fontBigMetrics.getHeight() / 3);
@@ -778,7 +774,7 @@ public class DrawManager {
 		backBufferGraphics.setColor(Color.GREEN);
 		drawCenteredBigString(screen, stageCoinString, screen.getHeight() / 3);
 		backBufferGraphics.setColor(Color.WHITE);
-		drawCenteredBigString(screen, Integer.toString(roundState.getRoundCoin()), screen.getHeight() / 3 + fontBigMetrics.getHeight() / 2 * 3);
+		drawCenteredBigString(screen, Integer.toString(roundState.getRoundCurrency()), screen.getHeight() / 3 + fontBigMetrics.getHeight() / 2 * 3);
 
 		//draw HitRate Bonus part
 		float hitRate = roundState.getRoundHitRate(); // Calculate HitRate
