@@ -702,11 +702,13 @@ public class GameScreen extends Screen {
 
 		for (Obstacle obstacle : this.obstacles) {
 			if (!obstacle.isDestroyed() && checkCollision(this.ship, obstacle)) {
-				this.lives--;
-				obstacle.destroy();  // Destroy obstacle
-				this.logger.info("Ship hit an obstacle, " + this.lives + " lives remaining.");
-				if (!this.ship.isDestroyed()) {
-					this.ship.destroy();  // Optionally, destroy the ship or apply other effects.
+				if (!this.item.isbarrierActive()) {//Obstacles ignored when barrier activated_team inventory
+					this.lives--;
+					obstacle.destroy();  // Destroy obstacle
+					this.logger.info("Ship hit an obstacle, " + this.lives + " lives remaining.");
+					if (!this.ship.isDestroyed()) {
+						this.ship.destroy();  // Optionally, destroy the ship or apply other effects.
+					}
 				}
 				break;  // Stop further collisions if the ship is destroyed.
 			}
