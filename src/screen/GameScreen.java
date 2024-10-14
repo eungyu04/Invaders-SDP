@@ -77,6 +77,8 @@ public class GameScreen extends Screen {
 	private int score;
 	/** Player lives left. */
 	private int lives;
+	/** player2 lives left.*/
+	private int livestwo;
 	/** Total bullets shot by the player. */
 	private int bulletsShot;
 	/** Total ships destroyed by the player. */
@@ -146,7 +148,7 @@ public class GameScreen extends Screen {
 
 	/**
 	 * Constructor, establishes the properties of the screen.
-	 * 
+	 *
 	 * @param gameState
 	 *            Current game state.
 	 * @param gameSettings
@@ -172,6 +174,9 @@ public class GameScreen extends Screen {
 		this.lives = gameState.getLivesRemaining();
 		if (this.bonusLife)
 			this.lives++;
+		this.livestwo = gameState.getLivesTwoRemaining();
+		if (this.bonusLife)
+			this.livestwo++;
 		this.bulletsShot = gameState.getBulletsShot();
 		this.shipsDestroyed = gameState.getShipsDestroyed();
 		this.item = new ItemBarrierAndHeart();	// team Inventory
@@ -202,6 +207,8 @@ public class GameScreen extends Screen {
 	 */
 	public final void initialize() {
 		super.initialize();
+		/** initialize background **/
+		drawManager.loadBackground(this.level);
 
 		enemyShipFormation = new EnemyShipFormation(this.gameSettings);
 		enemyShipFormation.attach(this);
@@ -234,9 +241,7 @@ public class GameScreen extends Screen {
 
 		// 	// --- OBSTACLES - Initialize obstacles
 		this.obstacles = new HashSet<>();
-		this.obstacleSpawnCooldown = Core.getCooldown(4000); // change obstacle spawn time
-
-
+		this.obstacleSpawnCooldown = Core.getCooldown(Math.max(2000 - (level * 200), 500)); // Minimum 0.5s
 	}
 
 	/**
@@ -261,12 +266,15 @@ public class GameScreen extends Screen {
 
 		if (this.inputDelay.checkFinished() && !this.levelFinished) {
 			// --- OBSTACLES
-			if (this.obstacleSpawnCooldown.checkFinished()) {
-				// Spawn obstacle at a random position
-				int randomX = new Random().nextInt(this.width);
-				obstacles.add(new Obstacle(randomX, 50)); // Start at top of the screen
-				this.obstacleSpawnCooldown.reset();
-			}
+        if (this.obstacleSpawnCooldown.checkFinished()) {
+            // Adjust spawn amount based on the level
+            int spawnAmount = Math.min(level, 3); // Spawn up to 3 obstacles at higher levels
+            for (int i = 0; i < spawnAmount; i++) {
+                int randomX = new Random().nextInt(this.width - 30);
+                obstacles.add(new Obstacle(randomX, 50)); // Start each at the top of the screen
+            }
+            this.obstacleSpawnCooldown.reset();
+        }
 
 			// --- OBSTACLES
 			Set<Obstacle> obstaclesToRemove = new HashSet<>();
@@ -337,6 +345,7 @@ public class GameScreen extends Screen {
 		//manageCollisions();
 		manageCollisions_add_item(); //by Enemy team
 		cleanBullets();
+		cleanObstacles();
 		this.itemManager.cleanItems(); //by Enemy team
 		draw();
 
@@ -401,7 +410,7 @@ public class GameScreen extends Screen {
 		drawManager.initDrawing(this);
 
 		/** ### TEAM INTERNATIONAL ### */
-		drawManager.drawBackground(this, this.level, backgroundMoveRight, backgroundMoveLeft);
+		drawManager.drawBackground(backgroundMoveRight, backgroundMoveLeft);
 		this.backgroundMoveRight = false;
 		this.backgroundMoveLeft = false;
 
@@ -425,9 +434,12 @@ public class GameScreen extends Screen {
 		this.itemManager.drawItems(); //by Enemy team
 
 		// --- OBSTACLES - Draw Obstaacles
-		for (Obstacle obstacle : this.obstacles) {
-			drawManager.drawEntity(obstacle, obstacle.getPositionX(), obstacle.getPositionY());
+		if (!this.levelFinished) {
+			for (Obstacle obstacle : this.obstacles) {
+				drawManager.drawEntity(obstacle, obstacle.getPositionX(), obstacle.getPositionY());
+			}
 		}
+
 
 		// Interface.
 //		drawManager.drawScore(this, this.scoreManager.getAccumulatedScore());    //clove -> edit by jesung ko - TeamHUD(to udjust score)
@@ -493,6 +505,21 @@ public class GameScreen extends Screen {
 		}
 		this.bullets.removeAll(recyclable);
 		PiercingBulletPool.recycle(recyclable); // Edited by Enemy
+	}
+
+	/**
+	* Clean obstacles that go off screen.
+	*/
+	private void cleanObstacles() { //added by Level Design Team
+		Set<Obstacle> removableObstacles = new HashSet<>();
+		for (Obstacle obstacle : this.obstacles) {
+			obstacle.update(this.level);
+			if (obstacle.getPositionY() > this.height - 70 ||
+			obstacle.getPositionY() < SEPARATION_LINE_HEIGHT) {
+				removableObstacles.add(obstacle);
+			}
+		}
+		this.obstacles.removeAll(removableObstacles);
 	}
 
 	/**
@@ -705,7 +732,7 @@ public class GameScreen extends Screen {
 
 	/**
 	 * Checks if two entities are colliding.
-	 * 
+	 *
 	 * @param a
 	 *            First entity, the bullet.
 	 * @param b
@@ -739,7 +766,7 @@ public class GameScreen extends Screen {
 	 * @return Current game state.
 	 */
 	public final GameState getGameState() {
-		return new GameState(this.level, this.scoreManager.getAccumulatedScore(), this.lives,
+		return new GameState(this.level, this.scoreManager.getAccumulatedScore(), this.lives,this.livestwo,
 				this.bulletsShot, this.shipsDestroyed, this.playTime, this.coin, this.gem, this.hitCount, this.coinItemsCollected); // Team-Ctrl-S(Currency)
 	}
 	public int getLives() {
@@ -747,6 +774,12 @@ public class GameScreen extends Screen {
 	}
 	public void setLives(int lives) {
 		this.lives = lives;
+	}
+	public int getLivestwo() {
+		return livestwo;
+	}
+	public void setLivestwo(int livestwo) {
+		this.livestwo = livestwo;
 	}
 	public Ship getShip() {
 		return ship;

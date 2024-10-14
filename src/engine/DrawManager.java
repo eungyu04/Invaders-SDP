@@ -27,15 +27,15 @@ import level_design.Background;
 import javax.imageio.ImageIO;
 
 /**
- * Manages screen drawing.
- *
- * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- *
- */
+* Manages screen drawing.
+*
+* @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
+*
+*/
 public class DrawManager {
 
 	/** Singleton instance of the class. */
-	private static DrawManager instance;
+	public static DrawManager instance;
 	/** Current frame. */
 	private static Frame frame;
 	/** FileManager instance. */
@@ -56,6 +56,10 @@ public class DrawManager {
 	private static Font fontBig;
 	/** Big sized font properties. */
 	private static FontMetrics fontBigMetrics;
+
+	/** ###TEAM INTERNATIONAL ### */
+	private Background background;
+	private BufferedImage backgroundImage;
 
 	/** Sprite types mapped to their images. */
 	private static Map<SpriteType, boolean[][]> spriteMap;
@@ -98,7 +102,7 @@ public class DrawManager {
 		Boss, //by enemy team
 		/** Player Lives. */
 		/** Item */
-    ItemHeart,
+    	ItemHeart,
 		ShipBarrierStatus,
 		ItemCoin,
 		ItemPierce,
@@ -116,11 +120,11 @@ public class DrawManager {
 	};
 
 	/**
-	 * Private constructor.
-	 *
-	 * Modifying Access Restrictor to public
-	 * - HUDTeam - LeeHyunWoo
-	 */
+	* Private constructor.
+	*
+	* Modifying Access Restrictor to public
+	* - HUDTeam - LeeHyunWoo
+	*/
 	public DrawManager() {
 		fileManager = Core.getFileManager();
 		logger = Core.getLogger();
@@ -177,7 +181,7 @@ public class DrawManager {
 	 *
 	 * @return Shared instance of DrawManager.
 	 */
-	static DrawManager getInstance() {
+	public static DrawManager getInstance() {
 		if (instance == null)
 			instance = new DrawManager();
 		return instance;
@@ -241,14 +245,24 @@ public class DrawManager {
 	 */
 	public void drawEntity(final Entity entity, final int positionX,
 						   final int positionY) {
-		boolean[][] image = spriteMap.get(entity.getSpriteType());
 
-		backBufferGraphics.setColor(entity.getColor());
-		for (int i = 0; i < image.length; i++)
-			for (int j = 0; j < image[i].length; j++)
-				if (image[i][j])
-					backBufferGraphics.drawRect(positionX + i * 2, positionY
-							+ j * 2, 1, 1);
+		try {
+			boolean[][] image = spriteMap.get(entity.getSpriteType());
+
+			backBufferGraphics.setColor(entity.getColor());
+			for (int i = 0; i < image.length; i++)
+				for (int j = 0; j < image[i].length; j++)
+					if (image[i][j])
+						backBufferGraphics.drawRect(positionX + i * 2, positionY
+								+ j * 2, 1, 1);
+
+		} catch(Exception e) {
+
+			System.out.println(e);
+			System.exit(1);
+		}
+
+
 	}
 
 	/**
@@ -852,21 +866,22 @@ public class DrawManager {
 	* ### TEAM INTERNATIONAL ###
 	* Background draw and update method
 	*/
-	Background background = new Background();
 
-	public void drawBackground(final Screen screen, int levelNumber, boolean backgroundMoveRight, boolean backgroundMoveLeft) {
+	public void loadBackground(int levelNumber) {
+		background = Background.getInstance();
 		// I still have no clue how relative pathing or class pathing works
 		InputStream imageStream = Background.getBackgroundImageStream(levelNumber);
-		BufferedImage backgroundImage;
 		try {
 			assert imageStream != null;
 			backgroundImage = ImageIO.read(imageStream);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
 
-		int verticalOffset = background.getVerticalOffset(frame);
-		int horizontalOffset = background.getHorizontalOffset(frame, backgroundMoveRight, backgroundMoveLeft);
+	public void drawBackground(boolean backgroundMoveRight, boolean backgroundMoveLeft) {
+		int verticalOffset = background.getVerticalOffset();
+		int horizontalOffset = background.getHorizontalOffset(backgroundMoveRight, backgroundMoveLeft);
 
 		backBufferGraphics.drawImage(backgroundImage, horizontalOffset, verticalOffset, null);
 	}
