@@ -577,8 +577,7 @@ public class GameScreen extends Screen {
 				for (EnemyShip enemyShip : this.enemyShipFormation) {
 					if (!enemyShip.isDestroyed()
 							&& checkCollision(bullet, enemyShip)) {
-            
-						this.enemyShipFormation._destroy(bullet,enemyShip);
+
 						if(enemyShip.getHp() <= 0) {
 							//inventory_f fever time is activated, the score is doubled.
 							if(feverTimeItem.isActive()) {
@@ -637,8 +636,9 @@ public class GameScreen extends Screen {
 					if (feverTimeItem.isActive()) {  //inventory
 						this.score += this.enemyShipSpecial.getPointValue() *2;
 					}
-					else{
+					else {
 						this.score += this.enemyShipSpecial.getPointValue();
+					}
 
 					// CtrlS - If collision occur then check the bullet can process
 					if (!processedFireBullet.contains(bullet.getFire_id())) {
