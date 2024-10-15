@@ -70,6 +70,11 @@ public class TitleScreen extends Screen {
 	public final int run() {
 		super.run();
 
+		//produced by starter team
+		if (this.pnumSelectionCode == 1 && this.returnCode == 2){
+			return 4; //return 4 instead of 2
+		}
+
 		return this.returnCode;
 	}
 
