@@ -672,6 +672,7 @@ public class GameScreen extends Screen {
 				if (this.enemyShipSpecial != null
 						&& !this.enemyShipSpecial.isDestroyed()
 						&& checkCollision(bullet, this.enemyShipSpecial)) {
+          
 					int feverSpecialScore = enemyShipSpecial.getPointValue();
           // inventory - Score bonus when acquiring fever items
 					if (feverTimeItem.isActive()) { feverSpecialScore *= 2; } //TEAM CLOVE //Team inventory
@@ -684,7 +685,6 @@ public class GameScreen extends Screen {
 							bullet.setCheckCount(false);
 							this.logger.info("Hit count!");
 						}
-
 					}
 					this.scoreManager.addScore(feverSpecialScore); //clove
 					this.shipsDestroyed++;

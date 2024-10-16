@@ -110,8 +110,6 @@ public class DrawManager {
 		ItemBarrier,
 		ItemFeverTime,
 		//Produced by Starter Team
-
-        //Produced by Starter Team
 		/** coin */
 		Coin,
 		/** add sign */
