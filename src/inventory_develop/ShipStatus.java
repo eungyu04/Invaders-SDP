@@ -3,6 +3,8 @@ package inventory_develop;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import Enemy.PlayerGrowth;
+import inventory_develop.NumberOfBullet;
 
 public class ShipStatus {
 
@@ -10,13 +12,22 @@ public class ShipStatus {
     private int SHOOTING_INTERVAL_increase;
     private int BULLET_SPEED_increase;
     private Double coin_increase;
-    private int feverTime_score_increase;// 피버타임 동안 점수 배수
+    private int feverTime_score_increase;
 
     private Double pierce_probability;
     private Double hearth_probability;
     private Double bomb_probability;
     private Double shield_probability;
-    private Double feverTime_probability;// 피버타임 발생 확률
+    private Double feverTime_probability;
+
+    private int Speed_price;
+    private int num_Bullet_price;
+    private int Attack_Speed_price;
+    private int Coin_Bonus_price;
+
+    private NumberOfBullet numberOfBullet;
+    private PlayerGrowth playerGrowth;
+
 
 
     Properties properties = new Properties();
@@ -65,6 +76,26 @@ public class ShipStatus {
         }
     }
 
+    public void loadPrice(){
+        try (InputStream inputStream = ShipStatus.class.getClassLoader().getResourceAsStream("StatusConfig.properties")) {
+            if (inputStream == null) {
+                System.out.println("FileNotFound");
+                return;
+            }
+
+            properties.load(inputStream);
+
+            Speed_price = Integer.parseInt(properties.getProperty("Speed.price"));
+            num_Bullet_price = Integer.parseInt(properties.getProperty("bullet_number.price"));
+            Attack_Speed_price = Integer.parseInt(properties.getProperty("SHOOTING_INTERVAL.price"));
+            Coin_Bonus_price = Integer.parseInt(properties.getProperty("CoinBonus.price"));
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public final int getSpeedIn(){
         return Speed_increase;
     }
@@ -91,7 +122,23 @@ public class ShipStatus {
     public final double getBomb_probability(){
         return bomb_probability;
     }
-     public Double getFeverTimeProbability() { return feverTime_probability; }
+    public Double getFeverTimeProbability() { return feverTime_probability; }
+
+    public final int getSpeed_price(){
+        return Speed_price;
+    }
+    public final int getCoinBonus_price(){
+        return Coin_Bonus_price;
+    }
+    public final int getAttack_price(){
+        return Attack_Speed_price;
+    }
+    public final int getBullet_price(){
+        return num_Bullet_price;
+    }
+
+
+
 
 
 
