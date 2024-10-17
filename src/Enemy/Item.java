@@ -67,8 +67,5 @@ public class Item extends Entity {
         return this.speed;
     }
 
-    @Override
-    public void move(int distanceX, int distanceY) {
 
-    }
 }

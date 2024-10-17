@@ -13,8 +13,4 @@ public class Gem extends Entity {
         this.spriteType = DrawManager.SpriteType.Gem;
     }
 
-    @Override
-    public void move(int distanceX, int distanceY) {
-
-    }
 }

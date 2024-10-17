@@ -129,7 +129,7 @@ public class EnemyShip extends Entity {
 	 * @param distanceY
 	 *            Distance to move in the Y axis.
 	 */
-	public final void moving(final int distanceX, final int distanceY) {
+	public final void move(final int distanceX, final int distanceY) {
 		this.positionX += distanceX;
 		this.positionY += distanceY;
 	}
@@ -269,11 +269,7 @@ public class EnemyShip extends Entity {
 	 * @param distanceX Distance to move in the X axis.
 	 * @param distanceY Distance to move in the Y axis.
 	 */
-	@Override
-	public final void move(final int distanceX, final int distanceY) {
-		this.positionX += distanceX * speedMultiplier;
-		this.positionY += distanceY * speedMultiplier;
-	}
+
 
 
 

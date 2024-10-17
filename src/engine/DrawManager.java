@@ -321,10 +321,7 @@ public class DrawManager {
 //		backBufferGraphics.drawString(Integer.toString(lives), 20, 25);
 
 		Entity heart = new Entity(0, 0, 13 * 2, 8 * 2, Color.RED) {
-			@Override
-			public void move(int distanceX, int distanceY) {
 
-			}
 		};
 		heart.setSpriteType(SpriteType.Heart);
 
@@ -925,10 +922,7 @@ public class DrawManager {
 	public void drawItem(final Screen screen){
 		//Bomb
 		Entity itemBomb = new Entity(0, 0, 13 * 2, 8 * 2, Color.gray) {
-			@Override
-			public void move(int distanceX, int distanceY) {
 
-			}
 		};
 		itemBomb.setSpriteType(DrawManager.SpriteType.ItemBomb);
 

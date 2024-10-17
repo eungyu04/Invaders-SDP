@@ -12,8 +12,5 @@ public class AddSign extends Entity{
         this.spriteType = DrawManager.SpriteType.AddSign;
     }
 
-    @Override
-    public void move(int distanceX, int distanceY) {
 
-    }
 }

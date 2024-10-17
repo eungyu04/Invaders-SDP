@@ -11,8 +11,5 @@ public class Coin extends Entity {
         this.spriteType = DrawManager.SpriteType.Coin;
     }
 
-    @Override
-    public void move(int distanceX, int distanceY) {
 
-    }
 }

@@ -137,5 +137,5 @@ public abstract class Entity {
 		return this.height;
 	}
 
-	public abstract void move(int distanceX, int distanceY);
+
 }

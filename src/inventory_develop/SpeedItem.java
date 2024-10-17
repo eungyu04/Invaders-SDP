@@ -68,8 +68,5 @@ public class SpeedItem extends Entity {
     }
 
 
-    @Override
-    public void move(int distanceX, int distanceY) {
-        //필요시 아이템 이동 방식 정의
-    }
+
 }

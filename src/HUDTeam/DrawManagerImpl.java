@@ -41,10 +41,7 @@ public class DrawManagerImpl extends DrawManager {
         backBufferGraphics.setColor(Color.WHITE);
 
         Entity heart = new Entity(0, 0, 13 * 2, 8 * 2, Color.RED) {
-            @Override
-            public void move(int distanceX, int distanceY) {
 
-            }
         };
         heart.setSpriteType(SpriteType.Heart);
 

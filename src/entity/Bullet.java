@@ -121,8 +121,5 @@ public class Bullet extends Entity {
 	 */
 	public final void setFire_id(final int id) { this.fire_id = id; }
 
-	@Override
-	public void move(int distanceX, int distanceY) {
 
-	}
 }

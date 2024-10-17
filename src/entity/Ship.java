@@ -210,8 +210,5 @@ public class Ship extends Entity {
 		return growth;
 	}	// Team Inventory(Item)
 
-	@Override
-	public void move(int distanceX, int distanceY) {
 
-	}
 }
