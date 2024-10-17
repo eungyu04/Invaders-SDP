@@ -266,12 +266,12 @@ public final class UpgradeManager {
     }
 
     public int PriceCalculation(int basic_price, int count){
-        basic_price += basic_price * LevelCalculation(count);
+        basic_price += (basic_price / 2) * LevelCalculation(count);
         return basic_price;
     }
 
     public int LevelCalculation(int level){
-        int Level = (level - (level / 4) - 1) ;
+        int Level = (level - ((level - 1) / 4) - 1) ;
         if (Level < 1){
             return 0;
         }

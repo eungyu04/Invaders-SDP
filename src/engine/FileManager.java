@@ -154,12 +154,14 @@ public final class FileManager {
 			Score highScore = null;
 			String name = reader.readLine();
 			String score = reader.readLine();
+			String time = reader.readLine();
 
 			while ((name != null) && (score != null)) {
-				highScore = new Score(name, Integer.parseInt(score));
+				highScore = new Score(name, Integer.parseInt(score), Integer.parseInt(time));
 				highScores.add(highScore);
 				name = reader.readLine();
 				score = reader.readLine();
+				time = reader.readLine();
 			}
 		} finally {
 			if (inputStream != null)
@@ -202,12 +204,14 @@ public final class FileManager {
 			Score highScore = null;
 			String name = bufferedReader.readLine();
 			String score = bufferedReader.readLine();
+			String time = bufferedReader.readLine();
 
-			while ((name != null) && (score != null)) {
-				highScore = new Score(name, Integer.parseInt(score));
+			while ((name != null) && (score != null) && (time != null)) {
+				highScore = new Score(name, Integer.parseInt(score), Long.parseLong(time));
 				highScores.add(highScore);
 				name = bufferedReader.readLine();
 				score = bufferedReader.readLine();
+				time = bufferedReader.readLine();
 			}
 
 		} catch (FileNotFoundException e) {
@@ -264,6 +268,8 @@ public final class FileManager {
 				bufferedWriter.write(score.getName());
 				bufferedWriter.newLine();
 				bufferedWriter.write(Integer.toString(score.getScore()));
+				bufferedWriter.newLine();
+				bufferedWriter.write(Long.toString(score.getPlayTime()));
 				bufferedWriter.newLine();
 				savedCount++;
 			}
@@ -384,7 +390,7 @@ public final class FileManager {
 				bufferedReader.close();
 		}
 
-		Collections.sort(recentScores);
+		//Collections.sort(recentScores);
 		return recentScores;
 	}
 

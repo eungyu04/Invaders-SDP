@@ -648,8 +648,8 @@ public class DrawManager {
 		String scoreString = "";
 
 		for (Score score : highScores) {
-			scoreString = String.format("%s        %04d", score.getName(),
-					score.getScore());
+			scoreString = String.format("%s        %04d           %04d", score.getName(),
+					score.getScore(), score.getPlayTime());
 			drawCenteredRegularString(screen, scoreString, screen.getHeight()
 					/ 4 + fontRegularMetrics.getHeight() * (i + 1) * 2);
 			i++;
@@ -670,25 +670,33 @@ public class DrawManager {
 		backBufferGraphics.setColor(Color.WHITE);
 		int i = 0;
 		boolean isFirstLine = true;
-		String scoreString = "";
+		int[] attributeXPosition = {50, 200, 295, 380, 480};
+		int[] instanceXPostition = {25, 205, 300, 400, 515};
+
+		if (isFirstLine) { // Create Header
+			String[] Attribute = {"Date", "Score", "Level", "Destroy", "Achievement"};
+			for(int k=0; k<5; k++){
+				drawRightedRegularString(screen, Attribute[k], attributeXPosition[k],
+						screen.getHeight() / 4 + fontRegularMetrics.getHeight() * (i + 1) * 2);
+			}
+			isFirstLine = false;
+
+			i++;
+		}
 
 		for (Score score : recentScores) {
-			if (isFirstLine) { // Create Header
-				scoreString = String.format("           Date                           " +
-						" Score       Level       Destroy       Achievement");
-				drawRightedRegularString(screen, scoreString, screen.getHeight()
-						/ 4 + fontRegularMetrics.getHeight() * (i + 1) * 2);
-				isFirstLine = false;
-				i++;
-			} else {
-				scoreString = String.format("   %s                      %04d         %04d             %04d         " +
-								"             %04d",
-						score.getDate(), score.getScore(), score.getHighestLevel(),
-						score.getShipDestroyed(), score.getClearAchievementNumber());
-				drawRightedRegularString(screen, scoreString, screen.getHeight()
-						/ 4 + fontRegularMetrics.getHeight() * (i + 1) * 2);
-				i++;
+			String[] Instance = new String[5];
+			Instance[0] = String.format("%s",score.getDate());
+			Instance[1] = String.format("%04d",score.getScore());
+			Instance[2] = String.format("%04d",score.getHighestLevel());
+			Instance[3] = String.format("%04d", score.getShipDestroyed());
+			Instance[4] = String.format("%04d", score.getClearAchievementNumber());
+
+			for(int k=0; k<5; k++){
+				drawRightedRegularString(screen, Instance[k], instanceXPostition[k],
+						screen.getHeight() / 4 + fontRegularMetrics.getHeight() * (i + 1) * 2);
 			}
+			i++;
 		}
 	}
 
@@ -706,9 +714,9 @@ public class DrawManager {
 	 * 		//Clove
 	 */
 	public void drawRightedRegularString(final Screen screen,
-										 final String string, final int height) {
+										 final String string, final int width, final int height) {
 		backBufferGraphics.setFont(fontRegular);
-		backBufferGraphics.drawString(string, 0, height);
+		backBufferGraphics.drawString(string, width, height);
 	}
 
 	/**

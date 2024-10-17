@@ -1,5 +1,6 @@
 package inventory_develop;
 
+import Sound_Operator.SoundManager; //Sound_Operator
 import engine.DrawManager;
 import entity.EnemyShip;
 import entity.EnemyShipFormation;
@@ -12,7 +13,8 @@ import java.util.logging.Logger;
 import clove.ScoreManager; //CLOVE
 
 public class Bomb{
-
+    // Sound Operator
+    private static SoundManager sm;
     private int BombSpeed;
 
     private static boolean IsBomb = false;
@@ -46,6 +48,9 @@ public class Bomb{
                     count++;
 
                     int columnIndex = enemyShips.indexOf(column);
+                    //Sound_Operator
+                    sm = SoundManager.getInstance();
+                    sm.playES("enemy_explosion");
 
                     // Operate according to IndexRange
                     for (int dx = -IndexRange; dx <= IndexRange; dx++) {
@@ -70,7 +75,7 @@ public class Bomb{
                     }
                 }
             }
-
+      
         isBombExploded = true; //CLOVE
         totalPoint += point; //CLOVE
 
@@ -93,6 +98,18 @@ public class Bomb{
                     //point += column.get(i).getPointValue(); //CLOVE-duplicate calculation
                     column.get(i).destroy();
                     count++;
+//                     // right
+//                     if (columnIndex < enemyShips.size() - 1) {
+//                         List<EnemyShip> rightColumn = enemyShips.get(columnIndex + 1);
+//                         if (i < rightColumn.size() && inposition(column, rightColumn, i, i)) {
+//                             DestroyedshipByBomb.add(rightColumn.get(i));
+//                             point += rightColumn.get(i).getPointValue();
+//                             rightColumn.get(i).destroy();
+//                             count++;
+//                             logger.info("Destroyed right ship at (" + (columnIndex + 1) + "," + i + ")");
+
+//                         }
+//                     }
 
                     int columnIndex = enemyShips.indexOf(column);
 

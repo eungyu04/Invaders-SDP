@@ -29,6 +29,9 @@ public class NumberOfBullet{
     public NumberOfBullet() {
         try {
             bulletLevel = Core.getUpgradeManager().getBulletNum();
+            if (bulletLevel > 3){
+                bulletLevel = 3;
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
