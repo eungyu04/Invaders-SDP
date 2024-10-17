@@ -526,10 +526,15 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				&& !destroyedShip.spriteType.equals(SpriteType.ExplosiveEnemyShip2))
 			destroyedShip.chainExplode();
 
-		if (bullet.getSpriteType() == SpriteType.ItemBomb) { // team Inventory
-			int[] temp = Bomb.destroyByBomb(enemyShips, destroyedShip, this.logger);
-			count = temp[0];
-			point = temp[1];
+		System.out.println(isCircle);
+		if (bullet.getSpriteType() == SpriteType.ItemBomb && isCircle) {
+			int[] score = Bomb.destroyByBomb_isCircle(enemyShips, destroyedShip, this.logger);
+			count = score[0];
+			point = score[1];
+		} else if (bullet.getSpriteType() == SpriteType.ItemBomb) { // team Inventory
+			int[] score = Bomb.destroyByBomb(enemyShips, destroyedShip, this.logger);
+			count = score[0];
+			point = score[1];
 		} else {
 			for (List<EnemyShip> column : this.enemyShips) // Add by team Enemy
 				for (int i = 0; i < column.size(); i++) {
