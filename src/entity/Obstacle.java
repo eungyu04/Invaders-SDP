@@ -25,7 +25,7 @@ public class Obstacle extends Entity {
     * @param positionY Initial position of the obstacle in the Y axis.
     */
     public Obstacle(final int positionX, final int positionY) {
-        super(positionX, positionY, 14 * 2, 7 * 2, Color.ORANGE); // Use different size/color than EnemyShip
+        super(positionX, positionY, 14 * 2, 7 * 2, new Color(161, 142, 108)); // Use different size/color than EnemyShip
         this.spriteType = SpriteType.Obstacle; // Ensure it's an obstacle shape sprite type
         this.isDestroyed = false;
         this.movementCooldown = Core.getCooldown(500); // Adjust the cooldown for obstacle movement

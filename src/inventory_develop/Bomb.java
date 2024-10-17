@@ -1,5 +1,6 @@
 package inventory_develop;
 
+import Sound_Operator.SoundManager; //Sound_Operator
 import engine.DrawManager;
 import entity.EnemyShip;
 import entity.EnemyShipFormation;
@@ -12,7 +13,8 @@ import java.util.logging.Logger;
 import clove.ScoreManager; //CLOVE
 
 public class Bomb{
-
+    // Sound Operator
+    private static SoundManager sm;
     private int BombSpeed;
 
     // Bomb를 먹을 때 true로 전환할 예정
@@ -44,6 +46,9 @@ public class Bomb{
                     count++;
 
                     int columnIndex = enemyShips.indexOf(column);
+                    //Sound_Operator
+                    sm = SoundManager.getInstance();
+                    sm.playES("enemy_explosion");
 
                     // left
                     if (columnIndex > 0) {
@@ -66,6 +71,7 @@ public class Bomb{
                             rightColumn.get(i).destroy();
                             count++;
                             logger.info("Destroyed right ship at (" + (columnIndex + 1) + "," + i + ")");
+
                         }
                     }
 
@@ -161,8 +167,8 @@ public class Bomb{
     public static boolean inposition(List<EnemyShip> column, List<EnemyShip> nextcolumn, int pos, int nextpos){
         int distanceY = column.get(pos).getPositionY() - nextcolumn.get(nextpos).getPositionY();
         int distanceX = column.get(pos).getPositionX() - nextcolumn.get(nextpos).getPositionX();
-
-        return (distanceY >= -50 && distanceX >= -50) && (distanceY <= 50 && distanceX <= 50);
+        
+        return (distanceY >= -60 && distanceX >= -60) && (distanceY <= 60 && distanceX <= 60);
     }
 
 }

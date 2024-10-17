@@ -5,6 +5,8 @@ import engine.GameState;
 // item level Bonus
 import inventory_develop.ShipStatus;
 
+import java.io.IOException;
+
 public class RoundState {
     private final GameState prevState;
     private final GameState currState;
@@ -17,8 +19,7 @@ public class RoundState {
     private final float roundHitRate;
     private final long roundTime;
 
-    private ShipStatus shipStatus;   //inventory team
-    private static double statBonus = 1;
+    private double statBonus;
     private static final int COIN_ITEM_VALUE = 10;
 
     public RoundState(GameState prevState, GameState currState) {
@@ -30,11 +31,15 @@ public class RoundState {
         this.roundHitRate = roundHitCount / (float) roundBulletsShot;
         this.roundTime = currState.getTime() - prevState.getTime();
         this.roundCoinItemsCollected = currState.getCoinItemsCollected() - prevState.getCoinItemsCollected();
-        this.roundCoin = calculateCoin();
 
-        //Coin Bonus increase by Level
-        shipStatus = new ShipStatus();
-        shipStatus.loadStatus();
+        // CtrlS: load stat bonus via UpgradeManager
+        try {
+            this.statBonus = Core.getUpgradeManager().getCoinAcquisitionMultiplier();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        this.roundCoin = calculateCoin();
     }
 
     private int calculateCoin() {
@@ -110,8 +115,4 @@ public class RoundState {
     }
 
     public int getRoundCoinItemsCollected() { return roundCoinItemsCollected; }
-
-    public void statBonusIN(){
-        statBonus += shipStatus.getCoinIn();
-    }
 }
