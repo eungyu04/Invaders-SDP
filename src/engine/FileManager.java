@@ -154,12 +154,14 @@ public final class FileManager {
 			Score highScore = null;
 			String name = reader.readLine();
 			String score = reader.readLine();
+			String time = reader.readLine();
 
 			while ((name != null) && (score != null)) {
-				highScore = new Score(name, Integer.parseInt(score));
+				highScore = new Score(name, Integer.parseInt(score), Integer.parseInt(time));
 				highScores.add(highScore);
 				name = reader.readLine();
 				score = reader.readLine();
+				time = reader.readLine();
 			}
 		} finally {
 			if (inputStream != null)
@@ -202,12 +204,14 @@ public final class FileManager {
 			Score highScore = null;
 			String name = bufferedReader.readLine();
 			String score = bufferedReader.readLine();
+			String time = bufferedReader.readLine();
 
-			while ((name != null) && (score != null)) {
-				highScore = new Score(name, Integer.parseInt(score));
+			while ((name != null) && (score != null) && (time != null)) {
+				highScore = new Score(name, Integer.parseInt(score), Long.parseLong(time));
 				highScores.add(highScore);
 				name = bufferedReader.readLine();
 				score = bufferedReader.readLine();
+				time = bufferedReader.readLine();
 			}
 
 		} catch (FileNotFoundException e) {
@@ -264,6 +268,8 @@ public final class FileManager {
 				bufferedWriter.write(score.getName());
 				bufferedWriter.newLine();
 				bufferedWriter.write(Integer.toString(score.getScore()));
+				bufferedWriter.newLine();
+				bufferedWriter.write(Long.toString(score.getPlayTime()));
 				bufferedWriter.newLine();
 				savedCount++;
 			}
@@ -384,7 +390,7 @@ public final class FileManager {
 				bufferedReader.close();
 		}
 
-		Collections.sort(recentScores);
+		//Collections.sort(recentScores);
 		return recentScores;
 	}
 
@@ -796,5 +802,112 @@ public final class FileManager {
 		}
 
 		return gem;
+	}
+
+	/**
+	 * Loads upgrade statuses from upgrade_status.properties file.
+	 *
+	 * @return Properties object containing the upgrade statuses.
+	 * @throws IOException In case of loading problems.
+	 */
+	public Properties loadUpgradeStatus() throws IOException {
+		Properties properties = new Properties();
+		InputStream inputStream = null;
+
+		try {
+			String jarPath = FileManager.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+			jarPath = URLDecoder.decode(jarPath, "UTF-8");
+
+			String propertiesPath = new File(jarPath).getParent();
+			propertiesPath += File.separator + "upgrade_status.properties";
+
+			File upgradeFile = new File(propertiesPath);
+
+			if (upgradeFile.exists()) {
+				inputStream = new FileInputStream(upgradeFile);
+				properties.load(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
+			} else {
+				logger.info("upgrade_status.properties not found. Loading default upgrade statuses.");
+				properties = loadDefaultUpgradeStatus();
+			}
+
+		} finally {
+			if (inputStream != null) {
+				inputStream.close();
+			}
+		}
+
+		return properties;
+	}
+
+	/**
+	 * Saves upgrade statuses to upgrade_status.properties file.
+	 *
+	 * @param properties The Properties object containing the upgrade statuses to save.
+	 * @throws IOException In case of saving problems.
+	 */
+	public void saveUpgradeStatus(Properties properties) throws IOException {
+		OutputStream outputStream = null;
+
+		try {
+			String jarPath = FileManager.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+			jarPath = URLDecoder.decode(jarPath, "UTF-8");
+
+			String propertiesPath = new File(jarPath).getParent();
+			propertiesPath += File.separator + "upgrade_status.properties";
+
+			File upgradeFile = new File(propertiesPath);
+
+			if (!upgradeFile.exists()) {
+				upgradeFile.createNewFile();
+			}
+
+			outputStream = new FileOutputStream(upgradeFile);
+			properties.store(new OutputStreamWriter(outputStream, Charset.forName("UTF-8")), "Upgrade Statuses");
+
+			logger.info("Saving upgrade statuses.");
+
+		} finally {
+			if (outputStream != null) {
+				outputStream.close();
+			}
+		}
+	}
+
+	/**
+	 * Loads default upgrade statuses from upgrade_default.properties file.
+	 *
+	 * @return Properties object containing the default upgrade statuses.
+	 * @throws IOException In case of loading problems.
+	 */
+    public Properties loadDefaultUpgradeStatus() throws IOException {
+		Properties defaultProperties = new Properties();
+		InputStream inputStream = null;
+
+		try {
+			inputStream = FileManager.class.getClassLoader().getResourceAsStream("upgrade_default.properties");
+			if (inputStream != null) {
+				defaultProperties.load(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
+				logger.info("Default upgrade statuses loaded from upgrade_default.properties.");
+			} else {
+				logger.warning("upgrade_default.properties not found. Using hardcoded default values.");
+				defaultProperties.setProperty("coin_acquisition_multiplier", "1.0");
+				defaultProperties.setProperty("attack_speed", "750");
+				defaultProperties.setProperty("movement_speed", "2");
+				defaultProperties.setProperty("bullet_num", "1");
+
+				//inventory team
+				defaultProperties.setProperty("speed_LevelCount", "1");
+				defaultProperties.setProperty("Coin_LevelCount", "1");
+				defaultProperties.setProperty("attack_LevelCount", "1");
+				defaultProperties.setProperty("bullet_LevelCount", "0");
+			}
+		} finally {
+			if (inputStream != null) {
+				inputStream.close();
+			}
+		}
+
+		return defaultProperties;
 	}
 }

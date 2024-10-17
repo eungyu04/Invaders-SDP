@@ -29,12 +29,12 @@
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
-  &quot;isMigrated&quot;: true
-}</component>
+    &quot;isMigrated&quot;: true
+    }</component>
   <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 6
-}</component>
+    &quot;customColor&quot;: &quot;&quot;,
+    &quot;associatedIndex&quot;: 6
+    }</component>
   <component name="ProjectId" id="2lvMrDXDXT0D24Hdc7PGKjkYe4i" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />

@@ -1,5 +1,6 @@
 package engine;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
@@ -11,11 +12,10 @@ import java.util.logging.Logger;
 import CtrlS.CurrencyManager;
 import CtrlS.RoundState;
 import CtrlS.ReceiptScreen;
+import CtrlS.UpgradeManager;
 import Sound_Operator.SoundManager;
 import level_design.Background;
-import CtrlS.RoundState;
-import CtrlS.ReceiptScreen;
-import Sound_Operator.SoundManager;
+import clove.AchievementConditions;
 import clove.AchievementManager;
 import screen.*;
 import twoplayermode.TwoPlayerMode;
@@ -81,6 +81,7 @@ public final class Core {
 	// Sound Operator
 	private static SoundManager sm;
     private static AchievementManager achievementManager; // Team CLOVER
+	private static AchievementConditions achievementConditions;
 
 	/**
 	 * Test implementation.
@@ -88,6 +89,7 @@ public final class Core {
 	 * @param args
 	 *            Program args, ignored.
 	 */
+
 	public static void main(final String[] args) {
 		try {
 			LOGGER.setUseParentHandlers(false);
@@ -108,6 +110,10 @@ public final class Core {
 			System.out.println("Initializing AchievementManager...");
 			achievementManager = new AchievementManager(DrawManager.getInstance());
 			System.out.println("AchievementManager initialized!");
+			achievementConditions = new AchievementConditions();
+
+			// CtrlS: Make instance of Upgrade Manager
+			Core.getUpgradeManager();
 
 		} catch (Exception e) {
 			// TODO handle exception
@@ -144,7 +150,7 @@ public final class Core {
 			switch (returnCode) {
 			case 1:
 				// Main menu.
-				currentScreen = new TitleScreen(width, height, FPS);
+                currentScreen = new TitleScreen(width, height, FPS);
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " title screen at " + FPS + " fps.");
 				returnCode = frame.setScreen(currentScreen);
@@ -244,13 +250,27 @@ public final class Core {
 				sm.playBGM("inGame_bgm");
 
 				do {
-					// One extra live every few levels.
-					boolean bonusLife = gameState.getLevel() % EXTRA_LIFE_FRECUENCY == 0
-							&& (gameState.getLivesRemaining() < MAX_LIVES || gameState.getLivesTwoRemaining() < MAX_LIVES);
+					if (gameSettings == null || gameSettings.isEmpty()) {
+						gameSettings = new ArrayList<>();
+						gameSettings.add(SETTINGS_LEVEL_1);
+						gameSettings.add(SETTINGS_LEVEL_2);
+						gameSettings.add(SETTINGS_LEVEL_3);
+						gameSettings.add(SETTINGS_LEVEL_4);
+						gameSettings.add(SETTINGS_LEVEL_5);
+						gameSettings.add(SETTINGS_LEVEL_6);
+						gameSettings.add(SETTINGS_LEVEL_7);
+					}
+
+					GameSettings currentGameSettings = gameSettings.get(gameState.getLevel() - 1);
+
+					int fps = FPS;
+					boolean bonusLife = gameState.getLevel() % EXTRA_LIFE_FRECUENCY == 0 &&
+							(gameState.getLivesRemaining() < MAX_LIVES || gameState.getLivesTwoRemaining() < MAX_LIVES);
 
 					GameState prevState = gameState;
 
-					currentScreen = new TwoPlayerMode(gameState);
+					// TwoPlayerMode의 생성자를 호출할 때 필요한 매개변수를 모두 전달
+					currentScreen = new TwoPlayerMode(gameState, currentGameSettings, bonusLife, width, height, fps);
 
 
 
@@ -300,8 +320,7 @@ public final class Core {
 						achievementManager.updateAchievements(currentScreen);
 					}
 
-				} while (gameState.getLivesRemaining() > 0
-						&& gameState.getLevel() <= NUM_LEVELS);
+				} while ((gameState.getLivesRemaining() > 0 || gameState.getLivesTwoRemaining() > 0) && gameState.getLevel() <= NUM_LEVELS);
 
 				LOGGER.info("Stop InGameBGM");
 				// Sound Operator
@@ -412,5 +431,15 @@ public final class Core {
 	// Team-Ctrl-S(Currency)
 	public static CurrencyManager getCurrencyManager() {
 		return CurrencyManager.getInstance();
+	}
+
+	/**
+	 * Controls access to the currency manager.
+	 *
+	 * @return Application currency manager.
+	 */
+	// Team-Ctrl-S(Currency)
+	public static UpgradeManager getUpgradeManager() {
+		return UpgradeManager.getInstance();
 	}
 }

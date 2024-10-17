@@ -2,9 +2,12 @@ package entity;
 
 import java.awt.Color;
 
+import clove.AchievementConditions;
 import engine.DrawManager;
 import engine.DrawManager.SpriteType;
 import inventory_develop.Bomb;
+
+import screen.GameScreen;
 
 /**
  * Implements a bullet that moves vertically up or down.
@@ -121,5 +124,17 @@ public class Bullet extends Entity {
 	 */
 	public final void setFire_id(final int id) { this.fire_id = id; }
 
-
+	/**
+	 * Notify the KillStreakSystem about the bullet's hit or miss.
+	 *
+	 * @param killStreakSystem
+	 *            The instance of KillStreakSystem to notify.
+	 */
+	public final void notifyKillStreak(AchievementConditions killStreakSystem) {
+		if (this.isCheckCount()) {
+			AchievementConditions.incrementKillCount();
+		} else {
+			AchievementConditions.resetKillCount();
+		}
+	}
 }

@@ -21,6 +21,8 @@ import engine.DrawManager.SpriteType;
 import engine.GameSettings;
 import static java.lang.Math.*;
 import Enemy.PiercingBulletPool;
+//Sound_Operator
+import Sound_Operator.SoundManager;
 /**
  * Groups enemy ships into a formation that moves together.
  * 
@@ -39,8 +41,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/** Initial position in the y-axis. */
 	private static final int INIT_POS_Y = 100;
 	/** Distance between ships. */
-	private static final int SEPARATION_DISTANCE = 40;
-	private static final int SEPARATION_DISTANCE_CIRCLE = 70;
+	private static final int SEPARATION_DISTANCE = 60;
+	private static final int SEPARATION_DISTANCE_CIRCLE = 90;
 	/** Radius of circle */
 	private int RADIUS=0;
 	private int MINIRADIUS= 0;
@@ -186,15 +188,11 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 					x = positionX + (SEPARATION_DISTANCE * this.enemyShips.indexOf(column));
 					y = positionY+ i*SEPARATION_DISTANCE;
 				}
-				column.add(new EnemyShip(x, y, spriteType));
-        
+
 				if(shipCount == nShipsHigh*(nShipsWide/2))
 					hp = 2; // Edited by Enemy, It just an example to insert EnemyShip that hp is 2.
 
-				column.add(new EnemyShip((SEPARATION_DISTANCE
-						* this.enemyShips.indexOf(column))
-								+ positionX, (SEPARATION_DISTANCE * i)
-								+ positionY, spriteType,hp,this.enemyShips.indexOf(column),i));// Edited by Enemy
+				column.add(new EnemyShip(x, y, spriteType,hp,this.enemyShips.indexOf(column),i));// Edited by Enemy
 				this.shipCount++;
 				hp = 1;// Edited by Enemy
 			}
@@ -258,11 +256,17 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		if (movementInterval >= this.movementSpeed) {
 			movementInterval = 0;
 
+			int circleFormationPadding = 0;
+
+			if (isCircle) {
+				circleFormationPadding = 45;
+			}
+
 			boolean isAtBottom = positionY
 					+ this.height + RADIUS > screen.getHeight() - BOTTOM_MARGIN;
 			boolean isAtRightSide = positionX
 					+ this.width + RADIUS >= screen.getWidth() - SIDE_MARGIN;
-			boolean isAtLeftSide = positionX - RADIUS <= SIDE_MARGIN;
+			boolean isAtLeftSide = positionX - RADIUS - circleFormationPadding <= SIDE_MARGIN;
 			boolean isAtHorizontalAltitude = positionY % DESCENT_DISTANCE == 0;
 
 			if (currentDirection == Direction.DOWN) {
@@ -328,9 +332,19 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				temp=0;
 				for (EnemyShip enemyShip : column) {
 					double currentAngle = angle * (temp+iteration);
+					int distanceX = movementX + (int) (MINIRADIUS * cos(currentAngle));
+					int distanceY = movementY + (int) (MINIRADIUS * sin(currentAngle));
+
+					if (distanceX + enemyShip.positionX > screen.getWidth() - SIDE_MARGIN || distanceX + enemyShip.positionX < SIDE_MARGIN) {
+						distanceX = 0;
+
+					} else if (distanceY + enemyShip.positionY > screen.getHeight() - BOTTOM_MARGIN) {
+						distanceY = 0;
+					}
+
 					enemyShip.move(
-							movementX+(int) (MINIRADIUS * cos(currentAngle)),
-							movementY+(int) (MINIRADIUS * sin(currentAngle))
+							distanceX,
+							distanceY
 					);
 					enemyShip.update();
 					temp++;
@@ -491,9 +505,6 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	public final boolean isEmpty() {
 		return this.shipCount <= 0;
 	}
-	public final void BecomeCircle(boolean iscircle){
-		this.isCircle=iscircle;
-	}
 
 	/**
 	 * When EnemyShip is hit, its HP decrease by 1, and if the HP reaches 0, the ship is destroyed.
@@ -526,6 +537,13 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 						switch (destroyedShip.spriteType){
 							case ExplosiveEnemyShip1:
 							case ExplosiveEnemyShip2:
+								HpEnemyShip.hit(destroyedShip);
+								//Sound_Operator
+								if (destroyedShip.isDestroyed()) {
+
+									sm = SoundManager.getInstance();
+									sm.playES("enemy_explosion");
+								}
 								destroyedShip.chainExplode(); // Edited by team Enemy
 								explosive(destroyedShip.getX(), destroyedShip.getY(),this.enemyShips.indexOf(column),i); //Add by team Enemy
 								// HpEnemyShip.hit(destroyedShip);
@@ -652,5 +670,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 		timer.addActionListener(listener);
 		timer.start();
+	}
+	public final void BecomeCircle(boolean iscircle){
+		this.isCircle=iscircle;
 	}
 }

@@ -209,6 +209,4 @@ public class Ship extends Entity {
 	public PlayerGrowth getPlayerGrowth() {
 		return growth;
 	}	// Team Inventory(Item)
-
-
 }

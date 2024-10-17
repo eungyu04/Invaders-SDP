@@ -2,11 +2,14 @@ package screen;
 
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import engine.Cooldown;
 import engine.Core;
 // Sound Operator
 import Sound_Operator.SoundManager;
+import engine.Score;
+import inventory_develop.ShipStatus;
 
 /**
  * Implements the title screen.
@@ -28,6 +31,8 @@ public class TitleScreen extends Screen {
 	// select One player or Two player
 	private int pnumSelectionCode; //produced by Starter
 	private int merchantState;
+	//inventory
+	private ShipStatus shipStatus;
 
 	/**
 	 * Constructor, establishes the properties of the screen.
@@ -60,6 +65,9 @@ public class TitleScreen extends Screen {
         // Sound Operator
 		SoundManager.getInstance().playBGM("mainMenu_bgm");
 
+		// inventory load upgrade price
+		shipStatus = new ShipStatus();
+		shipStatus.loadPrice();
 	}
 
 	/**
@@ -140,17 +148,7 @@ public class TitleScreen extends Screen {
 
 			if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
 				if(returnCode == 4) {
-					// CtrlS: Attempt the purchase, apply the upgrade if successful. Log the event if it fails.
-                    try {
-                        if (Core.getCurrencyManager().spendCoin(50)) {
-							testStatUpgrade();
-							this.coin = Core.getCurrencyManager().getCoin(); // CtrlS: After spending coins, update this.coin with the reduced amount
-						} else {
-							Core.getLogger().info("You don't have enough coins!");
-						}
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+					testStatUpgrade();
                     this.selectionCooldown.reset();
 				}
 				else this.isRunning = false;
@@ -178,22 +176,125 @@ public class TitleScreen extends Screen {
 	/**
 	 * Shifts the focus to the next menu item.
 	 */
-	private void testStatUpgrade(){
+	
+	private void testStatUpgrade() {
 		// CtrlS: testStatUpgrade should only be called after coins are spent
-		if(this.merchantState == 1) {
-			// this.currentCoin -= 50;
-		}
-		else if(this.merchantState == 2) {
-			// this.currentCoin -= 50;
-		}
-		else if(this.merchantState == 3) {
-			// this.currentCoin -= 50;
-		}
-		else if(this.merchantState == 4) {
-			// this.currentCoin -= 50;
-		}
+		if (this.merchantState == 1) { // bulletCount
+			try {
+				if (Core.getUpgradeManager().LevelCalculation(Core.getUpgradeManager().getBulletCount()) > 3){
+					Core.getLogger().info("The level is already Max!");
+				}
 
+				else if (!(Core.getUpgradeManager().getBulletCount() % 2 == 0)
+						&& Core.getCurrencyManager().spendCoin(Core.getUpgradeManager().Price(1))) {
 
+					Core.getUpgradeManager().addBulletNum();
+					Core.getLogger().info("Bullet Number: " + Core.getUpgradeManager().getBulletNum());
+
+					Core.getUpgradeManager().addBulletCount();
+
+				} else if ((Core.getUpgradeManager().getBulletCount() % 2 == 0)
+						&& Core.getCurrencyManager().spendGem(Core.getUpgradeManager().getBulletCount() + 1)) {
+
+					Core.getUpgradeManager().addBulletCount();
+					Core.getLogger().info("Upgrade has been unlocked");
+
+				} else {
+					Core.getLogger().info("you don't have enough");
+				}
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+
+		} else if (this.merchantState == 2) { // shipSpeed
+			try {
+				if (Core.getUpgradeManager().LevelCalculation(Core.getUpgradeManager().getSpeedCount()) > 10){
+					Core.getLogger().info("The level is already Max!");
+				}
+
+				else if (!(Core.getUpgradeManager().getSpeedCount() % 4 == 0)
+						&& Core.getCurrencyManager().spendCoin(Core.getUpgradeManager().Price(2))) {
+
+					Core.getUpgradeManager().addMovementSpeed();
+					Core.getLogger().info("Movement Speed: " + Core.getUpgradeManager().getMovementSpeed());
+
+					Core.getUpgradeManager().addSpeedCount();
+
+				} else if ((Core.getUpgradeManager().getSpeedCount() % 4 == 0)
+						&& Core.getCurrencyManager().spendGem(Core.getUpgradeManager().getSpeedCount() / 4)) {
+
+					Core.getUpgradeManager().addSpeedCount();
+					Core.getLogger().info("Upgrade has been unlocked");
+
+				} else {
+					Core.getLogger().info("you don't have enough");
+				}
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+
+		} else if (this.merchantState == 3) { // attackSpeed
+			try {
+				if (Core.getUpgradeManager().LevelCalculation(Core.getUpgradeManager().getAttackCount()) > 10){
+					Core.getLogger().info("The level is already Max!");
+				}
+
+				else if (!(Core.getUpgradeManager().getAttackCount() % 4 == 0)
+						&& Core.getCurrencyManager().spendCoin(Core.getUpgradeManager().Price(3))) {
+
+					Core.getUpgradeManager().addAttackSpeed();
+					Core.getLogger().info("Attack Speed: " + Core.getUpgradeManager().getAttackSpeed());
+
+					Core.getUpgradeManager().addAttackCount();
+
+				} else if ((Core.getUpgradeManager().getAttackCount() % 4 == 0)
+						&& Core.getCurrencyManager().spendGem(Core.getUpgradeManager().getAttackCount() / 4)) {
+
+					Core.getUpgradeManager().addAttackCount();
+					Core.getLogger().info("Upgrade has been unlocked");
+
+				} else {
+					Core.getLogger().info("you don't have enough");
+				}
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+
+		} else if (this.merchantState == 4) { // coinGain
+			try {
+				if (Core.getUpgradeManager().LevelCalculation(Core.getUpgradeManager().getCoinCount()) > 10){
+					Core.getLogger().info("The level is already Max!");
+				}
+
+				else if (!(Core.getUpgradeManager().getCoinCount() % 4 == 0)
+						&& Core.getCurrencyManager().spendCoin(Core.getUpgradeManager().Price(4))) {
+
+					Core.getUpgradeManager().addCoinAcquisitionMultiplier();
+					Core.getLogger().info("CoinBonus: " + Core.getUpgradeManager().getCoinAcquisitionMultiplier());
+
+					Core.getUpgradeManager().addCoinCount();
+
+				} else if ((Core.getUpgradeManager().getCoinCount() % 4 == 0)
+						&& Core.getCurrencyManager().spendGem(Core.getUpgradeManager().getCoinCount() / 4)) {
+
+					Core.getUpgradeManager().addCoinCount();
+					Core.getLogger().info("Upgrade has been unlocked");
+
+				} else {
+					Core.getLogger().info("you don't have enough");
+				}
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+
+		}
+		try{
+			this.coin = Core.getCurrencyManager().getCoin();
+			this.gem = Core.getCurrencyManager().getGem();
+
+		} catch (IOException e){
+			throw new RuntimeException(e);
+		}
 	}
 	private void nextMenuItem() {
 		if (this.returnCode == 5) // Team Clover changed values because recordMenu added

@@ -21,6 +21,9 @@ import inventory_develop.SpeedItem;
 
 import CtrlS.CurrencyManager;
 
+// Sound Operator
+import Sound_Operator.SoundManager;
+
 
 public class ItemManager {
 
@@ -37,7 +40,9 @@ public class ItemManager {
     private PlayerGrowth growth;
     private FeverTimeItem feverTimeItem;
     private CurrencyManager currencyManager;
-    private List<EnemyShip> enemyShips;
+    //private List<EnemyShip> enemyShips;
+    // Sound Operator
+    private static SoundManager sm;
 
     public ItemManager(int screenHeight, DrawManager drawManager, GameScreen gameScreen) {
         this.items = new HashSet<>();
@@ -92,12 +97,21 @@ public class ItemManager {
                 case ItemBomb:
                     Bomb.setIsbomb(true);
                     Bomb.setCanShoot(true);
+                    //Sound_Operator
+                    sm = SoundManager.getInstance();
+                    sm.playES("get_item");
                     break;
                 case ItemBarrier:
                     Item2.activatebarrier();
+                    //Sound_Operator
+                    sm = SoundManager.getInstance();
+                    sm.playES("get_item");
                     break;
                 case ItemHeart:
                     Item2.activeheart(gameScreen, ship, growth);
+                    //Sound_Operator
+                    sm = SoundManager.getInstance();
+                    sm.playES("get_item");
                     break;
                 case ItemFeverTime: // 피버타임 아이템일 경우
                     feverTimeItem.activate();
@@ -105,6 +119,9 @@ public class ItemManager {
                 case ItemPierce:
                     numberOfBullet.pierceup();
                     ship.increaseBulletSpeed();
+                    //Sound_Operator
+                    sm = SoundManager.getInstance();
+                    sm.playES("get_item");
                     break;
                 case ItemCoin:
                     this.logger.info("You get coin!");
@@ -131,6 +148,12 @@ public class ItemManager {
     public void addItemRecycle(Item item) {
         recyclableItems.add(item);
         String itemLog = item.getSpriteType().toString().toLowerCase().substring(4);
+        // Sound Operator
+        if (itemLog.equals("coin")){
+            sm = SoundManager.getInstance();
+            sm.playES("item_coin");
+        }
+
         if (!itemLog.equals("coin")) {
             this.logger.info("get " + itemLog + " item");   // Change log for each item
         }
