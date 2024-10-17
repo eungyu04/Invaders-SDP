@@ -181,7 +181,11 @@ public class TitleScreen extends Screen {
 		// CtrlS: testStatUpgrade should only be called after coins are spent
 		if (this.merchantState == 1) { // bulletCount
 			try {
-				if (!(Core.getUpgradeManager().getBulletCount() % 2 == 0)
+				if (Core.getUpgradeManager().LevelCalculation(Core.getUpgradeManager().getBulletCount()) > 3){
+					Core.getLogger().info("The level is already Max!");
+				}
+
+				else if (!(Core.getUpgradeManager().getBulletCount() % 2 == 0)
 						&& Core.getCurrencyManager().spendCoin(Core.getUpgradeManager().Price(1))) {
 
 					Core.getUpgradeManager().addBulletNum();
@@ -204,7 +208,11 @@ public class TitleScreen extends Screen {
 
 		} else if (this.merchantState == 2) { // shipSpeed
 			try {
-				if (!(Core.getUpgradeManager().getSpeedCount() % 4 == 0)
+				if (Core.getUpgradeManager().LevelCalculation(Core.getUpgradeManager().getSpeedCount()) > 10){
+					Core.getLogger().info("The level is already Max!");
+				}
+
+				else if (!(Core.getUpgradeManager().getSpeedCount() % 4 == 0)
 						&& Core.getCurrencyManager().spendCoin(Core.getUpgradeManager().Price(2))) {
 
 					Core.getUpgradeManager().addMovementSpeed();
@@ -227,7 +235,11 @@ public class TitleScreen extends Screen {
 
 		} else if (this.merchantState == 3) { // attackSpeed
 			try {
-				if (!(Core.getUpgradeManager().getAttackCount() % 4 == 0)
+				if (Core.getUpgradeManager().LevelCalculation(Core.getUpgradeManager().getAttackCount()) > 10){
+					Core.getLogger().info("The level is already Max!");
+				}
+
+				else if (!(Core.getUpgradeManager().getAttackCount() % 4 == 0)
 						&& Core.getCurrencyManager().spendCoin(Core.getUpgradeManager().Price(3))) {
 
 					Core.getUpgradeManager().addAttackSpeed();
@@ -250,7 +262,11 @@ public class TitleScreen extends Screen {
 
 		} else if (this.merchantState == 4) { // coinGain
 			try {
-				if (!(Core.getUpgradeManager().getCoinCount() % 4 == 0)
+				if (Core.getUpgradeManager().LevelCalculation(Core.getUpgradeManager().getCoinCount()) > 10){
+					Core.getLogger().info("The level is already Max!");
+				}
+
+				else if (!(Core.getUpgradeManager().getCoinCount() % 4 == 0)
 						&& Core.getCurrencyManager().spendCoin(Core.getUpgradeManager().Price(4))) {
 
 					Core.getUpgradeManager().addCoinAcquisitionMultiplier();

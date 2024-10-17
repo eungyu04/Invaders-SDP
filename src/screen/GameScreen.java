@@ -598,17 +598,9 @@ public class GameScreen extends Screen {
 								+ " lives remaining.");
 
 						// Sound Operator
-						if (this.lives == 0) {
+						if (this.lives == 0){
 							sm = SoundManager.getInstance();
-							sm.playES("ally_airship_destroy_explosion");
-							new Thread(() -> {
-								try {
-									Thread.sleep(1000);
-								} catch (InterruptedException e) {
-									throw new RuntimeException(e);
-								}
-								sm.playES("ally_airship_destroy_die");
-							}).start();
+							sm.playShipDieSounds();
 						}
 					}
 				}
@@ -708,6 +700,10 @@ public class GameScreen extends Screen {
 					if (!obstacle.isDestroyed() && checkCollision(bullet, obstacle)) {
 						obstacle.destroy();  // Destroy obstacle
 						recyclable.add(bullet);  // Remove bullet
+
+						// Sound Operator
+						sm = SoundManager.getInstance();
+						sm.playES("obstacle_explosion");
 					}
 				}
 			}
@@ -725,7 +721,6 @@ public class GameScreen extends Screen {
 				} else {
 					obstacle.destroy();  // Destroy obstacle
 					this.logger.info("Shield blocked the hit from an obstacle, " + this.lives + " lives remaining.");
-
 				}
 
 				break;  // Stop further collisions if the ship is destroyed.
@@ -745,6 +740,8 @@ public class GameScreen extends Screen {
 			}
 		}
 		itemManager.removeAllReItems();
+
+
 	}
 
 
