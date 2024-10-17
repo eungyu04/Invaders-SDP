@@ -44,6 +44,11 @@ public class EnemyShip extends Entity {
 	// Sound Operator
 	private static SoundManager sm;
 
+	/** Enemy ship's movement speed. */
+	private double speed = 1.0; // Default speed
+	/** Speed reduction or increase multiplier (1.0 means normal speed). */
+	private double speedMultiplier = 1.0;
+
 	/**
 	 * Constructor, establishes the ship's properties.
 	 *
@@ -124,7 +129,7 @@ public class EnemyShip extends Entity {
 	 * @param distanceY
 	 *            Distance to move in the Y axis.
 	 */
-	public final void move(final int distanceX, final int distanceY) {
+	public final void moving(final int distanceX, final int distanceY) {
 		this.positionX += distanceX;
 		this.positionY += distanceY;
 	}
@@ -257,4 +262,39 @@ public class EnemyShip extends Entity {
 	public final void setChainExploded(boolean isChainExploded) {
 		this.isChainExploded = isChainExploded;
 	} // Added by team Enemy
+
+	/**
+	 * Moves the ship the specified distance, applying the current speed multiplier.
+	 *
+	 * @param distanceX Distance to move in the X axis.
+	 * @param distanceY Distance to move in the Y axis.
+	 */
+	@Override
+	public final void move(final int distanceX, final int distanceY) {
+		this.positionX += distanceX * speedMultiplier;
+		this.positionY += distanceY * speedMultiplier;
+	}
+
+
+
+	/**
+	 * Applies a speed multiplier to the enemy ship.
+	 *
+	 * @param multiplier The multiplier to apply to the speed (e.g., 0.5 for slow, 1.5 for fast).
+	 */
+	public void setSpeedReduction(double multiplier) {
+		this.speedMultiplier = multiplier;
+	}
+
+	/**
+	 * Getter for the current speed multiplier.
+	 *
+	 * @return The current speed multiplier.
+	 */
+	public double getSpeedMultiplier() {
+		return this.speedMultiplier;
+	}
+
+	public void setSpeedMultiplier(double speedMultiplier) {
+	}
 }

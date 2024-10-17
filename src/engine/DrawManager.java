@@ -118,7 +118,8 @@ public class DrawManager {
 		AddSign,
 		/** Gem - Added by CtrlS */
 		Gem,
-		Obstacle
+        ItemSpeedUp, ItemSpeedSlow, Obstacle
+
 	};
 
 	/**
@@ -162,6 +163,8 @@ public class DrawManager {
 			spriteMap.put(SpriteType.ItemCoin, new boolean[7][7]);
 			spriteMap.put(SpriteType.ItemFeverTime, new boolean[9][9]);
 			spriteMap.put(SpriteType.ItemPierce, new boolean[7][7]);
+			spriteMap.put(SpriteType.ItemSpeedUp, new boolean[9][9]);
+			spriteMap.put(SpriteType.ItemSpeedSlow, new boolean[9][9]);
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");
@@ -317,7 +320,12 @@ public class DrawManager {
 		backBufferGraphics.setColor(Color.WHITE);
 //		backBufferGraphics.drawString(Integer.toString(lives), 20, 25);
 
-		Entity heart = new Entity(0, 0, 13 * 2, 8 * 2, Color.RED);
+		Entity heart = new Entity(0, 0, 13 * 2, 8 * 2, Color.RED) {
+			@Override
+			public void move(int distanceX, int distanceY) {
+
+			}
+		};
 		heart.setSpriteType(SpriteType.Heart);
 
 		for (int i = 0; i < lives; i++)
@@ -916,7 +924,12 @@ public class DrawManager {
 	 */
 	public void drawItem(final Screen screen){
 		//Bomb
-		Entity itemBomb = new Entity(0, 0, 13 * 2, 8 * 2, Color.gray);
+		Entity itemBomb = new Entity(0, 0, 13 * 2, 8 * 2, Color.gray) {
+			@Override
+			public void move(int distanceX, int distanceY) {
+
+			}
+		};
 		itemBomb.setSpriteType(DrawManager.SpriteType.ItemBomb);
 
 		if(Bomb.getIsBomb() && Bomb.getCanShoot()){

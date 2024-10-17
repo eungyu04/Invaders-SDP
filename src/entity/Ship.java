@@ -209,4 +209,9 @@ public class Ship extends Entity {
 	public PlayerGrowth getPlayerGrowth() {
 		return growth;
 	}	// Team Inventory(Item)
+
+	@Override
+	public void move(int distanceX, int distanceY) {
+
+	}
 }
