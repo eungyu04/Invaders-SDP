@@ -12,4 +12,5 @@ public class Gem extends Entity {
         super(0, 0, 7 * 2, 6 * 2, Color.cyan);
         this.spriteType = DrawManager.SpriteType.Gem;
     }
+
 }

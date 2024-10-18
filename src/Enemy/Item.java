@@ -23,6 +23,8 @@ public class Item extends Entity {
         double ShieldP = shipStatus.getShield_probability();
         double HearthP = shipStatus.getHearth_probability();
         double FeverP = shipStatus.getFeverTimeProbability();
+        double SpeedUpP = shipStatus.getSpeedUpProbability();
+        double SpeedSlowP = shipStatus.getSpeedSlowProbability();
 
         // Import odds from properties file for easy balance patches
         if (rdItem < bombP) { // 30%
@@ -37,10 +39,19 @@ public class Item extends Entity {
         } else if (rdItem < bombP + PierceP + ShieldP + HearthP) { // 100%
             this.spriteType = SpriteType.ItemHeart;
             this.setColor(Color.red);
-        } else if (rdItem < bombP + PierceP + ShieldP + HearthP + FeverP) {
+        } else if (rdItem < bombP + PierceP + ShieldP + HearthP + FeverP ) {
             this.spriteType = SpriteType.ItemFeverTime;
             this.setColor(Color.yellow);
-        } else {
+        }
+        else if (rdItem < bombP + PierceP + ShieldP + HearthP + SpeedUpP) {
+            this.spriteType = SpriteType.ItemSpeedUp;
+            this.setColor(Color.CYAN);
+        }
+        else if (rdItem < bombP + PierceP + ShieldP + HearthP + SpeedUpP + SpeedSlowP) {
+            this.spriteType = SpriteType.ItemSpeedSlow;
+            this.setColor(Color.ORANGE);
+        }
+        else {
             this.spriteType = SpriteType.ItemCoin;
             this.setColor(Color.yellow);
         }
@@ -55,4 +66,6 @@ public class Item extends Entity {
     public final int getSpeed() {
         return this.speed;
     }
+
+
 }

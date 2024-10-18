@@ -11,4 +11,6 @@ public class AddSign extends Entity{
 
         this.spriteType = DrawManager.SpriteType.AddSign;
     }
+
+
 }

@@ -10,4 +10,6 @@ public class Coin extends Entity {
 
         this.spriteType = DrawManager.SpriteType.Coin;
     }
+
+
 }

@@ -79,6 +79,8 @@ public class GameScreen extends Screen {
 	/** Shield item */
 	private ItemBarrierAndHeart item;	// team Inventory
 	private FeverTimeItem feverTimeItem;
+	/** Speed item */
+	private SpeedItem speedItem;
 	/** Current score. */
 	private int score;
 	/** Player lives left. */
@@ -189,6 +191,13 @@ public class GameScreen extends Screen {
 		this.shipsDestroyed = gameState.getShipsDestroyed();
 		this.item = new ItemBarrierAndHeart();	// team Inventory
 		this.feverTimeItem = new FeverTimeItem(); // team Inventory
+		// SpeedItem을 초기화하기 위해 positionX, positionY, isSpeedUp 값을 설정
+		int positionX = width / 2;  // 아이템의 가로 위치 (화면의 중앙으로 설정)
+		int positionY = height / 2;  // 아이템의 세로 위치 (화면의 중간으로 설정)
+		boolean isSpeedUp = false;  // true: 속도를 증가시키는 아이템, false: 속도를 감소시키는 아이템
+
+		// SpeedItem 객체를 생성
+		this.speedItem = new SpeedItem(positionX, positionY, isSpeedUp);
 		this.coin = gameState.getCoin(); // Team-Ctrl-S(Currency)
 		this.gem = gameState.getGem(); // Team-Ctrl-S(Currency)
 		this.hitCount = gameState.getHitCount(); //CtrlS
@@ -254,6 +263,14 @@ public class GameScreen extends Screen {
 		// 	// --- OBSTACLES - Initialize obstacles
 		this.obstacles = new HashSet<>();
 		this.obstacleSpawnCooldown = Core.getCooldown(Math.max(2000 - (level * 200), 500)); // Minimum 0.5s
+
+		// SpeedItem 초기화
+		int positionX = this.width / 2;  // 화면 중앙 또는 원하는 X 좌표
+		int positionY = this.height / 2; // 원하는 Y 좌표
+		boolean isSpeedUp = true;        // true이면 속도 증가, false이면 속도 감소
+
+		// SpeedItem 객체 생성
+		this.speedItem = new SpeedItem(positionX, positionY, isSpeedUp);
 	}
 
 	/**
@@ -822,4 +839,9 @@ public class GameScreen extends Screen {
 		}
 		return remainingEnemies;
 	} // by HUD team SeungYun
+
+
+	public SpeedItem getSpeedItem() {
+		return this.speedItem;
+	}
 }
