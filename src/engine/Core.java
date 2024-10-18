@@ -146,7 +146,8 @@ public final class Core {
 			// Add playtime parameter - Soomin Lee / TeamHUD
 			// Add hitCount parameter - Ctrl S
 			// Add coinItemsCollected parameter - Ctrl S
-			gameState = new GameState(1, 0, MAX_LIVES, 0,0, 0, 0, 0, 0, 0, 0);
+			gameState = new GameState(1, 0
+					, MAX_LIVES, 0,0, 0, 0, 0, 0, 0, 0);
 			switch (returnCode) {
 			case 1:
 				// Main menu.

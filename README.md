@@ -63,3 +63,5 @@
   - [8bit medium explosion, bomb boom or blast, cannon, retro old school, classic cartoon(ES)](https://www.zapsplat.com/music/8bit-medium-explosion-bomb-boom-or-blast-cannon-retro-old-school-classic-cartoon/) - &copy; None
   - [achievement(ES)](https://freesound.org/people/olivertravian/sounds/635075/) - &copy; olivertravian 2022
   - [Fever Time(ES)](https://pixabay.com/sound-effects/8bit-music-for-game-68698/) - &copy; annoyedCactus 2022
+  - [enemy_explosion(ES)](https://pixabay.com/ko/sound-effects/retro-explode-2-236688/) - &copy; Driken5482 2024
+  - [get_item(ES)](https://pixabay.com/ko/sound-effects/coin-collect-retro-8-bit-sound-effect-145251/) - &copy; Lesiakower 2023

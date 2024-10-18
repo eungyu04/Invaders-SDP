@@ -232,12 +232,14 @@ public class GameScreen extends Screen {
 		drawManager.loadBackground(this.level);
 
 		enemyShipFormation = new EnemyShipFormation(this.gameSettings);
+		enemyShipFormation.setScoreManager(this.scoreManager);//add by team Enemy
 		enemyShipFormation.attach(this);
 		this.ship = new Ship(this.width / 2, this.height - 30);
 
 		/** initialize itemManager */
 		this.itemManager = new ItemManager(this.height, drawManager, this); //by Enemy team
 		this.itemManager.initialize(); //by Enemy team
+		enemyShipFormation.setItemManager(this.itemManager);//add by team Enemy
 
 		// Appears each 10-30 seconds.
 		this.enemyShipSpecialCooldown = Core.getVariableCooldown(
@@ -628,18 +630,16 @@ public class GameScreen extends Screen {
 				for (EnemyShip enemyShip : this.enemyShipFormation) {
 					if (!enemyShip.isDestroyed()
 							&& checkCollision(bullet, enemyShip)) {
-						int feverScore = enemyShip.getPointValue(); //TEAM CLOVE
+						int CntAndPnt[] = this.enemyShipFormation._destroy(bullet, enemyShip, false);    // team Inventory
+						this.shipsDestroyed += CntAndPnt[0];
+						int feverScore = CntAndPnt[0]; //TEAM CLOVE //Edited by team Enemy
+
 						if(enemyShip.getHp() <= 0) {
 							//inventory_f fever time is activated, the score is doubled.
 							if(feverTimeItem.isActive()) { feverScore *= 2; } //TEAM CLOVE
 							this.shipsDestroyed++;
 						}
-						//Drop item when MAGENTA color enemy destroyed
-						if (enemyShip.getColor() == Color.MAGENTA) {
-							this.itemManager.dropItem(enemyShip, 1, 1);
-						}
-						int CntAndPnt[] = this.enemyShipFormation._destroy(bullet, enemyShip, false);    // team Inventory
-						this.shipsDestroyed += CntAndPnt[0];
+
                         this.scoreManager.addScore(feverScore); //clove
                         this.score += CntAndPnt[1];
 

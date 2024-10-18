@@ -281,7 +281,7 @@ public final class UpgradeManager {
     }
 
     public String whatMoney(int count, int i){
-        if (i == 0) {
+        if (i == 1) {
             if (count % 2 == 0){
                 return "GEM";
             }

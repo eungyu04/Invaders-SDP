@@ -8,15 +8,15 @@ import engine.Frame;
 public class Background {
     private static Background instance;
 
-    // Arbitrary value, for some reason the background jolts if I set it to zero. 25 Produces a seamless flow
-    private final int resetOffset = 25;
-    private final int scrollSpeedHorizontal = 3;
-    private final int scrollSpeedVertical = 2;
-
+    private int backgroundWidth;
+    private int backgroundHeight;
     private int screenWidth;
     private int screenHeight;
     private int horizontalOffset;
     private int verticalOffset;
+    private int scrollSpeedHorizontal;
+    private int scrollSpeedVertical;
+    private int offsetUpdateInterval;
 
     private Background() {
         // Empty constructor
@@ -32,8 +32,16 @@ public class Background {
     public void initialize(Frame frame) {
         this.screenWidth = frame.getWidth();
         this.screenHeight = frame.getHeight();
+    }
+
+    public void backgroundReset(int imageHeight, int imageWidth) {
+        this.backgroundWidth = imageWidth;
+        this.backgroundHeight = imageHeight;
         this.horizontalOffset = -screenWidth;
-        this.verticalOffset = -screenHeight;
+        this.verticalOffset = 0;
+        this.scrollSpeedHorizontal = 3;
+        this.scrollSpeedVertical = 1;
+        this.offsetUpdateInterval = 0;
     }
 
     public static List<String> levelBackgrounds;
@@ -56,12 +64,20 @@ public class Background {
             throw new IllegalArgumentException("Invalid index or levelBackgrounds not initialized");
         }
     }
+
     // Dynamic method to update background image vertical offset
     public int getVerticalOffset() {
-        if (verticalOffset <= -screenHeight) {
-           verticalOffset = resetOffset;
+        int scrollLimit = backgroundHeight - screenHeight;
+
+        if (scrollLimit == -verticalOffset) {
+            scrollSpeedVertical = 0;
         }
-        verticalOffset -= scrollSpeedVertical;
+
+        if (offsetUpdateInterval % 3 == 0) {
+            verticalOffset -= scrollSpeedVertical;
+            offsetUpdateInterval = 0;
+        }
+        offsetUpdateInterval++;
 
         return verticalOffset;
     }
