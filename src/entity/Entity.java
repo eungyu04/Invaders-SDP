@@ -10,7 +10,7 @@ import engine.DrawManager.SpriteType;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
-public abstract class Entity {
+public class Entity {
 
 	/** Position in the x-axis of the upper left corner of the entity. */
 	protected int positionX;
@@ -136,6 +136,4 @@ public abstract class Entity {
 	public final int getHeight() {
 		return this.height;
 	}
-
-
 }

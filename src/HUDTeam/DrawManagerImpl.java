@@ -38,9 +38,7 @@ public class DrawManagerImpl extends DrawManager {
         backBufferGraphics.setFont(fontRegular);
         backBufferGraphics.setColor(Color.WHITE);
 
-        Entity heart = new Entity(0, 0, 13 * 2, 8 * 2, Color.RED) {
-
-        };
+        Entity heart = new Entity(0, 0, 13 * 2, 8 * 2, Color.RED);
         heart.setSpriteType(SpriteType.Heart);
 
         for (int i = 0; i < lives; i++) {
@@ -144,8 +142,6 @@ public class DrawManagerImpl extends DrawManager {
         backBufferGraphics.drawString(remainingEnemiesString, x, y);
     } // by SeungYun
 
-
-
     /**
      * Draws current score on screen.
      *
@@ -161,22 +157,5 @@ public class DrawManagerImpl extends DrawManager {
         backBufferGraphics.drawLine(0, positionY, screen.getWidth(), positionY);
         backBufferGraphics.drawLine(0, positionY + 1, screen.getWidth(),
                 positionY + 1);
-    }
-
-    public static void drawSpeedItemStatus(final Screen screen, final boolean isSpeedUp, final int remainingTime) {
-        String statusText = isSpeedUp ? "Speed Up" : "Speed Slow";
-        String timeText = "Time left: " + remainingTime + "s";
-
-        backBufferGraphics.setFont(fontRegular);
-        backBufferGraphics.setColor(Color.WHITE);
-
-        // 속도 상태를 왼쪽 하단에 표시
-        int xPosition = 10;
-        int yPosition = screen.getHeight() - 55;
-
-        backBufferGraphics.drawString(statusText, xPosition, yPosition);
-
-        // 남은 시간을 그 아래에 표시
-        backBufferGraphics.drawString(timeText, xPosition, yPosition + 20);
     }
 }
