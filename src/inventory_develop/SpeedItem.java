@@ -7,6 +7,7 @@ import java.util.Set;
 
 public class SpeedItem {
 
+
     private boolean isSpeedUp;     // true - SpeedUp / false - SpeedDown
     private boolean isActive;
 
@@ -34,6 +35,7 @@ public class SpeedItem {
             } else {
                 enemyShip.setSpeedMultiplier(decreaseSpeedMultiplier); // decrease speed
             }
+
         }
     }
 

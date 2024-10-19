@@ -44,6 +44,7 @@ public class ItemManager {
     //private List<EnemyShip> enemyShips;
     // Sound Operator
     private static SoundManager sm;
+    private List<EnemyShip> enemyShips;
 
     public ItemManager(int screenHeight, DrawManager drawManager, GameScreen gameScreen) {
         this.items = new HashSet<>();

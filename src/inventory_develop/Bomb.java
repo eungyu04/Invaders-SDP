@@ -1,5 +1,6 @@
 package inventory_develop;
 
+import Enemy.ItemManager;
 import Sound_Operator.SoundManager; //Sound_Operator
 import engine.DrawManager;
 import entity.EnemyShip;
@@ -17,10 +18,11 @@ public class Bomb{
     private static SoundManager sm;
     private int BombSpeed;
 
-    // Bomb를 먹을 때 true로 전환할 예정
     private static boolean IsBomb = false;
-    // Bomb를 먹을 때 true로 전환할 예정
     private static boolean CanShoot = false;
+    private static int IndexRange = 1;
+    private static int PositionRange = 60;
+    private static int PositionRange_isCircle = 60;
 
     private static boolean isBombExploded = false; //CLOVE
 
@@ -31,7 +33,8 @@ public class Bomb{
     public Bomb() {
     }
 
-    public static int[] destroyByBomb(List<List<EnemyShip>> enemyShips, EnemyShip destroyedShip, Logger logger) {
+    // if EnemyShipFormation is not Circle
+    public static int[] destroyByBomb(List<List<EnemyShip>> enemyShips, EnemyShip destroyedShip, ItemManager itemManager, Logger logger) {
         int count = 0;   // number of destroyed enemy by Bomb
         int point = 0;  // point of destroyed enemy by Bomb
 
@@ -50,59 +53,83 @@ public class Bomb{
                     sm = SoundManager.getInstance();
                     sm.playES("enemy_explosion");
 
-                    // left
-                    if (columnIndex > 0) {
-                        List<EnemyShip> leftColumn = enemyShips.get(columnIndex - 1);
-                        if (i < leftColumn.size() && inposition(column, leftColumn, i, i)) {
-                            DestroyedshipByBomb.add(leftColumn.get(i));
-                            point += leftColumn.get(i).getPointValue();
-                            leftColumn.get(i).destroy();
-                            count++;
-                            logger.info("Destroyed left ship at (" + (columnIndex - 1) + "," + i + ")");
+                    // Operate according to IndexRange
+                    for (int dx = -IndexRange; dx <= IndexRange; dx++) {
+                        for (int dy = -IndexRange; dy <= IndexRange; dy++) {
+                            if (dx == 0 && dy == 0) continue;
+
+                            int newColumnIndex = columnIndex + dx;
+                            int newRowIndex = i + dy;
+
+                            if (newColumnIndex >= 0 && newColumnIndex < enemyShips.size()) {
+                                List<EnemyShip> targetColumn = enemyShips.get(newColumnIndex);
+                                if (newRowIndex >= 0 && newRowIndex < targetColumn.size() && inposition(column, targetColumn, i, newRowIndex, PositionRange)) {
+                                    EnemyShip targetShip = targetColumn.get(newRowIndex);
+                                    DestroyedshipByBomb.add(targetShip);
+                                    if (targetShip.getColor().equals(Color.MAGENTA)) { //add by team enemy
+                                        itemManager.dropItem(targetShip, 1, 1);
+                                    }
+//                                    point += targetShip.getPointValue();
+                                    targetShip.destroy();
+                                    count++;
+                                    logger.info("Destroyed ship at (" + newColumnIndex + "," + newRowIndex + ")");
+                                }
+                            }
                         }
                     }
+                }
+            }
+      
+        isBombExploded = true; //CLOVE
+        totalPoint += point; //CLOVE
 
-                    // right
-                    if (columnIndex < enemyShips.size() - 1) {
-                        List<EnemyShip> rightColumn = enemyShips.get(columnIndex + 1);
-                        if (i < rightColumn.size() && inposition(column, rightColumn, i, i)) {
-                            DestroyedshipByBomb.add(rightColumn.get(i));
-                            point += rightColumn.get(i).getPointValue();
-                            rightColumn.get(i).destroy();
-                            count++;
-                            logger.info("Destroyed right ship at (" + (columnIndex + 1) + "," + i + ")");
+        Bomb.setIsbomb(false);
+        int[] returnValue = {count, point};
 
+        return returnValue;
+    }
+
+    // if EnemyShipFormation is Circle
+    public static int[] destroyByBomb_isCircle(List<List<EnemyShip>> enemyShips, EnemyShip destroyedShip, ItemManager itemManager, Logger logger) {
+        int count = 0;   // number of destroyed enemy by Bomb
+        int point = 0;   // point of destroyed enemy by Bomb
+
+        for (List<EnemyShip> column : enemyShips)
+            for (int i = 0; i < column.size(); i++) {
+                if (column.get(i).equals(destroyedShip)) {
+
+                    DestroyedshipByBomb.add(column.get(i));
+                    //point += column.get(i).getPointValue(); //CLOVE-duplicate calculation
+                    column.get(i).destroy();
+                    count++;
+
+                    int columnIndex = enemyShips.indexOf(column);
+
+                    for (List<EnemyShip> column2 : enemyShips)
+                        for (int j = 0; j < column.size(); j++) {
+
+                            int column2Index = enemyShips.indexOf(column2);
+                            double distance = Math.sqrt(Math.pow(columnIndex - column2Index, 2) + Math.pow(i - j, 2));
+                            System.out.println(distance);
+                            if (j >= 0 && j < column2.size() && inposition(column, column2, i, j, PositionRange_isCircle)) {
+                                int newColumnIndex = enemyShips.indexOf(column2);
+                                EnemyShip targetShip = column2.get(j);
+                                DestroyedshipByBomb.add(targetShip);
+                                if (targetShip.getColor().equals(Color.MAGENTA)) {
+                                    itemManager.dropItem(targetShip, 1, 1);
+                                }
+                                targetShip.destroy();
+                                count++;
+                                logger.info("Destroyed ship at (" + newColumnIndex + "," + j + ")");
+                            }
                         }
-                    }
 
-                    // top
-                    if (i > 0) {
-                        List<EnemyShip> currentColumn = enemyShips.get(columnIndex);
-                        if (i - 1 < currentColumn.size() && inposition(column, currentColumn, i, i - 1)) {
-                            DestroyedshipByBomb.add(currentColumn.get(i - 1));
-                            point += currentColumn.get(i - 1).getPointValue();
-                            currentColumn.get(i - 1).destroy();
-                            count++;
-                            logger.info("Destroyed top ship at (" + columnIndex + "," + (i - 1) + ")");
-                        }
-                    }
-
-                    // bottom
-                    List<EnemyShip> currentColumn = enemyShips.get(columnIndex);
-                    if (i + 1 < currentColumn.size() && inposition(column, currentColumn, i, i + 1)) {
-                        DestroyedshipByBomb.add(currentColumn.get(i + 1));
-                        point += currentColumn.get(i + 1).getPointValue();
-                        currentColumn.get(i + 1).destroy();
-                        count++;
-                        logger.info("Destroyed bottom ship at (" + columnIndex + "," + (i + 1) + ")");
-                    }
                 }
             }
 
         isBombExploded = true; //CLOVE
         totalPoint += point; //CLOVE
 
-        Bomb.setIsbomb(false);
         int[] returnValue = {count, point};
 
         return returnValue;
@@ -164,11 +191,13 @@ public class Bomb{
 
     public final int getSpeed() {return this.BombSpeed;}
 
-    public static boolean inposition(List<EnemyShip> column, List<EnemyShip> nextcolumn, int pos, int nextpos){
+    public static boolean inposition(List<EnemyShip> column, List<EnemyShip> nextcolumn, int pos, int nextpos, int range){
         int distanceY = column.get(pos).getPositionY() - nextcolumn.get(nextpos).getPositionY();
         int distanceX = column.get(pos).getPositionX() - nextcolumn.get(nextpos).getPositionX();
+
+        boolean result = Math.pow(distanceX, 2) + Math.pow(distanceY, 2) <= Math.pow(range, 2);
         
-        return (distanceY >= -60 && distanceX >= -60) && (distanceY <= 60 && distanceX <= 60);
+        return result;
     }
 
 }

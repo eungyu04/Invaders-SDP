@@ -28,11 +28,13 @@ public class TitleScreen extends Screen {
 	// CtrlS
 	private int coin;
 	private int gem;
+
 	// select One player or Two player
 	private int pnumSelectionCode; //produced by Starter
 	private int merchantState;
 	//inventory
 	private ShipStatus shipStatus;
+
 
 	/**
 	 * Constructor, establishes the properties of the screen.
@@ -53,6 +55,7 @@ public class TitleScreen extends Screen {
 		this.returnCode = 2;
 		this.selectionCooldown = Core.getCooldown(SELECTION_TIME);
 		this.selectionCooldown.reset();
+
 
 		// CtrlS: Set user's coin, gem
         try {
@@ -78,7 +81,7 @@ public class TitleScreen extends Screen {
 	public final int run() {
 		super.run();
 
-		//produced by starter team
+		// produced by Starter
 		if (this.pnumSelectionCode == 1 && this.returnCode == 2){
 			return 4; //return 4 instead of 2
 		}
@@ -298,11 +301,11 @@ public class TitleScreen extends Screen {
 	}
 	private void nextMenuItem() {
 		if (this.returnCode == 5) // Team Clover changed values because recordMenu added
-			this.returnCode = 0; // from '2 player mode' to 'Exit' (starter)
+			this.returnCode = 0; // from '2 player mode' to 'Exit' (Starter)
 		else if (this.returnCode == 0)
-			this.returnCode = 2; // from 'Exit' to 'Play' (starter)
+			this.returnCode = 2; // from 'Exit' to 'Play' (Starter)
 		else
-			this.returnCode++; // go next (starter)
+			this.returnCode++; // go next (Starter)
 	}
 
 	/**
@@ -311,11 +314,11 @@ public class TitleScreen extends Screen {
 	private void previousMenuItem() {
 		this.merchantState =0;
 		if (this.returnCode == 0)
-			this.returnCode = 5; // from 'Exit' to '2 player mode' (starter) // Team Clover changed values because recordMenu added
+			this.returnCode = 5; // from 'Exit' to '2 player mode' (Starter) // Team Clover changed values because recordMenu added
 		else if (this.returnCode == 2)
-			this.returnCode = 0; // from 'Play' to 'Exit' (starter)
+			this.returnCode = 0; // from 'Play' to 'Exit' (Starter)
 		else
-			this.returnCode--; // go previous (starter)
+			this.returnCode--; // go previous (Starter)
 	}
 
 	// left and right move -- produced by Starter

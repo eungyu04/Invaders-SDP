@@ -20,7 +20,6 @@ import entity.Coin;
 import inventory_develop.Bomb;
 import screen.Screen;
 import entity.Entity;
-import entity.Ship;
 
 import level_design.Background;
 
@@ -87,19 +86,19 @@ public class DrawManager {
 		/** Third enemy ship - second form. */
 		EnemyShipC2,
 		/** First explosive enemy ship - first form. */
-		ExplosiveEnemyShip1, //Edited by Enemy
+		ExplosiveEnemyShip1, // Edited by Enemy
 		/** First explosive enemy ship - second form. */
-		ExplosiveEnemyShip2, //Edited by Enemy
+		ExplosiveEnemyShip2, // Edited by Enemy
 		/** Bonus ship. */
 		EnemyShipSpecial,
 		/** Destroyed enemy ship. */
 		Explosion,
 		/**HEART Graphics Produced by Nice HUD Team*/
-		Heart, //Please have the Nice HUD team fix it. - Enemy team
+		Heart, // Please have the Nice HUD team fix it. - Enemy team
 		/**Item*/
-		Item, //by enemy team
+		Item, // by enemy team
 		/**Boss*/
-		Boss, //by enemy team
+		Boss, // by enemy team
 		/** Player Lives. */
 		/** Item */
     	ItemHeart,
@@ -133,7 +132,7 @@ public class DrawManager {
 
 		try {
 			spriteMap = new LinkedHashMap<SpriteType, boolean[][]>();
-			spriteMap.put(SpriteType.Obstacle, new boolean[12][12]); //by Level Design Team
+			spriteMap.put(SpriteType.Obstacle, new boolean[12][12]); // by Level Design Team
 			spriteMap.put(SpriteType.Ship, new boolean[13][8]);
 			spriteMap.put(SpriteType.ShipDestroyed, new boolean[13][8]);
 			spriteMap.put(SpriteType.Bullet, new boolean[3][5]);
@@ -144,16 +143,16 @@ public class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipB2, new boolean[12][8]);
 			spriteMap.put(SpriteType.EnemyShipC1, new boolean[12][8]);
 			spriteMap.put(SpriteType.EnemyShipC2, new boolean[12][8]);
-			spriteMap.put(SpriteType.ExplosiveEnemyShip1, new boolean[12][8]); //Edited by Enemy
-			spriteMap.put(SpriteType.ExplosiveEnemyShip2, new boolean[12][8]); //Edited by Enemy
+			spriteMap.put(SpriteType.ExplosiveEnemyShip1, new boolean[12][8]); // Edited by Enemy
+			spriteMap.put(SpriteType.ExplosiveEnemyShip2, new boolean[12][8]); // Edited by Enemy
 			spriteMap.put(SpriteType.EnemyShipSpecial, new boolean[16][7]);
 			spriteMap.put(SpriteType.Explosion, new boolean[13][7]);
 			spriteMap.put(SpriteType.Heart, new boolean[13][8]);
-			spriteMap.put(SpriteType.Boss, new boolean[24][16]); //by Enemy team
-			spriteMap.put(SpriteType.Coin, new boolean[5][5]); //by Starter Team
-			spriteMap.put(SpriteType.AddSign, new boolean[5][5]); //by Starter Team
+			spriteMap.put(SpriteType.Boss, new boolean[24][16]); // by Enemy team
+			spriteMap.put(SpriteType.Coin, new boolean[5][5]); // by Starter Team
+			spriteMap.put(SpriteType.AddSign, new boolean[5][5]); // by Starter Team
 			spriteMap.put(SpriteType.Gem, new boolean[7][6]); // CtrlS: res/graphics, line 20
-			//by Item team
+			// by Item team
 			spriteMap.put(SpriteType.ItemHeart, new boolean[7][5]);
 			spriteMap.put(SpriteType.ItemBarrier, new boolean[9][10]);
 			spriteMap.put(SpriteType.ItemBomb, new boolean[7][9]);
@@ -374,10 +373,8 @@ public class DrawManager {
 	/**
 	 * Draws main menu.
 	 *
-	 * @param screen
-	 *            Screen to draw on.
-	 * @param option
-	 *            Option selected.
+	 * @param screen Screen to draw on.
+	 * @param option Option selected.
 	 */
 	public void drawMenu(final Screen screen, final int option, final int option2, final int option3) {
 		String onePlayerModeString = "1 player mode";
@@ -388,28 +385,28 @@ public class DrawManager {
 		String highScoresString = "High scores";
 		String exitString = "exit";
 		String merchant = "Merchant";
-		String bulletCountString = "bullet count up";
-		String shipSpeedString = "ship speed up";
-		String attackSpeedString = "attack speed up";
-		String coinGainString = "coin gain up";
+		String bulletCountString = String.format("bullet count up"); // Starter
+		String shipSpeedString = String.format("ship speed up"); // Starter
+		String attackSpeedString = String.format("attack speed up"); // Starter
+		String coinGainString = String.format("coin gain up"); // Starter
 		String merchantState = merchant;
 
         AddSign addSign = new AddSign();
 
 
-		// Play (starter)
+		// Play (Starter)
 		if (option == 2 && option2 == 0)
 			backBufferGraphics.setColor(Color.CYAN);
 		else if (option == 2 && option2 == 1)
 			backBufferGraphics.setColor(Color.MAGENTA);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
-		if (option2 == 1) {mode = twoPlayerModeString;} // 2 player mode (starter), default: 1 player mode
+		if (option2 == 1) {mode = twoPlayerModeString;} // 2 player mode (Starter), default: 1 player mode
 		if (option == 2) {mode = "<- " + mode + " ->";}
 		drawCenteredRegularString(screen, mode, screen.getHeight()
 				/ 4 * 2); // adjusted Height
 
-		// High scores (starter)
+		// High scores (Starter)
 		if (option == 3)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
@@ -420,24 +417,16 @@ public class DrawManager {
 		if (option3 == 0) {merchantState = merchant;}
 		try {
 			if (option3 == 1) {
-				merchantState = bulletCountString + " +" + Core.getUpgradeManager().LevelCalculation
-						(Core.getUpgradeManager().getBulletCount()) + "   " + Core.getUpgradeManager().Price(1) + " "
-						+ Core.getUpgradeManager().whatMoney(Core.getUpgradeManager().getBulletCount(),1);
+				merchantState = bulletCountString + MerchantTxt(Core.getUpgradeManager().getBulletCount(),1);
 			}
 			if (option3 == 2) {
-				merchantState = shipSpeedString + " +" + Core.getUpgradeManager().LevelCalculation
-						(Core.getUpgradeManager().getSpeedCount()) + "   " + Core.getUpgradeManager().Price(2) + " "
-						+ Core.getUpgradeManager().whatMoney(Core.getUpgradeManager().getSpeedCount(),0);
+				merchantState = shipSpeedString + MerchantTxt(Core.getUpgradeManager().getSpeedCount(),2);
 			}
 			if (option3 == 3) {
-				merchantState = attackSpeedString + " +" + Core.getUpgradeManager().LevelCalculation
-						(Core.getUpgradeManager().getAttackCount()) + "   " + Core.getUpgradeManager().Price(3) + " "
-						+ Core.getUpgradeManager().whatMoney(Core.getUpgradeManager().getAttackCount(),0);
+				merchantState = attackSpeedString + MerchantTxt(Core.getUpgradeManager().getAttackCount(),3);
 			}
 			if (option3 == 4) {
-				merchantState = coinGainString + " +" + Core.getUpgradeManager().LevelCalculation
-						(Core.getUpgradeManager().getCoinCount()) + "   " + Core.getUpgradeManager().Price(4) + " "
-						+ Core.getUpgradeManager().whatMoney(Core.getUpgradeManager().getCoinCount(),0);
+				merchantState = coinGainString + MerchantTxt(Core.getUpgradeManager().getCoinCount(),4);
 			}
 			if (option == 4) {
 				merchantState = "<- " + merchantState + " ->";
@@ -466,7 +455,7 @@ public class DrawManager {
         drawCenteredRegularString(screen, RecentRecord, screen.getHeight()
                 / 4 * 2 + fontRegularMetrics.getHeight() * 6); // adjusted Height
 
-        // Exit (starter)
+        // Exit (Starter)
 		if (option == 0)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
@@ -488,22 +477,20 @@ public class DrawManager {
 	 *            Total ships destroyed.
 	 * @param accuracy
 	 *            Total accuracy.
-	 * @param isNewRecord
-	 *            If the score is a new high score.
 	 */
 
-	//Ctrl S - add Coin String
+	// Ctrl S - add Coin String
 	public void drawResults(final Screen screen, final int score,
 							final int livesRemaining, final int shipsDestroyed,
-							final float accuracy, final boolean isNewRecord, final GameState gameState) {
-		String scoreString = String.format("score %04d", score);
-		String livesRemainingString = "lives remaining " + livesRemaining;
-		String shipsDestroyedString = "enemies destroyed " + shipsDestroyed;
+							final float accuracy, final GameState gameState) {
+		String scoreString = String.format("score: %04d", score);
+		String livesRemainingString = "lives remaining: " + livesRemaining;
+		String shipsDestroyedString = "enemies destroyed: " + shipsDestroyed;
 		String accuracyString = String
-				.format("accuracy %.2f%%", accuracy * 100);
-		String coinString = "Earned  $ " + gameState.getCoin() + "  Coins!";
+				.format("accuracy: %.2f%%", accuracy * 100);
+		String coinString = "Total earned  $ " + gameState.getCoin() + "  Coins!";
 
-		int height = isNewRecord ? 4 : 2;
+		int height = 4;
 
 		backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, scoreString, screen.getHeight()
@@ -514,6 +501,10 @@ public class DrawManager {
 		drawCenteredRegularString(screen, shipsDestroyedString,
 				screen.getHeight() / height + fontRegularMetrics.getHeight()
 						* 4);
+		//Change the accuracy String when player does not shoot any bullet
+		if (accuracy != accuracy) {
+			accuracyString = "You didn't shoot any bullet.";
+		}
 		drawCenteredRegularString(screen, accuracyString, screen.getHeight()
 				/ height + fontRegularMetrics.getHeight() * 6);
 		drawCenteredRegularString(screen, coinString, screen.getHeight()
@@ -577,21 +568,24 @@ public class DrawManager {
 	 *            Screen to draw on.
 	 * @param acceptsInput
 	 *            If the screen accepts input.
-	 * @param isNewRecord
-	 *            If the score is a new high score.
 	 */
 	// CtrlS
-	public void drawGameEnd(final Screen screen, final boolean acceptsInput,
-							 final boolean isNewRecord, boolean isGameClear) {
+	public void drawGameEnd(final Screen screen, final boolean acceptsInput, boolean isGameClear) {
 		String gameEndString = isGameClear ? "Game Clear" : "Game Over";
 		String continueOrExitString =
 				"Press Space to play again, Escape to exit";
+		String lostBonus = "You lost your Bonus on this level. Try Harder!";
 
-		int height = isNewRecord ? 4 : 2;
+		int height = 4;
 
 		backBufferGraphics.setColor(Color.GREEN);
 		drawCenteredBigString(screen, gameEndString, screen.getHeight()
 				/ height - fontBigMetrics.getHeight() * 2);
+		if (!isGameClear) {
+			backBufferGraphics.setColor(Color.GRAY);
+			drawCenteredRegularString(screen, lostBonus, screen.getHeight()
+					/ height - fontRegularMetrics.getHeight() - 20);
+		}
 
 		if (acceptsInput)
 			backBufferGraphics.setColor(Color.GREEN);
@@ -801,7 +795,7 @@ public class DrawManager {
 					+ fontBigMetrics.getHeight() / 3);
 	}
 
-	//Ctrl-S
+	// Ctrl-S
 	/**
 	 * Show ReceiptScreen
 	 *
@@ -816,8 +810,9 @@ public class DrawManager {
 		String totalScoreString = "Total Score : ";
 		String stageCoinString = "Coins Obtained";
 		String instructionsString = "Press Space to Continue to get more coin!";
-		String hitrateBonusString = "Hitrate Bonus!! : +30%";
-		String timeBonusString = "Time Bonus!!";
+		String hitrateBonusString = "HitRate Bonus: $ " + roundState.getAccuracyBonus_amount() + "  Coins";
+		String timeBonusString = "Time Bonus: $ " + roundState.getTimeBonus_amount() + "  Coins";
+		String levelBonusString = "Level Bonus: $ " + roundState.getLevelBonus_amount() + "  Coins";
 		//draw Score part
 		backBufferGraphics.setColor(Color.GREEN);
 		drawCenteredBigString(screen, stageScoreString, screen.getHeight() / 8);
@@ -826,47 +821,37 @@ public class DrawManager {
 		backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, totalScoreString + gameState.getScore(), screen.getHeight() / 8 + fontRegularMetrics.getHeight() / 2 * 7);
 		//draw Coin part
-		backBufferGraphics.setColor(Color.GREEN);
-		drawCenteredBigString(screen, stageCoinString, screen.getHeight() / 3);
+		backBufferGraphics.setColor(Color.LIGHT_GRAY);
+		drawCenteredBigString(screen, stageCoinString, screen.getHeight() / 3 - 30);
 		backBufferGraphics.setColor(Color.WHITE);
-		drawCenteredBigString(screen, Integer.toString(roundState.getRoundCoin()), screen.getHeight() / 3 + fontBigMetrics.getHeight() / 2 * 3);
+		drawCenteredBigString(screen, Integer.toString(roundState.getBaseCoin_amount()), (screen.getHeight() / 3) - 30 + fontBigMetrics.getHeight() / 2 * 3);
 
 		//draw HitRate Bonus part
-		float hitRate = roundState.getRoundHitRate(); // Calculate HitRate
-		if (hitRate > 0.9) {
+		if (roundState.getAccuracyBonus_amount() != 0) {
 			backBufferGraphics.setColor(Color.LIGHT_GRAY);
-			drawCenteredRegularString(screen, hitrateBonusString, screen.getHeight() / 3 + fontRegularMetrics.getHeight() / 2 * 7);
-		}
-		else if (hitRate > 0.8) {
-			hitrateBonusString = "Hitrate Bonus!! : +20%";
-			backBufferGraphics.setColor(Color.LIGHT_GRAY);
-			drawCenteredRegularString(screen, hitrateBonusString, screen.getHeight() / 3 + fontRegularMetrics.getHeight() / 2 * 7);
+			backBufferGraphics.setFont(fontRegular);
+			backBufferGraphics.drawString(hitrateBonusString, screen.getWidth() / 2 - fontRegularMetrics.stringWidth(hitrateBonusString) / 2, (screen.getHeight() / 3) - 30 + fontRegularMetrics.getHeight() / 2 * 7);
 		}
 		//draw Time Bonus part
-		long time = roundState.getRoundTime();
-		int num = (time <= 50) ? 0 : (time <= 80) ? 1 : (time <= 100) ? 2 : 3;
-		switch (num) {
-			case 0:
-				timeBonusString = "Time Bonus!! : +50";
-				backBufferGraphics.setColor(Color.LIGHT_GRAY);
-				drawCenteredRegularString(screen, timeBonusString, screen.getHeight() / 3 + fontRegularMetrics.getHeight() / 2 * 9);
-				break;
-			case 1:
-				timeBonusString = "Time Bonus!! : +30";
-				backBufferGraphics.setColor(Color.LIGHT_GRAY);
-				drawCenteredRegularString(screen, timeBonusString, screen.getHeight() / 3 + fontRegularMetrics.getHeight() / 2 * 9);
-				break;
-			case 2:
-				timeBonusString = "Time Bonus!! : +10";
-				backBufferGraphics.setColor(Color.LIGHT_GRAY);
-				drawCenteredRegularString(screen, timeBonusString, screen.getHeight() / 3 + fontRegularMetrics.getHeight() / 2 * 9);
-				break;
-			case 3:
-				timeBonusString = "You missed TimeBonus! Try harder!";
-				backBufferGraphics.setColor(Color.LIGHT_GRAY);
-				drawCenteredRegularString(screen, timeBonusString, screen.getHeight() / 3 + fontRegularMetrics.getHeight() / 2 * 9);
+		if (roundState.getTimeBonus_amount() != 0) {
+			backBufferGraphics.setColor(Color.LIGHT_GRAY);
+			backBufferGraphics.setFont(fontRegular);
+			backBufferGraphics.drawString(timeBonusString, screen.getWidth() / 2 - fontRegularMetrics.stringWidth(timeBonusString) / 2, (screen.getHeight() / 3) - 30 + fontRegularMetrics.getHeight() / 2 * 9);
 		}
+		//draw level Bonus part
+		if (roundState.getLevelBonus_amount() != 0) {
+			backBufferGraphics.setColor(Color.LIGHT_GRAY);
+			backBufferGraphics.setFont(fontRegular);
+			backBufferGraphics.drawString(levelBonusString, screen.getWidth() / 2 - fontRegularMetrics.stringWidth(levelBonusString) / 2, (screen.getHeight() / 3) - 30 + fontRegularMetrics.getHeight() / 2 * 11);
 
+		}
+		//draw Total coins part
+		backBufferGraphics.setColor(Color.GREEN);
+		drawCenteredBigString(screen, "Total Round Coins", screen.getHeight() / 3 + 120);
+		backBufferGraphics.setColor(Color.WHITE);
+		drawCenteredBigString(screen, Integer.toString(roundState.getRoundCoin()), screen.getHeight() / 3 + 120 + fontBigMetrics.getHeight() / 2 * 3);
+
+		//draw instructionString part
 		backBufferGraphics.setColor(Color.GRAY);
 		drawCenteredRegularString(screen, instructionsString,
 				screen.getHeight() / 2 + fontRegularMetrics.getHeight() * 10);
@@ -882,8 +867,8 @@ public class DrawManager {
 	 */
 	public void drawCurrentCoin(final Screen screen , final int coin) {
 		Coin coinImage = new Coin();
-		int coinX = screen.getWidth() - 60;
-		int coinY = 10;
+		int coinX = 10; //Starter edited
+		int coinY = 7; //Adjust the y position value - Starter
 		drawEntity(coinImage, coinX, coinY);
 		backBufferGraphics.setFont(fontRegular);
 		backBufferGraphics.setColor(Color.WHITE);
@@ -892,8 +877,8 @@ public class DrawManager {
 
 	public void drawCurrentGem(final Screen screen , final int gem) {
 		Gem gemImage = new Gem();
-		int coinX = screen.getWidth() - 60;
-		int coinY = 25;
+		int coinX = 10; //Starter edited
+		int coinY = 24; //Adjust the y position value - Starter
 		drawEntity(gemImage, coinX, coinY);
 		backBufferGraphics.setFont(fontRegular);
 		backBufferGraphics.setColor(Color.WHITE);
@@ -911,6 +896,7 @@ public class DrawManager {
 		try {
 			assert imageStream != null;
 			backgroundImage = ImageIO.read(imageStream);
+			background.backgroundReset(backgroundImage.getHeight(),backgroundImage.getWidth());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -929,7 +915,6 @@ public class DrawManager {
 	* Wave draw method
 	* **/
 	public void drawWave(final Screen screen, final int wave, final int number) {
-
 		int rectWidth = screen.getWidth();
 		int rectHeight = screen.getHeight() / 6;
 		backBufferGraphics.setColor(Color.BLACK);
@@ -968,6 +953,18 @@ public class DrawManager {
 
 		if(Bomb.getIsBomb() && Bomb.getCanShoot()){
 			drawEntity(itemBomb, screen.getWidth() / 5, screen.getHeight() - 50);
+		}
+	}
+
+	public String MerchantTxt(int count, int number){
+		if ((number == 1 && count > 3) ||
+				(count != 0 && Core.getUpgradeManager().LevelCalculation(count) > 9)){
+			return " max";
+		}
+		else {
+			return " +" + Core.getUpgradeManager().LevelCalculation
+					(count) + "   " + Core.getUpgradeManager().Price(number) + " "
+					+ Core.getUpgradeManager().whatMoney(count,number);
 		}
 	}
 }
