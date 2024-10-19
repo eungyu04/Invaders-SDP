@@ -19,7 +19,7 @@ public class GameState {
 	/** Lives currently remaining for Player 2. */
 	public int livestwoRemaining;
 	/** Bullets shot until now. */
-	public int bulletsShot; // TEAM CLOVER : Changed bulletsShot from private to public for usage in achievement
+	private int bulletsShot;
 	/** Ships destroyed until now. */
 	public int shipsDestroyed; // TEAM CLOVER : Changed shipsDestroyed from private to public for usage in achievement
 	// Soomin Lee / TeamHUD

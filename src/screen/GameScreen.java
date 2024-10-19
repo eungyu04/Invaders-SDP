@@ -7,6 +7,8 @@ import java.util.Random;
 import java.util.Set;
 
 import java.io.IOException;
+
+import CtrlS.RoundState;
 import clove.AchievementConditions;
 import clove.Statistics;
 import Enemy.*;
@@ -25,12 +27,6 @@ import inventory_develop.*;
 // Sound Operator
 import Sound_Operator.SoundManager;
 import clove.ScoreManager;    // CLOVE
-
-import java.beans.PropertyChangeListener; // CLOVE
-import java.beans.PropertyChangeSupport; // CLOVE
-import java.util.Timer; // CLOVE
-import java.util.TimerTask; // CLOVE
-import java.util.List;
 
 
 /**
@@ -64,6 +60,7 @@ public class GameScreen extends Screen {
 	private EnemyShipFormation enemyShipFormation;
 	/** Player's ship. */
 	private Ship ship;
+	public Ship player2;
 	/** Bonus enemy ship that appears sometimes. */
 	private EnemyShip enemyShipSpecial;
 	/** Minimum time between bonus ship appearances. */
@@ -75,7 +72,7 @@ public class GameScreen extends Screen {
 	/** Set of all bullets fired by on screen ships. */
 	public Set<PiercingBullet> bullets; //by Enemy team
 	/** Add an itemManager Instance */
-	private ItemManager itemManager; //by Enemy team
+	public ItemManager itemManager; //by Enemy team
 	/** Shield item */
 	private ItemBarrierAndHeart item;	// team Inventory
 	private FeverTimeItem feverTimeItem;
@@ -112,7 +109,7 @@ public class GameScreen extends Screen {
 
 
 	// --- OBSTACLES
-	private Set<Obstacle> obstacles; // Store obstacles
+	public Set<Obstacle> obstacles; // Store obstacles
 	private Cooldown obstacleSpawnCooldown; //control obstacle spawn speed
 	/** Shield item */
 
@@ -147,11 +144,9 @@ public class GameScreen extends Screen {
 	/** Check end-time*/
 	private long endTime;    //clove
 
-	// TEAM CLOVER
 	private Statistics statistics; //Team Clove
-	private static AchievementConditions achievementConditions;
-	/** Check kill-streak */
-	private int killCount;
+	private AchievementConditions achievementConditions;
+	private int fastKill;
 
 	/** CtrlS: Count the number of coin collected in game */
 	private int coinItemsCollected;
@@ -191,13 +186,6 @@ public class GameScreen extends Screen {
 		this.shipsDestroyed = gameState.getShipsDestroyed();
 		this.item = new ItemBarrierAndHeart();	// team Inventory
 		this.feverTimeItem = new FeverTimeItem(); // team Inventory
-		// SpeedItem을 초기화하기 위해 positionX, positionY, isSpeedUp 값을 설정
-		int positionX = width / 2;  // 아이템의 가로 위치 (화면의 중앙으로 설정)
-		int positionY = height / 2;  // 아이템의 세로 위치 (화면의 중간으로 설정)
-		boolean isSpeedUp = false;  // true: 속도를 증가시키는 아이템, false: 속도를 감소시키는 아이템
-
-		// SpeedItem 객체를 생성
-		this.speedItem = new SpeedItem(positionX, positionY, isSpeedUp);
 		this.coin = gameState.getCoin(); // Team-Ctrl-S(Currency)
 		this.gem = gameState.getGem(); // Team-Ctrl-S(Currency)
 		this.hitCount = gameState.getHitCount(); //CtrlS
@@ -217,27 +205,26 @@ public class GameScreen extends Screen {
 		this.statistics = new Statistics(); //Team Clove
 		this.achievementConditions = new AchievementConditions();
 		this.coinItemsCollected = gameState.getCoinItemsCollected(); // CtrlS
-
-		// Dongjun Suh / TEAM CLOVER
-		this.killCount = 0;
-		bullets = new HashSet<>();
 	}
 
 	/**
 	 * Initializes basic screen properties, and adds necessary elements.
 	 */
-	public final void initialize() {
+	public void initialize() {
 		super.initialize();
 		/** initialize background **/
 		drawManager.loadBackground(this.level);
 
 		enemyShipFormation = new EnemyShipFormation(this.gameSettings);
+		enemyShipFormation.setScoreManager(this.scoreManager);//add by team Enemy
 		enemyShipFormation.attach(this);
 		this.ship = new Ship(this.width / 2, this.height - 30);
 
 		/** initialize itemManager */
 		this.itemManager = new ItemManager(this.height, drawManager, this); //by Enemy team
 		this.itemManager.initialize(); //by Enemy team
+		enemyShipFormation.setItemManager(this.itemManager);//add by team Enemy
+		this.player2=null;
 
 		// Appears each 10-30 seconds.
 		this.enemyShipSpecialCooldown = Core.getVariableCooldown(
@@ -335,7 +322,7 @@ public class GameScreen extends Screen {
 					this.ship.moveLeft();
 					this.backgroundMoveLeft = true;
 				}
-				if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
+				if (inputManager.isKeyDown(KeyEvent.VK_ENTER))
 					if (this.ship.shoot(this.bullets)) {
 						this.bulletsShot++;
 						this.fire_id++;
@@ -406,8 +393,6 @@ public class GameScreen extends Screen {
 		}
 
 		if (this.levelFinished && this.screenFinishedCooldown.checkFinished()) {
-			this.endTime = System.currentTimeMillis();    //clove
-			long playTime = (this.endTime - this.startTime) / 1000;    //clove
 			//this.logger.info("Final Playtime: " + playTime + " seconds");    //clove
 			achievementConditions.checkNoDeathAchievements(lives);
 			achievementConditions.score(score);
@@ -415,13 +400,12 @@ public class GameScreen extends Screen {
 				statistics.comHighestLevel(level);
 				statistics.addBulletShot(bulletsShot);
 				statistics.addShipsDestroyed(shipsDestroyed);
-                statistics.addTotalPlayTime(playTime);
 
 				achievementConditions.onKill();
 				achievementConditions.onStage();
 				achievementConditions.trials();
-				achievementConditions.killStreak(killCount);
-				achievementConditions.accuracy(bulletsShot, hitCount);
+				achievementConditions.killStreak();
+				achievementConditions.fastKill(fastKill);
 				achievementConditions.score(score);
 
             } catch (IOException e) {
@@ -445,6 +429,9 @@ public class GameScreen extends Screen {
 
 		drawManager.drawEntity(this.ship, this.ship.getPositionX(),
 				this.ship.getPositionY());
+		if (player2 != null) {
+			drawManager.drawEntity(player2, player2.getPositionX(), player2.getPositionY());
+		}
 		if (this.enemyShipSpecial != null)
 			drawManager.drawEntity(this.enemyShipSpecial,
 					this.enemyShipSpecial.getPositionX(),
@@ -530,8 +517,6 @@ public class GameScreen extends Screen {
 				//Ctrl-S : set true of CheckCount if the bullet is planned to recycle.
 				bullet.setCheckCount(true);
 				recyclable.add(bullet);
-
-				AchievementConditions.resetKillCount(); // TEAM CLOVER
 			}
 		}
 		this.bullets.removeAll(recyclable);
@@ -602,7 +587,7 @@ public class GameScreen extends Screen {
 	 * Manages collisions between bullets and ships. -Edited code for Piercing Bullet
 	 */
 	//by Enemy team
-	private void manageCollisions_add_item() {
+	public void manageCollisions_add_item() {
 		Set<PiercingBullet> recyclable = new HashSet<PiercingBullet>();
 		for (PiercingBullet bullet : this.bullets)
 			if (bullet.getSpeed() > 0) {
@@ -624,24 +609,26 @@ public class GameScreen extends Screen {
 			} else {
 				// CtrlS - set fire_id of bullet.
 				bullet.setFire_id(fire_id);
-
 				for (EnemyShip enemyShip : this.enemyShipFormation) {
 					if (!enemyShip.isDestroyed()
 							&& checkCollision(bullet, enemyShip)) {
-						int feverScore = enemyShip.getPointValue(); //TEAM CLOVE
-						if(enemyShip.getHp() <= 0) {
-							//inventory_f fever time is activated, the score is doubled.
-							if(feverTimeItem.isActive()) { feverScore *= 2; } //TEAM CLOVE
-							this.shipsDestroyed++;
-						}
-						//Drop item when MAGENTA color enemy destroyed
-						if (enemyShip.getColor() == Color.MAGENTA) {
-							this.itemManager.dropItem(enemyShip, 1, 1);
-						}
 						int CntAndPnt[] = this.enemyShipFormation._destroy(bullet, enemyShip, false);    // team Inventory
 						this.shipsDestroyed += CntAndPnt[0];
-                        this.scoreManager.addScore(feverScore); //clove
-                        this.score += CntAndPnt[1];
+						int feverScore = CntAndPnt[0]; //TEAM CLOVE //Edited by team Enemy
+
+						if(enemyShip.getHp() <= 0) {
+							//inventory_f fever time is activated, the score is doubled.
+							if(feverTimeItem.isActive()) {
+								this.score += enemyShip.getPointValue()*2;
+							}
+							else{
+								this.score += enemyShip.getPointValue();
+							}
+							this.shipsDestroyed++;
+						}
+
+            this.scoreManager.addScore(feverScore); //clove
+            this.score += CntAndPnt[1];
 
 						// CtrlS - If collision occur then check the bullet can process
 						if (!processedFireBullet.contains(bullet.getFire_id())) {
@@ -650,9 +637,6 @@ public class GameScreen extends Screen {
 								hitCount++;
 								bullet.setCheckCount(false);
 								this.logger.info("Hit count!");
-
-								AchievementConditions.incrementKillCount(); // TEAM CLOVER
-
 								processedFireBullet.add(bullet.getFire_id()); // mark this bullet_id is processed.
 							}
 						}
@@ -666,14 +650,13 @@ public class GameScreen extends Screen {
 							recyclable.add(bullet);
 						}
 					}
-
 					// Added by team Enemy.
 					// Enemy killed by Explosive enemy gives points too
 					if (enemyShip.isChainExploded()) {
 						if (enemyShip.getColor() == Color.MAGENTA) {
 							this.itemManager.dropItem(enemyShip, 1, 1);
 						}
-						this.scoreManager.addScore(enemyShip.getPointValue()); //TEAM CLOVE
+						this.score += enemyShip.getPointValue();
 						this.shipsDestroyed++;
 						enemyShip.setChainExploded(false); // resets enemy's chain explosion state.
 					}
@@ -683,7 +666,7 @@ public class GameScreen extends Screen {
 						&& checkCollision(bullet, this.enemyShipSpecial)) {
           
 					int feverSpecialScore = enemyShipSpecial.getPointValue();
-          // inventory - Score bonus when acquiring fever items
+          			// inventory - Score bonus when acquiring fever items
 					if (feverTimeItem.isActive()) { feverSpecialScore *= 2; } //TEAM CLOVE //Team inventory
 
 					// CtrlS - If collision occur then check the bullet can process
@@ -695,7 +678,7 @@ public class GameScreen extends Screen {
 							this.logger.info("Hit count!");
 						}
 					}
-					this.scoreManager.addScore(feverSpecialScore); //clove
+					this.scoreManager.addScore(this.enemyShipSpecial.getPointValue()); //clove
 					this.shipsDestroyed++;
 					this.enemyShipSpecial.destroy();
 					this.enemyShipSpecialExplosionCooldown.reset();

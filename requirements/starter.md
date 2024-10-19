@@ -6,12 +6,12 @@ We aim for fast and accurate delivery and implementation of features, serving as
 - Leader
   - `Sangyoung Oh`
 - Member
-  - `Junehwa Hong` (Role: Devloper)
-  - `Hyeonbae Lee` (Role: Devloper)
-  - `Yubin Gil` (Role: Devloper)
-  - `Jaehyeok Lee` (Role: Devloper)
-  - `Sebin Cho` (Role: Devloper)
-  - `Taeyoung Jung` (Role: Devloper)
+  - `Junehwa Hong` (Role: Developer)
+  - `Hyeonbae Lee` (Role: Developer)
+  - `Yubin Gil` (Role: Developer)
+  - `Jaehyeok Lee` (Role: Developer)
+  - `Sebin Cho` (Role: Developer)
+  - `Taeyoung Jung` (Role: Developer)
 
 ## Team Requirements
 As the team responsible for the main menu of the Invaders game, we ensure that users can seamlessly connect to each functionality.

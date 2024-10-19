@@ -7,7 +7,7 @@ public class PlayerGrowth {
 
     //Player's base stats
     private int health;          //Health
-    private static int moveSpeed = 2;       //Movement speed
+    private static double moveSpeed = 1.5;       //Movement speed
     private static int bulletSpeed = -4;     // Bullet speed
     private static int shootingDelay = 750;   // Shooting delay
 
@@ -29,7 +29,7 @@ public class PlayerGrowth {
     }
 
     //Increases movement speed
-    public void increaseMoveSpeed(int increment) {
+    public void increaseMoveSpeed(double increment) {
         this.moveSpeed += increment;
     }
 
@@ -58,7 +58,7 @@ public class PlayerGrowth {
     }
 
     //  Returns current movement speed
-    public int getMoveSpeed() {
+    public double getMoveSpeed() {
         return this.moveSpeed;
     }
 

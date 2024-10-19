@@ -21,7 +21,7 @@ public class Bomb{
     private static boolean CanShoot = false;
     private static int IndexRange = 1;
     private static int PositionRange = 60;
-    private static int PositionRange_isCircle = 80;
+    private static int PositionRange_isCircle = 60;
 
     private static boolean isBombExploded = false; //CLOVE
 
@@ -98,18 +98,6 @@ public class Bomb{
                     //point += column.get(i).getPointValue(); //CLOVE-duplicate calculation
                     column.get(i).destroy();
                     count++;
-//                     // right
-//                     if (columnIndex < enemyShips.size() - 1) {
-//                         List<EnemyShip> rightColumn = enemyShips.get(columnIndex + 1);
-//                         if (i < rightColumn.size() && inposition(column, rightColumn, i, i)) {
-//                             DestroyedshipByBomb.add(rightColumn.get(i));
-//                             point += rightColumn.get(i).getPointValue();
-//                             rightColumn.get(i).destroy();
-//                             count++;
-//                             logger.info("Destroyed right ship at (" + (columnIndex + 1) + "," + i + ")");
-
-//                         }
-//                     }
 
                     int columnIndex = enemyShips.indexOf(column);
 
@@ -132,7 +120,6 @@ public class Bomb{
                 }
             }
 
-
         isBombExploded = true; //CLOVE
         totalPoint += point; //CLOVE
 
@@ -140,7 +127,6 @@ public class Bomb{
 
         return returnValue;
     }
-
 
     public static void nextShooterByBomb(List<List<EnemyShip>> enemyShips, List<EnemyShip> shooters,
                                           EnemyShipFormation enemyShipFormation, Logger logger) {
@@ -201,9 +187,10 @@ public class Bomb{
     public static boolean inposition(List<EnemyShip> column, List<EnemyShip> nextcolumn, int pos, int nextpos, int range){
         int distanceY = column.get(pos).getPositionY() - nextcolumn.get(nextpos).getPositionY();
         int distanceX = column.get(pos).getPositionX() - nextcolumn.get(nextpos).getPositionX();
+
+        boolean result = Math.pow(distanceX, 2) + Math.pow(distanceY, 2) <= Math.pow(range, 2);
         
-        return (distanceY >= -range && distanceX >= -range)
-                && (distanceY <= range && distanceX <= range);
+        return result;
     }
 
 }

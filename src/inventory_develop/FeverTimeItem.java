@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 public class FeverTimeItem {
 
-    private static final long FEVER_DURATION = 5000; // 5초 동안 유지
+    private static final long FEVER_DURATION = 5000; // 5 second
     private long startTime;
     private boolean isActive;
     protected Logger logger = Core.getLogger();
@@ -20,7 +20,7 @@ public class FeverTimeItem {
         this.isActive = false;
     }
 
-    // 피버타임 아이템을 활성화
+    // Activate fever time item
     public void activate() {
         this.isActive = true;
         this.startTime = System.currentTimeMillis();
@@ -32,7 +32,7 @@ public class FeverTimeItem {
 
     }
 
-    // 매 프레임마다 피버타임이 끝났는지 체크
+    // Check whether fever time has ended every frame
     public void update() {
         if (isActive) {
             long currentTime = System.currentTimeMillis();
@@ -42,13 +42,13 @@ public class FeverTimeItem {
         }
     }
 
-    // 피버타임 종료
+    // Fever time ends
     private void deactivate() {
         this.isActive = false;
         logger.info("Fever Time effect ends");
     }
 
-    // 현재 피버타임이 활성화되어 있는지 확인
+    // Check if Fevertime is currently enabled
     public boolean isActive() {
         return isActive;
     }
