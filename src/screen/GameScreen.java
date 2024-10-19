@@ -2,9 +2,7 @@ package screen;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 import java.io.IOException;
 import clove.AchievementConditions;
@@ -28,16 +26,14 @@ import clove.ScoreManager;    // CLOVE
 
 import java.beans.PropertyChangeListener; // CLOVE
 import java.beans.PropertyChangeSupport; // CLOVE
-import java.util.Timer; // CLOVE
-import java.util.TimerTask; // CLOVE
 import java.util.List;
 
 
 /**
  * Implements the game screen, where the action happens.
- * 
+ *
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- * 
+ *
  */
 public class GameScreen extends Screen {
 
@@ -77,7 +73,7 @@ public class GameScreen extends Screen {
 	/** Add an itemManager Instance */
 	private ItemManager itemManager; //by Enemy team
 	/** Shield item */
-	private ItemBarrierAndHeart item;	// team Inventory
+	private ItemBarrierAndHeart item;   // team Inventory
 	private FeverTimeItem feverTimeItem;
 	/** Speed item */
 	private SpeedItem speedItem;
@@ -98,10 +94,10 @@ public class GameScreen extends Screen {
 	/** Checks if a bonus life is received. */
 	private boolean bonusLife;
 	/**
-	* Added by the Level Design team
-	*
-	* Counts the number of waves destroyed
-	* **/
+	 * Added by the Level Design team
+	 *
+	 * Counts the number of waves destroyed
+	 * **/
 	private int waveCounter;
 
 	/** ### TEAM INTERNATIONAL ### */
@@ -133,7 +129,7 @@ public class GameScreen extends Screen {
 	private int coin;
 	/** Total gem **/
 	private int gem;
-	/** Total hitCount **/		//CtrlS
+	/** Total hitCount **/      //CtrlS
 	private int hitCount;
 	/** Unique id for shot of bullets **/ //CtrlS
 	private int fire_id;
@@ -173,8 +169,8 @@ public class GameScreen extends Screen {
 	 *            Frames per second, frame rate at which the game is run.
 	 */
 	public GameScreen(final GameState gameState,
-			final GameSettings gameSettings, final boolean bonusLife,
-			final int width, final int height, final int fps) {
+					  final GameSettings gameSettings, final boolean bonusLife,
+					  final int width, final int height, final int fps) {
 		super(width, height, fps);
 
 		this.gameSettings = gameSettings;
@@ -189,15 +185,9 @@ public class GameScreen extends Screen {
 			this.livestwo++;
 		this.bulletsShot = gameState.getBulletsShot();
 		this.shipsDestroyed = gameState.getShipsDestroyed();
-		this.item = new ItemBarrierAndHeart();	// team Inventory
+		this.item = new ItemBarrierAndHeart();   // team Inventory
 		this.feverTimeItem = new FeverTimeItem(); // team Inventory
-		// SpeedItem을 초기화하기 위해 positionX, positionY, isSpeedUp 값을 설정
-		int positionX = width / 2;  // 아이템의 가로 위치 (화면의 중앙으로 설정)
-		int positionY = height / 2;  // 아이템의 세로 위치 (화면의 중간으로 설정)
-		boolean isSpeedUp = false;  // true: 속도를 증가시키는 아이템, false: 속도를 감소시키는 아이템
-
-		// SpeedItem 객체를 생성
-		this.speedItem = new SpeedItem(positionX, positionY, isSpeedUp);
+		this.speedItem = new SpeedItem();   // team Inventory
 		this.coin = gameState.getCoin(); // Team-Ctrl-S(Currency)
 		this.gem = gameState.getGem(); // Team-Ctrl-S(Currency)
 		this.hitCount = gameState.getHitCount(); //CtrlS
@@ -205,10 +195,10 @@ public class GameScreen extends Screen {
 		this.processedFireBullet = new HashSet<>(); //CtrlS - initialized the processedFireBullet
 
 		/**
-		* Added by the Level Design team
-		*
-		* Sets the wave counter
-		* **/
+		 * Added by the Level Design team
+		 *
+		 * Sets the wave counter
+		 * **/
 		this.waveCounter = 1;
 
 		// Soomin Lee / TeamHUD
@@ -239,6 +229,12 @@ public class GameScreen extends Screen {
 		this.itemManager = new ItemManager(this.height, drawManager, this); //by Enemy team
 		this.itemManager.initialize(); //by Enemy team
 
+		Set<EnemyShip> enemyShipSet = new HashSet<>();
+		for (EnemyShip enemyShip : this.enemyShipFormation) {
+			enemyShipSet.add(enemyShip);
+		}
+		this.itemManager.setEnemyShips(enemyShipSet);
+
 		// Appears each 10-30 seconds.
 		this.enemyShipSpecialCooldown = Core.getVariableCooldown(
 				BONUS_SHIP_INTERVAL, BONUS_SHIP_VARIANCE);
@@ -260,17 +256,10 @@ public class GameScreen extends Screen {
 		this.playTimePre = playTime;
 
 
-		// 	// --- OBSTACLES - Initialize obstacles
+		//    // --- OBSTACLES - Initialize obstacles
 		this.obstacles = new HashSet<>();
 		this.obstacleSpawnCooldown = Core.getCooldown(Math.max(2000 - (level * 200), 500)); // Minimum 0.5s
 
-		// SpeedItem 초기화
-		int positionX = this.width / 2;  // 화면 중앙 또는 원하는 X 좌표
-		int positionY = this.height / 2; // 원하는 Y 좌표
-		boolean isSpeedUp = true;        // true이면 속도 증가, false이면 속도 감소
-
-		// SpeedItem 객체 생성
-		this.speedItem = new SpeedItem(positionX, positionY, isSpeedUp);
 	}
 
 	/**
@@ -295,15 +284,15 @@ public class GameScreen extends Screen {
 
 		if (this.inputDelay.checkFinished() && !this.levelFinished) {
 			// --- OBSTACLES
-        if (this.obstacleSpawnCooldown.checkFinished()) {
-            // Adjust spawn amount based on the level
-            int spawnAmount = Math.min(level, 3); // Spawn up to 3 obstacles at higher levels
-            for (int i = 0; i < spawnAmount; i++) {
-                int randomX = new Random().nextInt(this.width - 30);
-                obstacles.add(new Obstacle(randomX, 50)); // Start each at the top of the screen
-            }
-            this.obstacleSpawnCooldown.reset();
-        }
+			if (this.obstacleSpawnCooldown.checkFinished()) {
+				// Adjust spawn amount based on the level
+				int spawnAmount = Math.min(level, 3); // Spawn up to 3 obstacles at higher levels
+				for (int i = 0; i < spawnAmount; i++) {
+					int randomX = new Random().nextInt(this.width - 30);
+					obstacles.add(new Obstacle(randomX, 50)); // Start each at the top of the screen
+				}
+				this.obstacleSpawnCooldown.reset();
+			}
 
 			// --- OBSTACLES
 			Set<Obstacle> obstaclesToRemove = new HashSet<>();
@@ -365,8 +354,9 @@ public class GameScreen extends Screen {
 				this.logger.info("The special ship has escaped");
 			}
 
-			this.item.updateBarrierAndShip(this.ship);	// team Inventory
-//			this.ship.update();					// team Inventory
+			this.item.updateBarrierAndShip(this.ship);   // team Inventory
+			this.speedItem.update();         // team Inventory
+//         this.ship.update();               // team Inventory
 			this.feverTimeItem.update();
 			this.enemyShipFormation.update();
 			this.enemyShipFormation.shoot(this.bullets);
@@ -379,12 +369,12 @@ public class GameScreen extends Screen {
 		draw();
 
 		/**
-		* Added by the Level Design team and edit by team Enemy
-		* Changed the conditions for the game to end  by team Enemy
-		*
-		* Counts and checks if the number of waves destroyed match the intended number of waves for this level
-		* Spawn another wave
-		**/
+		 * Added by the Level Design team and edit by team Enemy
+		 * Changed the conditions for the game to end  by team Enemy
+		 *
+		 * Counts and checks if the number of waves destroyed match the intended number of waves for this level
+		 * Spawn another wave
+		 **/
 		if (getRemainingEnemies() == 0 && waveCounter < this.gameSettings.getWavesNumber()) {
 
 			waveCounter++;
@@ -393,14 +383,14 @@ public class GameScreen extends Screen {
 		}
 
 		/**
-		* Wave counter condition added by the Level Design team*
-		* Changed the conditions for the game to end  by team Enemy
-		*
-		* Checks if the intended number of waves for this level was destroyed
-		* **/
+		 * Wave counter condition added by the Level Design team*
+		 * Changed the conditions for the game to end  by team Enemy
+		 *
+		 * Checks if the intended number of waves for this level was destroyed
+		 * **/
 		if ((getRemainingEnemies() == 0 || this.lives == 0)
-		&& !this.levelFinished
-		&& waveCounter == this.gameSettings.getWavesNumber()) {
+				&& !this.levelFinished
+				&& waveCounter == this.gameSettings.getWavesNumber()) {
 			this.levelFinished = true;
 			this.screenFinishedCooldown.reset();
 		}
@@ -411,11 +401,11 @@ public class GameScreen extends Screen {
 			//this.logger.info("Final Playtime: " + playTime + " seconds");    //clove
 			achievementConditions.checkNoDeathAchievements(lives);
 			achievementConditions.score(score);
-            try { //Team Clove
+			try { //Team Clove
 				statistics.comHighestLevel(level);
 				statistics.addBulletShot(bulletsShot);
 				statistics.addShipsDestroyed(shipsDestroyed);
-                statistics.addTotalPlayTime(playTime);
+				statistics.addTotalPlayTime(playTime);
 
 				achievementConditions.onKill();
 				achievementConditions.onStage();
@@ -424,11 +414,11 @@ public class GameScreen extends Screen {
 				achievementConditions.accuracy(bulletsShot, hitCount);
 				achievementConditions.score(score);
 
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
 
-            this.isRunning = false;
+			this.isRunning = false;
 		}
 	}
 
@@ -471,15 +461,15 @@ public class GameScreen extends Screen {
 
 
 		// Interface.
-//		drawManager.drawScore(this, this.scoreManager.getAccumulatedScore());    //clove -> edit by jesung ko - TeamHUD(to udjust score)
-//		drawManager.drawScore(this, this.score); // by jesung ko - TeamHUD
+//      drawManager.drawScore(this, this.scoreManager.getAccumulatedScore());    //clove -> edit by jesung ko - TeamHUD(to udjust score)
+//      drawManager.drawScore(this, this.score); // by jesung ko - TeamHUD
 		DrawManagerImpl.drawScore2(this,this.scoreManager.getAccumulatedScore()); // by jesung ko - TeamHUD
 		drawManager.drawLives(this, this.lives);
 		drawManager.drawHorizontalLine(this, SEPARATION_LINE_HEIGHT - 1);
 		DrawManagerImpl.drawRemainingEnemies(this, getRemainingEnemies()); // by HUD team SeungYun
 		DrawManagerImpl.drawLevel(this, this.level);
 		DrawManagerImpl.drawBulletSpeed(this, (int)this.ship.getAttackSpeed());
-		//		Call the method in DrawManagerImpl - Lee Hyun Woo TeamHud
+		//      Call the method in DrawManagerImpl - Lee Hyun Woo TeamHud
 		DrawManagerImpl.drawTime(this, this.playTime);
 		// Call the method in DrawManagerImpl - Soomin Lee / TeamHUD
 		drawManager.drawItem(this); // HUD team - Jo Minseo
@@ -487,19 +477,19 @@ public class GameScreen extends Screen {
 		// Countdown to game start.
 		if (!this.inputDelay.checkFinished()) {
 			int countdown = (int) ((INPUT_DELAY
-			- (System.currentTimeMillis()
-			- this.gameStartTime)) / 1000);
+					- (System.currentTimeMillis()
+					- this.gameStartTime)) / 1000);
 
 			/**
-			* Wave counter condition added by the Level Design team
-			*
-			* Display the wave number instead of the level number
-			* **/
+			 * Wave counter condition added by the Level Design team
+			 *
+			 * Display the wave number instead of the level number
+			 * **/
 			if (waveCounter != 1) {
 				drawManager.drawWave(this, waveCounter, countdown);
 			} else {
 				drawManager.drawCountDown(this, this.level, countdown,
-				this.bonusLife);
+						this.bonusLife);
 			}
 
 			drawManager.drawHorizontalLine(this, this.height / 2 - this.height
@@ -526,7 +516,7 @@ public class GameScreen extends Screen {
 			bullet.update();
 			if (bullet.getPositionY() < SEPARATION_LINE_HEIGHT
 					|| bullet.getPositionY() > this.height-70) // ko jesung / HUD team
-                {
+			{
 				//Ctrl-S : set true of CheckCount if the bullet is planned to recycle.
 				bullet.setCheckCount(true);
 				recyclable.add(bullet);
@@ -539,14 +529,14 @@ public class GameScreen extends Screen {
 	}
 
 	/**
-	* Clean obstacles that go off screen.
-	*/
+	 * Clean obstacles that go off screen.
+	 */
 	private void cleanObstacles() { //added by Level Design Team
 		Set<Obstacle> removableObstacles = new HashSet<>();
 		for (Obstacle obstacle : this.obstacles) {
 			obstacle.update(this.level);
 			if (obstacle.getPositionY() > this.height - 70 ||
-			obstacle.getPositionY() < SEPARATION_LINE_HEIGHT) {
+					obstacle.getPositionY() < SEPARATION_LINE_HEIGHT) {
 				removableObstacles.add(obstacle);
 			}
 		}
@@ -562,7 +552,7 @@ public class GameScreen extends Screen {
 			if (bullet.getSpeed() > 0) {
 				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
 					recyclable.add(bullet);
-					if (!this.ship.isDestroyed() && !this.item.isbarrierActive()) {	// team Inventory
+					if (!this.ship.isDestroyed() && !this.item.isbarrierActive()) {   // team Inventory
 						this.ship.destroy();
 						this.lives--;
 						this.logger.info("Hit on player ship, " + this.lives
@@ -608,7 +598,7 @@ public class GameScreen extends Screen {
 			if (bullet.getSpeed() > 0) {
 				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
 					recyclable.add(bullet);
-					if (!this.ship.isDestroyed() && !this.item.isbarrierActive()) {	// team Inventory
+					if (!this.ship.isDestroyed() && !this.item.isbarrierActive()) {   // team Inventory
 						this.ship.destroy();
 						this.lives--;
 						this.logger.info("Hit on player ship, " + this.lives
@@ -640,8 +630,8 @@ public class GameScreen extends Screen {
 						}
 						int CntAndPnt[] = this.enemyShipFormation._destroy(bullet, enemyShip, false);    // team Inventory
 						this.shipsDestroyed += CntAndPnt[0];
-                        this.scoreManager.addScore(feverScore); //clove
-                        this.score += CntAndPnt[1];
+						this.scoreManager.addScore(feverScore); //clove
+						this.score += CntAndPnt[1];
 
 						// CtrlS - If collision occur then check the bullet can process
 						if (!processedFireBullet.contains(bullet.getFire_id())) {
@@ -681,9 +671,9 @@ public class GameScreen extends Screen {
 				if (this.enemyShipSpecial != null
 						&& !this.enemyShipSpecial.isDestroyed()
 						&& checkCollision(bullet, this.enemyShipSpecial)) {
-          
+
 					int feverSpecialScore = enemyShipSpecial.getPointValue();
-          // inventory - Score bonus when acquiring fever items
+					// inventory - Score bonus when acquiring fever items
 					if (feverTimeItem.isActive()) { feverSpecialScore *= 2; } //TEAM CLOVE //Team inventory
 
 					// CtrlS - If collision occur then check the bullet can process
@@ -815,11 +805,11 @@ public class GameScreen extends Screen {
 	}
 	public Ship getShip() {
 		return ship;
-	}	// Team Inventory(Item)
+	}   // Team Inventory(Item)
 
 	public ItemBarrierAndHeart getItem() {
 		return item;
-	}	// Team Inventory(Item)
+	}   // Team Inventory(Item)
 
 	public FeverTimeItem getFeverTimeItem() {
 		return feverTimeItem;
