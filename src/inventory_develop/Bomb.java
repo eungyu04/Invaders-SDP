@@ -108,9 +108,6 @@ public class Bomb{
                     for (List<EnemyShip> column2 : enemyShips)
                         for (int j = 0; j < column.size(); j++) {
 
-                            int column2Index = enemyShips.indexOf(column2);
-                            double distance = Math.sqrt(Math.pow(columnIndex - column2Index, 2) + Math.pow(i - j, 2));
-                            System.out.println(distance);
                             if (j >= 0 && j < column2.size() && inposition(column, column2, i, j, PositionRange_isCircle)) {
                                 int newColumnIndex = enemyShips.indexOf(column2);
                                 EnemyShip targetShip = column2.get(j);

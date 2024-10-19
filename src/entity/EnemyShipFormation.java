@@ -546,12 +546,11 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 			destroyedShip.chainExplode();
 		}
 
-		System.out.println(isCircle);
-		if (bullet.getSpriteType() == SpriteType.ItemBomb && isCircle) {
+		if (bullet.getSpriteType() == SpriteType.ItemBomb && isCircle) {	// Bomb Item type1
 			int[] score = Bomb.destroyByBomb_isCircle(enemyShips, destroyedShip, this.itemManager, this.logger);
 			count = score[0];
 			point = score[1];
-		} else if (bullet.getSpriteType() == SpriteType.ItemBomb) { // team Inventory
+		} else if (bullet.getSpriteType() == SpriteType.ItemBomb) {		// Bomb Item type2
 			int[] score = Bomb.destroyByBomb(enemyShips, destroyedShip, this.itemManager, this.logger);
 			count = score[0];
 			point = score[1];
