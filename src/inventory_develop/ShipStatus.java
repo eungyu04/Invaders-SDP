@@ -27,9 +27,6 @@ public class ShipStatus {
     private int Attack_Speed_price;
     private int Coin_Bonus_price;
 
-    private NumberOfBullet numberOfBullet;
-    private PlayerGrowth playerGrowth;
-
     Properties properties = new Properties();
 
 

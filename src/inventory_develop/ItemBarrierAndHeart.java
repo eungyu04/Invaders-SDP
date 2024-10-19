@@ -16,22 +16,21 @@ public class ItemBarrierAndHeart {
     private long barrierActivationTime;
     protected Logger logger = Core.getLogger();
 
-    // gamescreen에서 딱 한 번 생성되고 말음
     public ItemBarrierAndHeart() {
     }
 
     //barrier
     public void updateBarrierAndShip(Ship ship) {
-        if (this.barrierActive) {   // 베리어 활성화
+        if (this.barrierActive) {
             ship.setSpriteType(DrawManager.SpriteType.ShipBarrierStatus);
 
             long currentTime = System.currentTimeMillis();
 
-            if (currentTime - this.barrierActivationTime >= barrier_DURATION) {     // 베리어 비활성화
+            if (currentTime - this.barrierActivationTime >= barrier_DURATION) {
                 ship.setSpriteType(DrawManager.SpriteType.Ship);
-                deactivatebarrier();
+                deactivatebarrier();    // deactive barrier
             }
-        } else {    // 베리어가 비활성화 되었을 때는 ship.update()호출
+        } else {    // When barrier is not active, call the ship's update()
             ship.update();
         }
     }
@@ -51,7 +50,7 @@ public class ItemBarrierAndHeart {
     }
 
     //heart
-    public void activeheart(GameScreen gameScreen, Ship ship, PlayerGrowth growth) {
+    public void activeheart(GameScreen gameScreen) {
         if (gameScreen.getLives() < MAX_LIVES) {
             gameScreen.setLives(gameScreen.getLives() + 1);
         }

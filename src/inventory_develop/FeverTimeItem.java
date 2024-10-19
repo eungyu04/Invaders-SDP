@@ -37,7 +37,7 @@ public class FeverTimeItem {
         if (isActive) {
             long currentTime = System.currentTimeMillis();
             if (currentTime - startTime > FEVER_DURATION) {
-                deactivate(); // 5초 지나면 비활성화
+                deactivate();
             }
         }
     }

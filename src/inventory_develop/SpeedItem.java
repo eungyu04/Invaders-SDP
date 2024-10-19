@@ -1,12 +1,10 @@
 package inventory_develop;
 
-import engine.Core;
 import entity.EnemyShip;
 
 import java.util.Set;
 
 public class SpeedItem {
-
 
     private boolean isSpeedUp;     // true - SpeedUp / false - SpeedDown
     private boolean isActive;
@@ -31,9 +29,9 @@ public class SpeedItem {
 
         for (EnemyShip enemyShip : this.enemyShips) {
             if (this.isSpeedUp) {
-                enemyShip.setSpeedMultiplier(increaseSpeedMultiplier); //increase speed
+                enemyShip.setSpeedMultiplier(increaseSpeedMultiplier); //increase enemy's speed
             } else {
-                enemyShip.setSpeedMultiplier(decreaseSpeedMultiplier); // decrease speed
+                enemyShip.setSpeedMultiplier(decreaseSpeedMultiplier); // decrease enemy's speed
             }
 
         }
