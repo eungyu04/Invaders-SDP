@@ -30,9 +30,6 @@ public class ShipStatus {
     private NumberOfBullet numberOfBullet;
     private PlayerGrowth playerGrowth;
 
-    private Double speedUp_probability;
-    private Double speedSlow_probability;
-
     Properties properties = new Properties();
 
 

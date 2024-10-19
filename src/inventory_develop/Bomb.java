@@ -1,5 +1,6 @@
 package inventory_develop;
 
+import Enemy.ItemManager;
 import Sound_Operator.SoundManager; //Sound_Operator
 import engine.DrawManager;
 import entity.EnemyShip;
@@ -33,7 +34,7 @@ public class Bomb{
     }
 
     // if EnemyShipFormation is not Circle
-    public static int[] destroyByBomb(List<List<EnemyShip>> enemyShips, EnemyShip destroyedShip, Logger logger) {
+    public static int[] destroyByBomb(List<List<EnemyShip>> enemyShips, EnemyShip destroyedShip, ItemManager itemManager, Logger logger) {
         int count = 0;   // number of destroyed enemy by Bomb
         int point = 0;  // point of destroyed enemy by Bomb
 
@@ -65,6 +66,9 @@ public class Bomb{
                                 if (newRowIndex >= 0 && newRowIndex < targetColumn.size() && inposition(column, targetColumn, i, newRowIndex, PositionRange)) {
                                     EnemyShip targetShip = targetColumn.get(newRowIndex);
                                     DestroyedshipByBomb.add(targetShip);
+                                    if (targetShip.getColor().equals(Color.MAGENTA)) { //add by team enemy
+                                        itemManager.dropItem(targetShip, 1, 1);
+                                    }
 //                                    point += targetShip.getPointValue();
                                     targetShip.destroy();
                                     count++;
@@ -86,7 +90,7 @@ public class Bomb{
     }
 
     // if EnemyShipFormation is Circle
-    public static int[] destroyByBomb_isCircle(List<List<EnemyShip>> enemyShips, EnemyShip destroyedShip, Logger logger) {
+    public static int[] destroyByBomb_isCircle(List<List<EnemyShip>> enemyShips, EnemyShip destroyedShip, ItemManager itemManager, Logger logger) {
         int count = 0;   // number of destroyed enemy by Bomb
         int point = 0;   // point of destroyed enemy by Bomb
 
@@ -111,6 +115,9 @@ public class Bomb{
                                 int newColumnIndex = enemyShips.indexOf(column2);
                                 EnemyShip targetShip = column2.get(j);
                                 DestroyedshipByBomb.add(targetShip);
+                                if (targetShip.getColor().equals(Color.MAGENTA)) {
+                                    itemManager.dropItem(targetShip, 1, 1);
+                                }
                                 targetShip.destroy();
                                 count++;
                                 logger.info("Destroyed ship at (" + newColumnIndex + "," + j + ")");

@@ -442,7 +442,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 */
 	public final void destroy(final EnemyShip destroyedShip) {
 			if (Bomb.getIsBomb()) {		// team Inventory
-				Bomb.destroyByBomb(enemyShips, destroyedShip, this.logger);
+				Bomb.destroyByBomb(enemyShips, destroyedShip, this.itemManager , this.logger);
 			} else {
 				for (List<EnemyShip> column : this.enemyShips)
 					for (int i = 0; i < column.size(); i++)
@@ -545,11 +545,11 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 		System.out.println(isCircle);
 		if (bullet.getSpriteType() == SpriteType.ItemBomb && isCircle) {
-			int[] score = Bomb.destroyByBomb_isCircle(enemyShips, destroyedShip, this.logger);
+			int[] score = Bomb.destroyByBomb_isCircle(enemyShips, destroyedShip, this.itemManager, this.logger);
 			count = score[0];
 			point = score[1];
 		} else if (bullet.getSpriteType() == SpriteType.ItemBomb) { // team Inventory
-			int[] score = Bomb.destroyByBomb(enemyShips, destroyedShip, this.logger);
+			int[] score = Bomb.destroyByBomb(enemyShips, destroyedShip, this.itemManager, this.logger);
 			count = score[0];
 			point = score[1];
 		} else {
