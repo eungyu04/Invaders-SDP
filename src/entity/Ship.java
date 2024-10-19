@@ -193,7 +193,7 @@ public class Ship extends Entity {
 	 *
 	 * @return Speed of the ship.
 	 */
-	public final int getSpeed() {
+	public final double getSpeed() {
 		return growth.getMoveSpeed();
 	}
 
@@ -209,4 +209,6 @@ public class Ship extends Entity {
 	public PlayerGrowth getPlayerGrowth() {
 		return growth;
 	}	// Team Inventory(Item)
+
+
 }

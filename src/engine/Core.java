@@ -14,8 +14,11 @@ import CtrlS.RoundState;
 import CtrlS.ReceiptScreen;
 import CtrlS.UpgradeManager;
 import Sound_Operator.SoundManager;
+import clove.Statistics;
 import level_design.Background;
-import clove.AchievementConditions;
+import CtrlS.RoundState;
+import CtrlS.ReceiptScreen;
+import Sound_Operator.SoundManager;
 import clove.AchievementManager;
 import screen.*;
 import twoplayermode.TwoPlayerMode;
@@ -81,7 +84,6 @@ public final class Core {
 	// Sound Operator
 	private static SoundManager sm;
     private static AchievementManager achievementManager; // Team CLOVER
-	private static AchievementConditions achievementConditions;
 
 	/**
 	 * Test implementation.
@@ -89,7 +91,6 @@ public final class Core {
 	 * @param args
 	 *            Program args, ignored.
 	 */
-
 	public static void main(final String[] args) {
 		try {
 			LOGGER.setUseParentHandlers(false);
@@ -110,10 +111,14 @@ public final class Core {
 			System.out.println("Initializing AchievementManager...");
 			achievementManager = new AchievementManager(DrawManager.getInstance());
 			System.out.println("AchievementManager initialized!");
-			achievementConditions = new AchievementConditions();
 
 			// CtrlS: Make instance of Upgrade Manager
 			Core.getUpgradeManager();
+
+			//Clove. Reset Player Statistics After the Game Starts
+			Statistics statistics = new Statistics();
+			statistics.resetStatistics();
+			LOGGER.info("Reset Player Statistics");
 
 		} catch (Exception e) {
 			// TODO handle exception
@@ -146,7 +151,8 @@ public final class Core {
 			// Add playtime parameter - Soomin Lee / TeamHUD
 			// Add hitCount parameter - Ctrl S
 			// Add coinItemsCollected parameter - Ctrl S
-			gameState = new GameState(1, 0, MAX_LIVES, 0,0, 0, 0, 0, 0, 0, 0);
+			gameState = new GameState(1, 0
+					, MAX_LIVES, 0,0, 0, 0, 0, 0, 0, 0);
 			switch (returnCode) {
 			case 1:
 				// Main menu.
@@ -181,6 +187,8 @@ public final class Core {
 
 					achievementManager.updateAchievements(currentScreen); // TEAM CLOVER : Achievement
 
+					Statistics statistics = new Statistics(); //Clove
+
 					gameState = ((GameScreen) currentScreen).getGameState();
 
 					roundState = new RoundState(prevState, gameState);
@@ -200,6 +208,13 @@ public final class Core {
           			LOGGER.info("Round Coin: " + roundState.getRoundCoin());
 					LOGGER.info("Round Hit Rate: " + roundState.getRoundHitRate());
 					LOGGER.info("Round Time: " + roundState.getRoundTime());
+
+					try { //Clove
+						statistics.addTotalPlayTime(roundState.getRoundTime());
+						LOGGER.info("RoundTime Saving");
+					} catch (IOException e){
+						LOGGER.info("Failed to Save RoundTime");
+					}
 
 					// Show receiptScreen
 					// If it is not the last round and the game is not over
@@ -272,7 +287,7 @@ public final class Core {
 					// TwoPlayerMode의 생성자를 호출할 때 필요한 매개변수를 모두 전달
 					currentScreen = new TwoPlayerMode(gameState, currentGameSettings, bonusLife, width, height, fps);
 
-
+					Statistics statistics = new Statistics(); //Clove
 
 
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
@@ -302,6 +317,13 @@ public final class Core {
 					LOGGER.info("Round Coin: " + roundState.getRoundCoin());
 					LOGGER.info("Round Hit Rate: " + roundState.getRoundHitRate());
 					LOGGER.info("Round Time: " + roundState.getRoundTime());
+
+					try { //Clove
+						statistics.addTotalPlayTime(roundState.getRoundTime());
+						LOGGER.info("RoundTime Saving");
+					} catch (IOException e){
+						LOGGER.info("Failed to Save RoundTime");
+					}
 
 					// Show receiptScreen
 					// If it is not the last round and the game is not over

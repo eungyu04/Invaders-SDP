@@ -16,7 +16,7 @@ public class SpeedItem extends Entity {
     /**
      * Duration of the speed effect in milliseconds.
      */
-    private static final int SPEED_EFFECT_DURATION = 5000; // 5초
+    private static final int SPEED_EFFECT_DURATION = 5000; // 5 second
 
     /**
      * Speed change percentage (e.g., 50% slower or faster).
@@ -35,10 +35,10 @@ public class SpeedItem extends Entity {
      *
      */
     public SpeedItem( int positionX,  int positionY, boolean isSpeedUp) {
-        super(positionX, positionY, 12, 12, isSpeedUp ? Color.ORANGE : Color.CYAN); // 느려지는 아이템(오렌지)과 빨라지는 아이템(하늘)
+        super(positionX, positionY, 12, 12, isSpeedUp ? Color.ORANGE : Color.CYAN); // Items that slow down (orange) and items that speed up (sky blue)
         this.spriteType = isSpeedUp ? SpriteType.ItemSpeedUp : SpriteType.ItemSpeedSlow;
         this.isSpeedUp = isSpeedUp;
-        this.speedMultiplier = isSpeedUp ? 3.0 : 0.15; // true이면 속도를 3.0배 빠르게, false이면 0.15배 느리게 설정
+        this.speedMultiplier = isSpeedUp ? 3.0 : 0.15; // If true, set the speed 3.0 times faster, if false, set it 0.15 times slower.
         this.speedEffectCooldown = Core.getCooldown(SPEED_EFFECT_DURATION);
     }
 
@@ -49,9 +49,9 @@ public class SpeedItem extends Entity {
      */
     public void applySpeedEffect(EnemyShip enemyShip) {
         double newSpeedMultiplier = enemyShip.getSpeedMultiplier() * speedMultiplier;
-        enemyShip.setSpeedMultiplier(newSpeedMultiplier); // 새로운 속도 배수 적용
+        enemyShip.setSpeedMultiplier(newSpeedMultiplier); // New speed multiplier applied
 
-        speedEffectCooldown.reset(); // 쿨다운 리셋
+        speedEffectCooldown.reset(); // Cooldown Reset
     }
 
     /**
@@ -61,9 +61,8 @@ public class SpeedItem extends Entity {
      */
     public void update(EnemyShip enemyShip) {
         if (speedEffectCooldown != null && speedEffectCooldown.checkFinished()) {
-            // 효과가 종료되면 원래 속도로 복원
-            enemyShip.setSpeedMultiplier(1.0); // 원래 속도로 복구
-            speedEffectCooldown = null; // 쿨다운 해제
+            enemyShip.setSpeedMultiplier(1.0); // Restore to original speed
+            speedEffectCooldown = null; // Cooldown off
         }
     }
 

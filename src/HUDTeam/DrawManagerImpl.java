@@ -27,7 +27,7 @@ public class DrawManagerImpl extends DrawManager {
         backBufferGraphics.drawString(bulletSpeedText, 10, screen.getHeight() - 15);
     }
 
-    public static void drawSpeed(final Screen screen, final int speed) {
+    public static void drawSpeed(final Screen screen, final double speed) {
         String speedString = "MS : " + speed;
         backBufferGraphics.setColor(Color.WHITE);
         backBufferGraphics.setFont(fontRegular);
