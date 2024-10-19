@@ -33,6 +33,7 @@ public class ItemManager {
     private GameScreen gameScreen;
     protected Logger logger = Core.getLogger();
     private Set<Item> recyclableItems = new HashSet<>();
+    private Set<EnemyShip> enemyShips;
     private ItemBarrierAndHeart Item2;
     private NumberOfBullet numberOfBullet;
     private SpeedItem speedItem;
@@ -56,7 +57,7 @@ public class ItemManager {
         this.feverTimeItem = gameScreen.getFeverTimeItem();
         this.numberOfBullet = new NumberOfBullet();
         this.speedItem = gameScreen.getSpeedItem();
-        this.enemyShips = new ArrayList<>();
+        this.enemyShips = new HashSet<>();
     }
 
     public void cleanItems() {
@@ -86,6 +87,9 @@ public class ItemManager {
             Item item = ItemPool.getItem(enemyShip.getPositionX(), enemyShip.getPositionY(), 3, enemyship_type);
             this.items.add(item);
         }
+    }
+    public void setEnemyShips(Set<EnemyShip> enemyShips) {
+        this.enemyShips = enemyShips;
     }
 
     // team Inventory
@@ -126,11 +130,16 @@ public class ItemManager {
                     break;
                 case ItemCoin:
                     this.logger.info("You get coin!");
+                    break;
                 case ItemSpeedUp:
-                    applySpeedToAllEnemies(true); // 속도 증가
+//                    speedItem = new SpeedItem(item.getPositionX(), item.getPositionY(), true);
+                    speedItem.activate(true, enemyShips); // 속도 효과 시작
+//                    applySpeedToAllEnemies(speedItem); // 속도 증가
                     break;
                 case ItemSpeedSlow:
-                    applySpeedToAllEnemies(false); // 속도 감소
+//                    speedItem = new SpeedItem(item.getPositionX(), item.getPositionY(), false);
+                    speedItem.activate(false, enemyShips); // 속도 효과 시작
+//                    applySpeedToAllEnemies(speedItem); // 속도 감소
                     break;
             }
 
@@ -138,13 +147,6 @@ public class ItemManager {
         }
     }
 
-    private void applySpeedToAllEnemies(boolean isSpeedUp) {
-        for (EnemyShip enemyShip : enemyShips) {
-            SpeedItem speedItem = new SpeedItem(enemyShip.getPositionX(), enemyShip.getPositionY(), isSpeedUp);
-            speedItem.applySpeedEffect(enemyShip);
-        }
-        logger.info(isSpeedUp ? "Applied speed up to all enemies." : "Applied speed slow to all enemies.");
-    }
 
     public void addItemRecycle(Item item) {
         recyclableItems.add(item);

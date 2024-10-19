@@ -14,6 +14,7 @@ import Enemy.*;
 import Sound_Operator.SoundManager;
 import clove.ScoreManager;
 import inventory_develop.Bomb;
+import inventory_develop.SpeedItem;
 import screen.Screen;
 import engine.Cooldown;
 import engine.Core;
@@ -33,8 +34,8 @@ import Sound_Operator.SoundManager;
  */
 public class EnemyShipFormation implements Iterable<EnemyShip> {
 	private boolean isCircle = false;
-  // Sound Operator
-  private static SoundManager sm;
+	// Sound Operator
+	private static SoundManager sm;
 	/** Number of iteration of movement */
 	private int iteration = 0;
 
@@ -80,6 +81,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/** List of enemy ships forming the formation. */
 	private List<List<EnemyShip>> enemyShips;
 	/** Minimum time between shots. */
+	private List<SpeedItem> activeSpeedItems;
 	private Cooldown shootingCooldown;
 	/** Number of ships in the formation - horizontally. */
 	private int nShipsWide;
@@ -148,6 +150,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.drawManager = Core.getDrawManager();
 		this.logger = Core.getLogger();
 		this.enemyShips = new ArrayList<List<EnemyShip>>();
+		this.activeSpeedItems = new ArrayList<>();
 		this.currentDirection = Direction.RIGHT;
 		this.movementInterval = 0;
 		this.nShipsWide = gameSettings.getFormationWidth();
@@ -160,8 +163,9 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.positionX = INIT_POS_X;
 		this.positionY = INIT_POS_Y;
 		this.shooters = new ArrayList<EnemyShip>();
+		this.shipCount = 0;
 		SpriteType spriteType = null;
-    int hp=1;// Edited by Enemy
+		int hp=1;// Edited by Enemy
 		Random rand= new Random();
 		int n = rand.nextInt(2);
 		if(n%2==1){ isCircle=true;
@@ -187,17 +191,17 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				double angle = 2* PI * i / this.nShipsHigh;
 
 				if (i / (float) this.nShipsHigh < PROPORTION_C)
-        if (shipCount == (nShipsHigh*1)+1 ||shipCount == (nShipsHigh*3)+1) //Edited by Enemy
-					spriteType = SpriteType.ExplosiveEnemyShip1;
-				else if (i / (float) this.nShipsHigh < PROPORTION_C)
-					spriteType = SpriteType.EnemyShipC1;
-				else if (i / (float) this.nShipsHigh < PROPORTION_B + PROPORTION_C)
-					spriteType = SpriteType.EnemyShipB1;
-				else
-					spriteType = SpriteType.EnemyShipA1;
+					if (shipCount == (nShipsHigh*1)+1 ||shipCount == (nShipsHigh*3)+1) //Edited by Enemy
+						spriteType = SpriteType.ExplosiveEnemyShip1;
+					else if (i / (float) this.nShipsHigh < PROPORTION_C)
+						spriteType = SpriteType.EnemyShipC1;
+					else if (i / (float) this.nShipsHigh < PROPORTION_B + PROPORTION_C)
+						spriteType = SpriteType.EnemyShipB1;
+					else
+						spriteType = SpriteType.EnemyShipA1;
 				if(isCircle){
-				x = (int) round(RADIUS * cos(angle) + positionX + ( SEPARATION_DISTANCE_CIRCLE* this.enemyShips.indexOf(column)));
-				y = (int) (RADIUS * sin(angle)) + positionY;}
+					x = (int) round(RADIUS * cos(angle) + positionX + ( SEPARATION_DISTANCE_CIRCLE* this.enemyShips.indexOf(column)));
+					y = (int) (RADIUS * sin(angle)) + positionY;}
 				else{
 					x = positionX + (SEPARATION_DISTANCE * this.enemyShips.indexOf(column));
 					y = positionY+ i*SEPARATION_DISTANCE;
@@ -228,7 +232,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 	/**
 	 * Associates the formation to a given screen.
-	 * 
+	 *
 	 * @param newScreen
 	 *            Screen to attach.
 	 */
@@ -245,7 +249,6 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				drawManager.drawEntity(enemyShip, enemyShip.getPositionX(),
 						enemyShip.getPositionY());
 	}
-
 	/**
 	 * Updates the position of the ships.
 	 */
@@ -255,7 +258,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 					shootingVariance);
 			this.shootingCooldown.reset();
 		}
-		
+
 		cleanUp();
 
 		int movementX = 0;
@@ -265,7 +268,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.movementSpeed = (int) (pow(remainingProportion, 2)
 				* this.baseSpeed);
 		this.movementSpeed += MINIMUM_SPEED;
-		
+
 		movementInterval++;
 		if (movementInterval >= this.movementSpeed) {
 			movementInterval = 0;
@@ -394,7 +397,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 		int leftMostPoint = 0;
 		int rightMostPoint = 0;
-		
+
 		for (List<EnemyShip> column : this.enemyShips) {
 			if (!column.isEmpty()) {
 				if (leftMostPoint == 0)
@@ -412,7 +415,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 	/**
 	 * Shoots a bullet downwards.
-	 * 
+	 *
 	 * @param bullets
 	 *            Bullets set to add the bullet being shot.
 	 */
@@ -480,7 +483,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	}
 	/**
 	 * Gets the ship on a given column that will be in charge of shooting.
-	 * 
+	 *
 	 * @param column
 	 *            Column to search.
 	 * @return New shooter ship.
@@ -499,23 +502,23 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 	/**
 	 * Returns an iterator over the ships in the formation.
-	 * 
+	 *
 	 * @return Iterator over the enemy ships.
 	 */
 	@Override
 	public final Iterator<EnemyShip> iterator() {
-		Set<EnemyShip> enemyShipsList = new HashSet<EnemyShip>();
-
-		for (List<EnemyShip> column : this.enemyShips)
-			for (EnemyShip enemyShip : column)
+		Set<EnemyShip> enemyShipsList = new HashSet<>();
+		for (List<EnemyShip> column : this.enemyShips) {
+			for (EnemyShip enemyShip : column) {
 				enemyShipsList.add(enemyShip);
-
+			}
+		}
 		return enemyShipsList.iterator();
 	}
 
 	/**
 	 * Checks if there are any ships remaining.
-	 * 
+	 *
 	 * @return True when all ships have been destroyed.
 	 */
 	public final boolean isEmpty() {
@@ -530,10 +533,10 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 * @param destroyedShip
 	 *            Ship to be hit
 	 * @param isChainExploded
-	 * 			  True if enemy ship is chain exploded
+	 *            True if enemy ship is chain exploded
 	 */
 	public final int[] _destroy(final Bullet bullet, final EnemyShip destroyedShip, boolean isChainExploded) {// Edited by Enemy team
-		int count = 0;	// number of destroyed enemy
+		int count = 0;   // number of destroyed enemy
 		int point = 0;  // point of destroyed enemy
 
 		// Checks if this ship is 'chainExploded' due to recursive call
@@ -604,7 +607,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		}
 
 		// Updates the list of ships that can shoot the player.
-		if (bullet.getSpriteType() == SpriteType.ItemBomb) {	// team Inventory
+		if (bullet.getSpriteType() == SpriteType.ItemBomb) {   // team Inventory
 			Bomb.nextShooterByBomb(enemyShips, shooters, this, logger);
 
 		} else if (destroyedShip.isDestroyed()) {
@@ -645,7 +648,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 * @param y
 	 *            explosive EnemyShip's Initial y-coordinates
 	 * @param index_x
-	 * 			  explosive EnemyShip's x-coordinates in EnemyShips
+	 *            explosive EnemyShip's x-coordinates in EnemyShips
 	 * @param index_y
 	 * 			  explosive EnemyShip's y-coordinates in EnemyShips
 	 * @param enemyShips

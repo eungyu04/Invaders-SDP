@@ -44,10 +44,9 @@ public class EnemyShip extends Entity {
 	// Sound Operator
 	private static SoundManager sm;
 
-	/** Enemy ship's movement speed. */
-	private double speed = 1.0; // Default speed
 	/** Speed reduction or increase multiplier (1.0 means normal speed). */
-	private double speedMultiplier = 1.0;
+	private double speedMultiplier;
+	private double defaultSpeedMultiplier;
 
 	/**
 	 * Constructor, establishes the ship's properties.
@@ -62,7 +61,7 @@ public class EnemyShip extends Entity {
 
 
 	public EnemyShip(final int positionX, final int positionY,
-			final SpriteType spriteType,int hp,int x, int y) {// Edited by Enemy
+					 final SpriteType spriteType,int hp,int x, int y) {// Edited by Enemy
 		super(positionX, positionY, 12 * 2, 8 * 2, HpEnemyShip.determineColor(hp));
 
 		this.hp = hp;// Add by team Enemy
@@ -71,28 +70,30 @@ public class EnemyShip extends Entity {
 		this.isDestroyed = false;
 		this.x = x; // Add by team enemy
 		this.y = y; // Add by team enemy
+		this.speedMultiplier=1.0; // 기본 속도 배수는 1.0으로 설정
+		this.defaultSpeedMultiplier = 1.0;
 
 		switch (this.spriteType) {
-		case EnemyShipA1:
-		case EnemyShipA2:
-			this.pointValue = A_TYPE_POINTS;
-			break;
-		case EnemyShipB1:
-		case EnemyShipB2:
-			this.pointValue = B_TYPE_POINTS;
-			break;
-		case EnemyShipC1:
-		case EnemyShipC2:
-			this.pointValue = C_TYPE_POINTS;
-			break;
-		case ExplosiveEnemyShip1: //Edited by Enemy
-		case ExplosiveEnemyShip2:
-			super.setColor(new Color(237, 28, 36)); //set ExplosiveEnemyShip Color
-			this.pointValue = EXPLOSIVE_TYPE_POINTS;
-			break;
-		default:
-			this.pointValue = 0;
-			break;
+			case EnemyShipA1:
+			case EnemyShipA2:
+				this.pointValue = A_TYPE_POINTS;
+				break;
+			case EnemyShipB1:
+			case EnemyShipB2:
+				this.pointValue = B_TYPE_POINTS;
+				break;
+			case EnemyShipC1:
+			case EnemyShipC2:
+				this.pointValue = C_TYPE_POINTS;
+				break;
+			case ExplosiveEnemyShip1: //Edited by Enemy
+			case ExplosiveEnemyShip2:
+				super.setColor(new Color(237, 28, 36)); //set ExplosiveEnemyShip Color
+				this.pointValue = EXPLOSIVE_TYPE_POINTS;
+				break;
+			default:
+				this.pointValue = 0;
+				break;
 		}
 	}
 
@@ -130,7 +131,7 @@ public class EnemyShip extends Entity {
 	 *            Distance to move in the Y axis.
 	 */
 	public final void move(final int distanceX, final int distanceY) {
-		this.positionX += distanceX;
+		this.positionX += distanceX * this.getSpeedMultiplier(); // team Inventory
 		this.positionY += distanceY;
 	}
 
@@ -142,32 +143,32 @@ public class EnemyShip extends Entity {
 			this.animationCooldown.reset();
 
 			switch (this.spriteType) {
-			case EnemyShipA1:
-				this.spriteType = SpriteType.EnemyShipA2;
-				break;
-			case EnemyShipA2:
-				this.spriteType = SpriteType.EnemyShipA1;
-				break;
-			case EnemyShipB1:
-				this.spriteType = SpriteType.EnemyShipB2;
-				break;
-			case EnemyShipB2:
-				this.spriteType = SpriteType.EnemyShipB1;
-				break;
-			case EnemyShipC1:
-				this.spriteType = SpriteType.EnemyShipC2;
-				break;
-			case EnemyShipC2:
-				this.spriteType = SpriteType.EnemyShipC1;
-				break;
-			case ExplosiveEnemyShip1: //Edited by Enemy
-				this.spriteType = SpriteType.ExplosiveEnemyShip2;
-				break;
-			case ExplosiveEnemyShip2: //Edited by Enemy
-				this.spriteType = SpriteType.ExplosiveEnemyShip1;
-				break;
-			default:
-				break;
+				case EnemyShipA1:
+					this.spriteType = SpriteType.EnemyShipA2;
+					break;
+				case EnemyShipA2:
+					this.spriteType = SpriteType.EnemyShipA1;
+					break;
+				case EnemyShipB1:
+					this.spriteType = SpriteType.EnemyShipB2;
+					break;
+				case EnemyShipB2:
+					this.spriteType = SpriteType.EnemyShipB1;
+					break;
+				case EnemyShipC1:
+					this.spriteType = SpriteType.EnemyShipC2;
+					break;
+				case EnemyShipC2:
+					this.spriteType = SpriteType.EnemyShipC1;
+					break;
+				case ExplosiveEnemyShip1: //Edited by Enemy
+					this.spriteType = SpriteType.ExplosiveEnemyShip2;
+					break;
+				case ExplosiveEnemyShip2: //Edited by Enemy
+					this.spriteType = SpriteType.ExplosiveEnemyShip1;
+					break;
+				default:
+					break;
 			}
 		}
 	}
@@ -218,7 +219,7 @@ public class EnemyShip extends Entity {
 	 * Setter for the Hp of the Enemy ship.
 	 *
 	 * @param hp
-	 * 			New hp of the Enemy ship.
+	 *          New hp of the Enemy ship.
 	 */
 	public void setHp(int hp) {
 		this.hp = hp;
@@ -264,33 +265,19 @@ public class EnemyShip extends Entity {
 	} // Added by team Enemy
 
 	/**
-	 * Moves the ship the specified distance, applying the current speed multiplier.
-	 *
-	 * @param distanceX Distance to move in the X axis.
-	 * @param distanceY Distance to move in the Y axis.
-	 */
-
-
-
-
-	/**
-	 * Applies a speed multiplier to the enemy ship.
-	 *
-	 * @param multiplier The multiplier to apply to the speed (e.g., 0.5 for slow, 1.5 for fast).
-	 */
-	public void setSpeedReduction(double multiplier) {
-		this.speedMultiplier = multiplier;
-	}
-
-	/**
 	 * Getter for the current speed multiplier.
 	 *
 	 * @return The current speed multiplier.
 	 */
+	public void setSpeedMultiplier(double speedMultiplier) {
+		this.speedMultiplier = speedMultiplier;
+	}
+	public void resetSpeedMultiplier() {
+		this.speedMultiplier = this.defaultSpeedMultiplier;
+	}
 	public double getSpeedMultiplier() {
 		return this.speedMultiplier;
 	}
 
-	public void setSpeedMultiplier(double speedMultiplier) {
-	}
+
 }
