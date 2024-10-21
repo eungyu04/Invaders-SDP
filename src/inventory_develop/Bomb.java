@@ -44,6 +44,9 @@ public class Bomb{
 
                     // middle
                     DestroyedshipByBomb.add(column.get(i));
+                    if (column.get(i).getColor().equals(Color.MAGENTA)) { //add by team enemy
+                        itemManager.dropItem(column.get(i), 1, 1);
+                    }
                     //point += column.get(i).getPointValue(); //CLOVE-duplicate calculation
                     column.get(i).destroy();
                     count++;
