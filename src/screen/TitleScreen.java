@@ -197,7 +197,7 @@ public class TitleScreen extends Screen {
 					Core.getUpgradeManager().addBulletCount();
 
 				} else if ((Core.getUpgradeManager().getBulletCount() % 2 == 0)
-						&& Core.getCurrencyManager().spendGem(Core.getUpgradeManager().getBulletCount() + 1)) {
+						&& Core.getCurrencyManager().spendGem((Core.getUpgradeManager().getBulletCount() + 1) * 10)) {
 
 					Core.getUpgradeManager().addBulletCount();
 					Core.getLogger().info("Upgrade has been unlocked");
@@ -224,7 +224,7 @@ public class TitleScreen extends Screen {
 					Core.getUpgradeManager().addSpeedCount();
 
 				} else if ((Core.getUpgradeManager().getSpeedCount() % 4 == 0)
-						&& Core.getCurrencyManager().spendGem(Core.getUpgradeManager().getSpeedCount() / 4)) {
+						&& Core.getCurrencyManager().spendGem(Core.getUpgradeManager().getSpeedCount() / 4 * 5)) {
 
 					Core.getUpgradeManager().addSpeedCount();
 					Core.getLogger().info("Upgrade has been unlocked");
@@ -251,7 +251,7 @@ public class TitleScreen extends Screen {
 					Core.getUpgradeManager().addAttackCount();
 
 				} else if ((Core.getUpgradeManager().getAttackCount() % 4 == 0)
-						&& Core.getCurrencyManager().spendGem(Core.getUpgradeManager().getAttackCount() / 4)) {
+						&& Core.getCurrencyManager().spendGem(Core.getUpgradeManager().getAttackCount() / 4 * 5)) {
 
 					Core.getUpgradeManager().addAttackCount();
 					Core.getLogger().info("Upgrade has been unlocked");
@@ -278,7 +278,7 @@ public class TitleScreen extends Screen {
 					Core.getUpgradeManager().addCoinCount();
 
 				} else if ((Core.getUpgradeManager().getCoinCount() % 4 == 0)
-						&& Core.getCurrencyManager().spendGem(Core.getUpgradeManager().getCoinCount() / 4)) {
+						&& Core.getCurrencyManager().spendGem(Core.getUpgradeManager().getCoinCount() / 4 * 5)) {
 
 					Core.getUpgradeManager().addCoinCount();
 					Core.getLogger().info("Upgrade has been unlocked");
