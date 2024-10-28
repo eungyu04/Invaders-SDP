@@ -49,6 +49,7 @@ public class GameScreen extends Screen {
 	private static final int SCREEN_CHANGE_INTERVAL = 1500;
 	/** Height of the interface separation line. */
 	private static final int SEPARATION_LINE_HEIGHT = 40;
+	private static final int SEPARATION_LINE_HEIGHT_DOWN = 635;
 
 	/** Current game difficulty settings. */
 	private GameSettings gameSettings;
@@ -306,11 +307,19 @@ public class GameScreen extends Screen {
 						|| inputManager.isKeyDown(KeyEvent.VK_D);
 				boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT)
 						|| inputManager.isKeyDown(KeyEvent.VK_A);
+				boolean moveUp = inputManager.isKeyDown(KeyEvent.VK_UP)
+						|| inputManager.isKeyDown(KeyEvent.VK_W);
+				boolean moveDown = inputManager.isKeyDown(KeyEvent.VK_DOWN)
+						|| inputManager.isKeyDown(KeyEvent.VK_S);
 
 				boolean isRightBorder = this.ship.getPositionX()
 						+ this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
 				boolean isLeftBorder = this.ship.getPositionX()
 						- this.ship.getSpeed() < 1;
+				boolean isUpBorder = this.ship.getPositionY()
+						- this.ship.getSpeed() < SEPARATION_LINE_HEIGHT + 1;
+				boolean isDownBorder = this.ship.getPositionY()
+						+ this.ship.getHeight() + this.ship.getSpeed() > SEPARATION_LINE_HEIGHT_DOWN - 1;
 
 				if (moveRight && !isRightBorder) {
 					this.ship.moveRight();
@@ -320,7 +329,14 @@ public class GameScreen extends Screen {
 					this.ship.moveLeft();
 					this.backgroundMoveLeft = true;
 				}
-				if (inputManager.isKeyDown(KeyEvent.VK_ENTER))
+				if (moveUp && !isUpBorder) {
+					this.ship.moveUp();
+				}
+				if (moveDown && !isDownBorder) {
+					this.ship.moveDown();
+				}
+
+				if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
 					if (this.ship.shoot(this.bullets)) {
 						this.bulletsShot++;
 						this.fire_id++;
@@ -511,7 +527,7 @@ public class GameScreen extends Screen {
 		for (PiercingBullet bullet : this.bullets) { // Edited by Enemy
 			bullet.update();
 			if (bullet.getPositionY() < SEPARATION_LINE_HEIGHT
-					|| bullet.getPositionY() > this.height-70) // ko jesung / HUD team
+					|| bullet.getPositionY() + bullet.getHeight() > SEPARATION_LINE_HEIGHT_DOWN) // ko jesung / HUD team
 			{
 				//Ctrl-S : set true of CheckCount if the bullet is planned to recycle.
 				bullet.setCheckCount(true);
@@ -529,8 +545,8 @@ public class GameScreen extends Screen {
 		Set<Obstacle> removableObstacles = new HashSet<>();
 		for (Obstacle obstacle : this.obstacles) {
 			obstacle.update(this.level);
-			if (obstacle.getPositionY() > this.height - 70 ||
-					obstacle.getPositionY() < SEPARATION_LINE_HEIGHT) {
+			if ( obstacle.getPositionY() < SEPARATION_LINE_HEIGHT ||
+					obstacle.getPositionY() + obstacle.getHeight() > SEPARATION_LINE_HEIGHT_DOWN - 10) {
 				removableObstacles.add(obstacle);
 			}
 		}

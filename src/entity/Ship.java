@@ -87,6 +87,23 @@ public class Ship extends Entity {
 	} //Edit by Enemy
 
 	/**
+	 * Moves the ship speed uni ts right, or until the right screen border is
+	 * reached.
+	 */
+	public final void moveUp() {
+		this.positionY -= growth.getMoveSpeed(); //  Use PlayerGrowth for movement speed
+	} //Edit by Enemy
+
+
+	/**
+	 * Moves the ship speed units left, or until the left screen border is
+	 * reached.
+	 */
+	public final void moveDown() {
+		this.positionY += growth.getMoveSpeed(); // Use PlayerGrowth for movement speed
+	} //Edit by Enemy
+
+	/**
 	 * Shoots a bullet upwards.
 	 *
 	 * @param bullets
@@ -99,7 +116,6 @@ public class Ship extends Entity {
 	public final boolean shoot(final Set<PiercingBullet> bullets) {
 
 		if (this.shootingCooldown.checkFinished()) {
-
 			this.shootingCooldown.reset(); // Reset cooldown after shooting
 
 			// Sound Operator, Apply a Shooting sound
