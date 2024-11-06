@@ -376,79 +376,49 @@ public class DrawManager {
 	 * @param screen Screen to draw on.
 	 * @param option Option selected.
 	 */
-	public void drawMenu(final Screen screen, final int option, final int option2, final int option3) {
-		String onePlayerModeString = "1 player mode";
-		String twoPlayerModeString = "2 player mode";
-		String mode = onePlayerModeString;
+	public void drawMenu(final Screen screen, final int option, final int option2) {
+		String normalModeString = "Normal mode";
+		String storyModeString = "Story mode";
+		String infiniteModeString = "Infinite mode";
+		String mode = normalModeString;
 		String RecentRecord = "Recent Records";
-		String playString = "Play";
 		String highScoresString = "High scores";
 		String exitString = "exit";
-		String merchant = "Merchant";
-		String bulletCountString = String.format("bullet count up"); // Starter
-		String shipSpeedString = String.format("ship speed up"); // Starter
-		String attackSpeedString = String.format("attack speed up"); // Starter
-		String coinGainString = String.format("coin gain up"); // Starter
-		String merchantState = merchant;
+		String logoutString = "logout";
 
-        AddSign addSign = new AddSign();
-
-
-		// Play (Starter)
-		if (option == 2 && option2 == 0)
+		// normal & infinity
+		if (option == 2)
 			backBufferGraphics.setColor(Color.CYAN);
-		else if (option == 2 && option2 == 1)
+		else if (option == 3)
 			backBufferGraphics.setColor(Color.MAGENTA);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
-		if (option2 == 1) {mode = twoPlayerModeString;} // 2 player mode (Starter), default: 1 player mode
-		if (option == 2) {mode = "<- " + mode + " ->";}
+
+		if (option2 == 0) mode = normalModeString;
+		if (option2 == 1) mode = infiniteModeString;
+
+		if (option == 2 || option == 3) {mode = "<- " + mode + " ->";}
 		drawCenteredRegularString(screen, mode, screen.getHeight()
 				/ 4 * 2); // adjusted Height
 
+		// story
+		if (option == 4)
+			backBufferGraphics.setColor(Color.YELLOW);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		drawCenteredRegularString(screen, storyModeString, screen.getHeight()
+				/ 4 * 2 + fontRegularMetrics.getHeight() * 2); // adjusted Height
+
 		// High scores (Starter)
-		if (option == 3)
+		if (option == 5)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, highScoresString, screen.getHeight()
-				/ 4 * 2 + fontRegularMetrics.getHeight() * 2); // adjusted Height
-
-		if (option3 == 0) {merchantState = merchant;}
-		try {
-			if (option3 == 1) {
-				merchantState = bulletCountString + MerchantTxt(Core.getUpgradeManager().getBulletCount(),1);
-			}
-			if (option3 == 2) {
-				merchantState = shipSpeedString + MerchantTxt(Core.getUpgradeManager().getSpeedCount(),2);
-			}
-			if (option3 == 3) {
-				merchantState = attackSpeedString + MerchantTxt(Core.getUpgradeManager().getAttackCount(),3);
-			}
-			if (option3 == 4) {
-				merchantState = coinGainString + MerchantTxt(Core.getUpgradeManager().getCoinCount(),4);
-			}
-			if (option == 4) {
-				merchantState = "<- " + merchantState + " ->";
-			}
-		} catch (IOException e){
-			throw new RuntimeException(e);
-		}
-
-		if (option == 4 && option3 == 0)
-			backBufferGraphics.setColor(Color.GREEN);
-		else if (option == 4 && option3 != 0)
-			backBufferGraphics.setColor(Color.CYAN);
-		else
-			backBufferGraphics.setColor(Color.WHITE);
-
-		drawCenteredRegularString(screen, merchantState, screen.getHeight()
-				/ 4 * 2 + fontRegularMetrics.getHeight() * 4);
-		/*drawEntity(addSign, screen.getWidth()/2 + 50, screen.getHeight()
-				/ 4 * 2 + fontRegularMetrics.getHeight() * 6 - 12);*/
+				/ 4 * 2 + fontRegularMetrics.getHeight() * 4); // adjusted Height
 
         // Record scores (Team Clove)
-        if (option == 5)
+        if (option == 6)
             backBufferGraphics.setColor(Color.GREEN);
         else
             backBufferGraphics.setColor(Color.WHITE);
@@ -460,6 +430,10 @@ public class DrawManager {
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
+//		drawRightedRegularString(screen, exitString, screen.getWidth() / 2 - fontRegularMetrics.getHeight() * 3,
+//				screen.getHeight() / 4 * 2 + fontRegularMetrics.getHeight() * 10);
+//		drawRightedRegularString(screen, logoutString, screen.getWidth() / 2 + fontRegularMetrics.getHeight() * 1,
+//				screen.getHeight() / 4 * 2 + fontRegularMetrics.getHeight() * 10);
 		drawCenteredRegularString(screen, exitString, screen.getHeight()
 				/ 4 * 2 + fontRegularMetrics.getHeight() * 10); // adjusted Height
 	}
