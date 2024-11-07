@@ -436,6 +436,38 @@ public class DrawManager {
 //				screen.getHeight() / 4 * 2 + fontRegularMetrics.getHeight() * 10);
 		drawCenteredRegularString(screen, exitString, screen.getHeight()
 				/ 4 * 2 + fontRegularMetrics.getHeight() * 10); // adjusted Height
+
+
+		// 기존 코드 부분 여기다가 추가해놓겠음
+//		if (option3 == 0) {merchantState = merchant;}
+//		try {
+//			if (option3 == 1) {
+//				merchantState = bulletCountString + MerchantTxt(Core.getUpgradeManager().getBulletCount(),1);
+//			}
+//			if (option3 == 2) {
+//				merchantState = shipSpeedString + MerchantTxt(Core.getUpgradeManager().getSpeedCount(),2);
+//			}
+//			if (option3 == 3) {
+//				merchantState = attackSpeedString + MerchantTxt(Core.getUpgradeManager().getAttackCount(),3);
+//			}
+//			if (option3 == 4) {
+//				merchantState = coinGainString + MerchantTxt(Core.getUpgradeManager().getCoinCount(),4);
+//			}
+//			if (option == 4) {
+//				merchantState = "<- " + merchantState + " ->";
+//			}
+//		} catch (IOException e){
+//			throw new RuntimeException(e);
+//		}
+//		if (option == 4 && option3 == 0)
+//			backBufferGraphics.setColor(Color.GREEN);
+//		else if (option == 4 && option3 != 0)
+//			backBufferGraphics.setColor(Color.CYAN);
+//		else
+//			backBufferGraphics.setColor(Color.WHITE);
+//
+//		drawCenteredRegularString(screen, merchantState, screen.getHeight()
+//				/ 4 * 2 + fontRegularMetrics.getHeight() * 4);
 	}
 
 	/**
