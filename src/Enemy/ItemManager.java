@@ -161,8 +161,4 @@ public class ItemManager {
         this.items.removeAll(recyclableItems);
         ItemPool.recycle(recyclableItems);
     }
-
-    public void setEnemyShips(Set<EnemyShip> enemyShips) {
-        this.enemyShips = enemyShips;
-    }
 }
