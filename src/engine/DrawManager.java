@@ -245,7 +245,7 @@ public class DrawManager {
 	 * @param positionY
 	 *            Coordinates for the upper side of the image.
 	 */
-	public void drawEntity(final Entity entity, final int positionX,
+	public static void drawEntity(final Entity entity, final int positionX,
 						   final int positionY) {
 
 		try {
@@ -679,8 +679,8 @@ public class DrawManager {
 		int[] instanceXPostition = {25, 205, 300, 400, 515};
 
 		if (isFirstLine) { // Create Header
-			String[] Attribute = {"Date", "Score", "Level", "Destroy", "Achievement"};
-			for(int k=0; k<5; k++){
+			String[] Attribute = {"Date", "Score", "Level", "Destroy"};
+			for(int k=0; k<4; k++){
 				drawRightedRegularString(screen, Attribute[k], attributeXPosition[k],
 						screen.getHeight() / 4 + fontRegularMetrics.getHeight() * (i + 1) * 2);
 			}
@@ -690,14 +690,13 @@ public class DrawManager {
 		}
 
 		for (Score score : recentScores) {
-			String[] Instance = new String[5];
+			String[] Instance = new String[4];
 			Instance[0] = String.format("%s",score.getDate());
 			Instance[1] = String.format("%04d",score.getScore());
 			Instance[2] = String.format("%04d",score.getHighestLevel());
 			Instance[3] = String.format("%04d", score.getShipDestroyed());
-			Instance[4] = String.format("%04d", score.getClearAchievementNumber());
 
-			for(int k=0; k<5; k++){
+			for(int k=0; k<4; k++){
 				drawRightedRegularString(screen, Instance[k], instanceXPostition[k],
 						screen.getHeight() / 4 + fontRegularMetrics.getHeight() * (i + 1) * 2);
 			}

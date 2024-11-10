@@ -88,6 +88,10 @@ public class ItemManager {
         }
     }
 
+    public void setEnemyShips(Set<EnemyShip> enemyShips) {
+        this.enemyShips = enemyShips;
+    }
+
     // team Inventory
     public void OperateItem(Item item) {
         if(item!= null) {
@@ -138,7 +142,6 @@ public class ItemManager {
             addItemRecycle(item);
         }
     }
-
 
     public void addItemRecycle(Item item) {
         recyclableItems.add(item);

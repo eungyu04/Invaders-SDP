@@ -45,7 +45,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	private static final int INIT_POS_Y = 100;
 	/** Distance between ships. */
 	private static final int SEPARATION_DISTANCE = 60;
-	private static final int SEPARATION_DISTANCE_CIRCLE = 90;
+	private static final int SEPARATION_DISTANCE_CIRCLE = 70;
 	/** Radius of circle */
 	private int RADIUS=0;
 	private int MINIRADIUS= 0;

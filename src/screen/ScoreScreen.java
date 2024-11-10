@@ -156,7 +156,12 @@ public class ScoreScreen extends Screen {
 				saveRecentScore(); // Team Clove
 			} else if (inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
 				// Play again.
-				this.returnCode = 2;
+				System.out.println(this.isTwoPlayerMode());
+				if (this.isTwoPlayerMode()){
+					this.returnCode = 4;
+				} else {
+					this.returnCode = 2;
+				}
 				this.isRunning = false;
 				if (this.isNewRecord) {
 					saveScore();
