@@ -10,7 +10,7 @@ public class SpeedItem {
     private boolean isActive;
 
     private long startTime;
-    private long effectDuration = 5000;
+    private long effectDuration = 10000;
     private double increaseSpeedMultiplier = 3.0;
     private double decreaseSpeedMultiplier = 0.25;
 
