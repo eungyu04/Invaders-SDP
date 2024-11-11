@@ -45,6 +45,7 @@ public class Background {
     }
 
     public static List<String> levelBackgrounds;
+    public static List<String> storyModeBackgrounds;
     // Static block to initialize levelBackgrounds
     static {
         levelBackgrounds = new ArrayList<>();
@@ -55,6 +56,7 @@ public class Background {
         levelBackgrounds.add("/backgrounds/background_level_5.jpg");
         levelBackgrounds.add("/backgrounds/background_level_6.jpg");
         levelBackgrounds.add("/backgrounds/background_level_7.jpg");
+        levelBackgrounds.add("/backgrounds/background_level_8.jpg");
     }
     // Static method to get background image stream
     public static InputStream getBackgroundImageStream(int levelIndex) {
