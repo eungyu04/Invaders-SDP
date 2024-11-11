@@ -70,7 +70,7 @@ public class EnemyShip extends Entity {
 		this.isDestroyed = false;
 		this.x = x; // Add by team enemy
 		this.y = y; // Add by team enemy
-		this.speedMultiplier=1.0; // 기본 속도 배수는 1.0으로 설정
+		this.speedMultiplier=1.0; // default 1.0
 		this.defaultSpeedMultiplier = 1.0;
 
 		switch (this.spriteType) {
@@ -278,6 +278,4 @@ public class EnemyShip extends Entity {
 	public double getSpeedMultiplier() {
 		return this.speedMultiplier;
 	}
-
-
 }

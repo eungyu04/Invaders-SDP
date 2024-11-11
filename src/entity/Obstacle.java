@@ -85,6 +85,6 @@ public class Obstacle extends Entity {
     * @return True if the obstacle can be removed.
     */
     public final boolean shouldBeRemoved() {
-        return this.isDestroyed && this.spriteType == null;  // Remove when spriteType is null after explosion
+        return this.spriteType == null;  // Remove when spriteType is null after explosion
     }
 }

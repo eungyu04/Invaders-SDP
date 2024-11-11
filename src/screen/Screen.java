@@ -44,6 +44,8 @@ public class Screen {
 	protected boolean isRunning;
 	/** What kind of screen goes next. */
 	protected int returnCode;
+	/** Checks if the game is in 2 player mode **/
+	private boolean isTwoPlayerMode;
 
 	/**
 	 * Constructor, establishes the properties of the screen.
@@ -133,5 +135,11 @@ public class Screen {
 	 */
 	public final int getHeight() {
 		return this.height;
+	}
+	public final boolean isTwoPlayerMode() {
+		return this.isTwoPlayerMode;
+	}
+	public final void setTwoPlayerMode(boolean isTwoPlayerMode) {
+		this.isTwoPlayerMode = isTwoPlayerMode;
 	}
 }

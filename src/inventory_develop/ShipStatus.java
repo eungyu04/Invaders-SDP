@@ -3,8 +3,6 @@ package inventory_develop;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import Enemy.PlayerGrowth;
-import inventory_develop.NumberOfBullet;
 
 public class ShipStatus {
 
