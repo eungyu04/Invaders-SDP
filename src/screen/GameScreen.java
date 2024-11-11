@@ -151,6 +151,10 @@ public class GameScreen extends Screen {
 	/** CtrlS: Count the number of coin collected in game */
 	private int coinItemsCollected;
 
+	//스토리라운드
+	private static final long ROUND_CLEAR_DURATION =(7000+15000); // 15초 (5 + 00 + 2)
+	private long roundStartTime;
+
 	/**
 	 * Constructor, establishes the properties of the screen.
 	 *
@@ -169,7 +173,7 @@ public class GameScreen extends Screen {
 	 */
 	public GameScreen(final GameState gameState,
 					  final GameSettings gameSettings, final boolean bonusLife,
-					  final int width, final int height, final int fps) {
+					  final int width, final int height, final int fps, int returnCode) {
 		super(width, height, fps);
 
 		this.gameSettings = gameSettings;
@@ -192,7 +196,6 @@ public class GameScreen extends Screen {
 		this.hitCount = gameState.getHitCount(); //CtrlS
 		this.fire_id = 0; //CtrlS - fire_id means the id of bullet that shoot already. It starts from 0.
 		this.processedFireBullet = new HashSet<>(); //CtrlS - initialized the processedFireBullet
-
 		/**
 		 * Added by the Level Design team
 		 *
@@ -206,6 +209,7 @@ public class GameScreen extends Screen {
 		this.statistics = new Statistics(); //Team Clove
 		this.achievementConditions = new AchievementConditions();
 		this.coinItemsCollected = gameState.getCoinItemsCollected(); // CtrlS
+		this.returnCode = returnCode;
 	}
 
 	/**
@@ -870,5 +874,11 @@ public class GameScreen extends Screen {
 
 	public SpeedItem getSpeedItem() {
 		return this.speedItem;
+	}
+	public void startRoundTimer() {
+		this.roundStartTime = System.currentTimeMillis();
+	}
+	public boolean isRoundClearedByTime() {
+		return (returnCode == 4) && (System.currentTimeMillis() - this.roundStartTime >= ROUND_CLEAR_DURATION);
 	}
 }

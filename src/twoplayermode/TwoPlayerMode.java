@@ -31,7 +31,7 @@ public class TwoPlayerMode extends GameScreen {
 
 
     public TwoPlayerMode(GameState gameState, GameSettings gameSettings, boolean bonusLife, int width, int height, int fps) {
-        super(gameState, gameSettings, bonusLife, width, height, fps);
+        super(gameState, gameSettings, bonusLife, width, height, fps, 2);
 
 
 
