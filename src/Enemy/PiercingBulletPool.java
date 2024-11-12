@@ -29,23 +29,26 @@ public final class PiercingBulletPool {
      *
      * @param positionX The requested X position for the bullet.
      * @param positionY The requested Y position for the bullet.
-     * @param speed The speed of the bullet, positive or negative depending on direction.
+     * @param speedX The speedX of the bullet.
+     * @param speedY The speedY of the bullet, positive or negative depending on direction.
      * @param piercingCount The number of enemies the bullet can pierce.
      * @return A PiercingBullet object, either from the pool or newly created.
      */
     public static PiercingBullet getPiercingBullet(final int positionX,
-                                                   final int positionY, final int speed, int piercingCount) {
+                                                   final int positionY, final int speedX, final int speedY,
+                                                   final int piercingCount, final int bulletType) {
         PiercingBullet bullet;
         if (!pool.isEmpty()) {
             bullet = pool.iterator().next();
             pool.remove(bullet); // Remove the bullet from the pool for use
             bullet.setPositionX(positionX - bullet.getWidth() / 2);
             bullet.setPositionY(positionY);
-            bullet.setSpeed(speed);
+            bullet.setSpeed(speedX, speedY);
             bullet.setPiercingCount(piercingCount);  // Reset piercing count when recycling
+            bullet.setBulletType(bulletType);
             bullet.setSprite(); // Prevents destroyed bullets from being reused incorrectly
         } else {
-            bullet = new PiercingBullet(positionX, positionY, speed, piercingCount);
+            bullet = new PiercingBullet(positionX, positionY, speedX, speedY, piercingCount, bulletType);
             bullet.setPositionX(positionX - bullet.getWidth() / 2);
         }
         return bullet;

@@ -20,11 +20,12 @@ public class PiercingBullet extends Bullet {
      *
      * @param positionX Initial X position of the bullet.
      * @param positionY Initial Y position of the bullet.
-     * @param speed Speed of the bullet, positive is down, negative is up.
+     * @param speedX SpeedX of the bullet.
+     * @param speedY SpeedY of the bullet, positive is down, negative is up.
      * @param piercingCount Number of enemies the bullet can pierce.
      */
-    public PiercingBullet(final int positionX, final int positionY, final int speed, int piercingCount) {
-        super(positionX, positionY, speed);  // Piercing bullets do not use isPiercing flag anymore.
+    public PiercingBullet(final int positionX, final int positionY, final int speedX, final int speedY, int piercingCount, int bulletType) {
+        super(positionX, positionY, speedX, speedY, bulletType);  // Piercing bullets do not use isPiercing flag anymore.
         this.piercingCount = piercingCount;
         setSprite();    // team Inventory
     }

@@ -8,7 +8,8 @@ public class PlayerGrowth {
     //Player's base stats
     private int health;          //Health
     private static double moveSpeed = 1.5;       //Movement speed
-    private static int bulletSpeed = -4;     // Bullet speed
+    private static int bulletSpeedX = 0;      // Bullet speedX
+    private static int bulletSpeedY = -4;     // Bullet speedY
     private static int shootingDelay = 750;   // Shooting delay
 
     //Constructor to set initial values
@@ -34,8 +35,11 @@ public class PlayerGrowth {
     }
 
     // Increases bullet speed (makes bullets faster)
-    public void increaseBulletSpeed(int increment) {
-        this.bulletSpeed -= increment; // Increase by subtracting (since negative speed)
+    public void increaseBulletSpeedX(int increment) {
+        this.bulletSpeedX -= increment; // Increase by subtracting (since negative speed)
+    }
+    public void increaseBulletSpeedY(int increment) {
+        this.bulletSpeedY -= increment; // Increase by subtracting (since negative speed)
     }
 
     // Decreases shooting delay (makes shooting faster)
@@ -49,7 +53,8 @@ public class PlayerGrowth {
     // reset bullet speed
     //Edit by inventory
     public void ResetBulletSpeed(){
-        bulletSpeed = -4;
+        bulletSpeedX = 0;
+        bulletSpeedY = -4;
     }
 
     // Returns current health
@@ -63,8 +68,11 @@ public class PlayerGrowth {
     }
 
     // Returns current bullet speed
-    public int getBulletSpeed() {
-        return this.bulletSpeed;
+    public int getBulletSpeedX() {
+        return this.bulletSpeedX;
+    }
+    public int getBulletSpeedY() {
+        return this.bulletSpeedY;
     }
 
     //  Returns current shooting delay
@@ -76,7 +84,8 @@ public class PlayerGrowth {
     public void printStats() {
         System.out.println("Health: " + this.health);
         System.out.println("MoveSpeed: " + this.moveSpeed);
-        System.out.println("BulletSpeed: " + this.bulletSpeed);
+        System.out.println("BulletSpeedX: " + this.bulletSpeedX);
+        System.out.println("BulletSpeedY: " + this.bulletSpeedY);
         System.out.println("ShootingDelay: " + this.shootingDelay + "ms");
     }
 }

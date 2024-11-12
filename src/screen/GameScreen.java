@@ -2,6 +2,7 @@ package screen;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.*;
 
 import java.io.IOException;
@@ -26,6 +27,8 @@ import inventory_develop.*;
 import Sound_Operator.SoundManager;
 import clove.ScoreManager;    // CLOVE
 import twoplayermode.TwoPlayerMode;
+
+import javax.swing.*;
 
 
 /**
@@ -340,9 +343,25 @@ public class GameScreen extends Screen {
 				if (moveDown && !isDownBorder) {
 					this.ship.moveDown();
 				}
+				
+				// 마우스 추적(화면 밖으로 나가도 추적하고 싶으면 사용 - 거의 사용X 일듯 나중에 지우기)
+//				Point mousePosition = MouseInfo.getPointerInfo().getLocation();
+//				SwingUtilities.convertPointFromScreen(mousePosition, drawManager.getFrame());
 
-				if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
-					if (this.ship.shoot(this.bullets)) {
+				// 함선과의 상대거리 계산
+				double deltaX = inputManager.getMouseX() - (this.ship.getPositionX() + this.ship.getWidth() * 3 / 4);
+				double deltaY = inputManager.getMouseY() - (this.ship.getPositionY() + this.ship.getHeight() * 2);
+
+				// 각도 계산 (라디안 값)
+				double angle = Math.atan2(deltaY, deltaX);
+				this.ship.setAngle(angle);
+
+				if (inputManager.isKeyDown(KeyEvent.VK_SPACE) || inputManager.isMouseButtonDown(MouseEvent.BUTTON1))
+					if (this.returnCode == 2 && this.ship.shoot360(this.bullets)) {	// 무한모드일 때 작동(임시로 일반모드일 때 작동하게 설정)
+						this.bulletsShot++;
+						this.fire_id++;
+						this.logger.info("Bullet's fire_id is " + fire_id);
+					} else if (this.ship.shoot(this.bullets)) {
 						this.bulletsShot++;
 						this.fire_id++;
 						this.logger.info("Bullet's fire_id is " + fire_id);
@@ -512,14 +531,14 @@ public class GameScreen extends Screen {
 		drawManager.drawHorizontalLine(this, SEPARATION_LINE_HEIGHT - 1);
 		DrawManagerImpl.drawRemainingEnemies(this, getRemainingEnemies()); // by HUD team SeungYun
 		DrawManagerImpl.drawLevel(this, this.level);
-		DrawManagerImpl.drawBulletSpeed(this, ship.getBulletSpeed());
+		DrawManagerImpl.drawBulletSpeed(this, ship.getBulletSpeedY());
 		// Call the method in DrawManagerImpl - Lee Hyun Woo TeamHud
 		DrawManagerImpl.drawTime(this, this.playTime);
 		// Call the method in DrawManagerImpl - Soomin Lee / TeamHUD
 		drawManager.drawItem(this); // HUD team - Jo Minseo
 
 		if(player2 != null){
-			DrawManagerImpl.drawBulletSpeed2P(this, player2.getBulletSpeed());
+			DrawManagerImpl.drawBulletSpeed2P(this, player2.getBulletSpeedY());
 			DrawManagerImpl.drawSpeed2P(this, player2.getSpeed());
 			DrawManagerImpl.drawLives2P(this, ((TwoPlayerMode) this).getLivestwo());
 			if (((TwoPlayerMode) this).getLivestwo() == 0) {
@@ -600,7 +619,7 @@ public class GameScreen extends Screen {
 	private void manageCollisions() {
 		Set<Bullet> recyclable = new HashSet<Bullet>();
 		for (Bullet bullet : this.bullets)
-			if (bullet.getSpeed() > 0) {
+			if (bullet.getSpeedY() > 0) {
 				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
 					recyclable.add(bullet);
 					if (!this.ship.isDestroyed() && !this.item.isbarrierActive()) {   // team Inventory
@@ -646,7 +665,7 @@ public class GameScreen extends Screen {
 	public void manageCollisions_add_item() {
 		Set<PiercingBullet> recyclable = new HashSet<PiercingBullet>();
 		for (PiercingBullet bullet : this.bullets)
-			if (bullet.getSpeed() > 0) {
+			if (bullet.getBulletType() != 0) {
 				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
 					recyclable.add(bullet);
 					if (!this.ship.isDestroyed() && !this.item.isbarrierActive()) {   // team Inventory

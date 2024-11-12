@@ -78,7 +78,7 @@ public class TwoPlayerMode extends GameScreen {
         if(player2==null) return;
         Set<Bullet> recyclable = new HashSet<>();
         for (Bullet bullet : bullets) {
-            if (bullet.getSpeed() > 0 && checkCollision(bullet, player2)) {
+            if (bullet.getSpeedY() > 0 && checkCollision(bullet, player2)) {
                 recyclable.add(bullet);
                 if (!player2.isDestroyed()) {
                     player2.destroy();

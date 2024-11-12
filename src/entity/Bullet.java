@@ -15,10 +15,14 @@ import inventory_develop.Bomb;
 public class Bullet extends Entity {
 
 	/**
-	 * Speed of the bullet, positive or negative depending on direction -
+	 * Speed of the bulletX
+	 */
+	private int speedX;
+	/**
+	 * Speed of the bulletY, positive or negative depending on direction -
 	 * positive is down.
 	 */
-	private int speed;
+	private int speedY;
 	// Ctrl S
 	/**
 	 * Check if there is count on the bullet.
@@ -30,6 +34,9 @@ public class Bullet extends Entity {
 	 * give unique id for certain shot of bullets
 	 */
 	protected int fire_id;
+
+	protected int BulletType;
+
 	/**
 	 * Constructor, establishes the bullet's properties.
 	 * 
@@ -37,16 +44,20 @@ public class Bullet extends Entity {
 	 *            Initial position of the bullet in the X axis.
 	 * @param positionY
 	 *            Initial position of the bullet in the Y axis.
-	 * @param speed
-	 *            Speed of the bullet, positive or negative depending on
+	 * @param speedX
+	 *			  Speed of the bullet in the X axis
+	 * @param speedY
+	 *            Speed of the bullet in the Y axis, positive or negative depending on
 	 *            direction - positive is down.
 	 */
-	public Bullet(final int positionX, final int positionY, final int speed) {
+	public Bullet(final int positionX, final int positionY, final int speedX, final int speedY, final int bulletType) {
 		super(positionX, positionY, 3 * 2, 5 * 2, Color.WHITE);
 		// CtrlS
 		this.checkCount = true;
 		// CtrlS
-		this.speed = speed;
+		this.speedX = speedX;
+		this.speedY = speedY;
+		this.BulletType = bulletType;
 		setSprite();
 	}
 
@@ -56,7 +67,7 @@ public class Bullet extends Entity {
 	 */
 	public final void setSprite() {
 
-		if (speed < 0) {
+		if (BulletType == 0) {
 			if(Bomb.getIsBomb() && Bomb.getCanShoot())
 				this.spriteType = SpriteType.ItemBomb;
 			else
@@ -70,26 +81,39 @@ public class Bullet extends Entity {
 	 * Updates the bullet's position.
 	 */
 	public final void update() {
-		this.positionY += this.speed;
+		this.positionX += this.speedX;
+		this.positionY += this.speedY;
 	}
 
 	/**
 	 * Setter of the speed of the bullet.
-	 * 
-	 * @param speed
-	 *            New speed of the bullet.
+	 *
+	 * @param speedX
+	 * 	 *        New speed of the bullet in the X axis.
+	 * @param speedY
+	 *            New speed of the bullet in the Y axis.
 	 */
-	public final void setSpeed(final int speed) {
-		this.speed = speed;
+	public final void setSpeed(final int speedX, final int speedY) {
+		this.speedX = speedX;
+		this.speedY = speedY;
 	}
 
 	/**
-	 * Getter for the speed of the bullet.
-	 * 
-	 * @return Speed of the bullet.
+	 * Getter for the speedX of the bullet.
+	 *
+	 * @return Speed of the bullet in the X axis.
 	 */
-	public final int getSpeed() {
-		return this.speed;
+	public final int getSpeedX() {
+		return this.speedX;
+	}
+
+	/**
+	 * Getter for the speedY of the bullet.
+	 * 
+	 * @return Speed of the bullet in the Y axis.
+	 */
+	public final int getSpeedY() {
+		return this.speedY;
 	}
 
 	/**
@@ -120,4 +144,7 @@ public class Bullet extends Entity {
 	 * 	          New fire_id of the bullet.
 	 */
 	public final void setFire_id(final int id) { this.fire_id = id; }
+
+	public void setBulletType(int bulletType) { BulletType = bulletType; }
+	public int getBulletType() { return BulletType; }
 }
