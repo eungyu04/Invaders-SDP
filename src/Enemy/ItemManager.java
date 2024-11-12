@@ -123,7 +123,7 @@ public class ItemManager {
                     break;
                 case ItemPierce:
                     numberOfBullet.pierceup();
-                    ship.increaseBulletSpeed();
+                    ship.increaseBulletSpeedY();
                     //Sound_Operator
                     sm = SoundManager.getInstance();
                     sm.playES("get_item");

@@ -40,6 +40,8 @@ public class Ship extends Entity {
 	private static SoundManager sm;
 	/** NumberOfBullet instance*/
 	private NumberOfBullet numberOfBullet;
+	/** angle of ship */
+	private double angle;
 
 	/**
 	 * Constructor, establishes the ship's properties.
@@ -52,6 +54,7 @@ public class Ship extends Entity {
 	//Edit by Enemy
 	public Ship(final int positionX, final int positionY, final Color color) {
 		super(positionX, positionY - 50, 13 * 2, 8 * 2, color); // add by team HUD
+		this.angle = 0;
 
 		this.spriteType = SpriteType.Ship;
 
@@ -87,7 +90,7 @@ public class Ship extends Entity {
 	} //Edit by Enemy
 
 	/**
-	 * Moves the ship speed uni ts right, or until the right screen border is
+	 * Moves the ship speed uni ts up, or until the up screen border is
 	 * reached.
 	 */
 	public final void moveUp() {
@@ -96,7 +99,7 @@ public class Ship extends Entity {
 
 
 	/**
-	 * Moves the ship speed units left, or until the left screen border is
+	 * Moves the ship speed units down, or until the down screen border is
 	 * reached.
 	 */
 	public final void moveDown() {
@@ -126,8 +129,10 @@ public class Ship extends Entity {
 			Set<PiercingBullet> newBullets = numberOfBullet.addBullet(
 					positionX + this.width / 2,
 					positionY,
-					growth.getBulletSpeed(), // Use PlayerGrowth for bullet speed
-					Bomb.getCanShoot()
+					growth.getBulletSpeedX(), // Use PlayerGrowth for bullet speed
+					growth.getBulletSpeedY(),
+					Bomb.getCanShoot(),
+					0	// bulletType -> 아군 총알은 0
 			);
 
 			// now can't shoot bomb
@@ -141,6 +146,34 @@ public class Ship extends Entity {
 		return false;
 	}
 
+	/** if gamemode is infinity */
+	public final boolean shoot360(final Set<PiercingBullet> bullets) {
+
+		if (this.shootingCooldown.checkFinished()) {
+			this.shootingCooldown.reset(); // Reset cooldown after shooting
+
+			// Sound Operator, Apply a Shooting sound
+			sm = SoundManager.getInstance();
+			sm.playES("My_Gun_Shot");
+
+			// Use NumberOfBullet to generate bullets
+			Set<PiercingBullet> newBullets = numberOfBullet.addBullet(
+					positionX + this.width / 2,
+					positionY,
+                    (int) (10 * Math.cos(angle)),	// 임시 수치
+					(int) (10 * Math.sin(angle)),
+					Bomb.getCanShoot(),
+					0
+			);
+			System.out.println(Math.cos(angle));
+
+			Bomb.setCanShoot(false);
+			bullets.addAll(newBullets);
+
+			return true;
+		}
+		return false;
+	}
 
 
 
@@ -192,8 +225,8 @@ public class Ship extends Entity {
 
 	// Increases bullet speed
 	//Edit by Enemy
-	public void increaseBulletSpeed() {
-		growth.increaseBulletSpeed(shipStatus.getBulletSpeedIn());
+	public void increaseBulletSpeedY() {
+		growth.increaseBulletSpeedY(shipStatus.getBulletSpeedIn());
 	}
 
 	//  Decreases shooting delay
@@ -218,14 +251,21 @@ public class Ship extends Entity {
 	 *
 	 * @return bullet speed (Pixels per frame).
 	 */
-	public final int getBulletSpeed() {
-		int speed = growth.getBulletSpeed();
-		return (speed >= 0) ? speed : -speed;
+	public final int getBulletSpeedY() {
+		int speedY = growth.getBulletSpeedY();
+		return (speedY >= 0) ? speedY : -speedY;
 	}//by SeungYun TeamHUD
 
 	public PlayerGrowth getPlayerGrowth() {
 		return growth;
 	}	// Team Inventory(Item)
 
+
+	public void setAngle(double angle) {
+		this.angle = angle;
+	}
+	public double getAngle() {
+		return this.angle;
+	}
 
 }

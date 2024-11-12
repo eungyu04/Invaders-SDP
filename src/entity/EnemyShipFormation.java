@@ -58,8 +58,10 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	private static final int X_SPEED = 8;
 	/** Downwards speed of the formation. */
 	private static final int Y_SPEED = 4;
-	/** Speed of the bullets shot by the members. */
-	private static final int BULLET_SPEED = 4;
+	/** SpeedX of the bullets shot by the members. */
+	private static final int BULLET_SPEEDX = 0;
+	/** SpeedY of the bullets shot by the members. */
+	private static final int BULLET_SPEEDY = 4;
 	/** Proportion of differences between shooting times. */
 	private static final double SHOOTING_VARIANCE = .2;
 	/** Margin on the sides of the screen. */
@@ -431,8 +433,10 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				bullets.add(PiercingBulletPool.getPiercingBullet( // Edited by Enemy
 						shooter.getPositionX() + shooter.width / 2,
 						shooter.getPositionY(),
-						BULLET_SPEED,
-						0)); // Edited by Enemy
+						BULLET_SPEEDX,
+						BULLET_SPEEDY,
+						0,
+						1)); // Edited by Enemy
 			}
 		}
 	}
@@ -663,7 +667,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		int point = 0;
 		int mob = 0;
 
-		Bullet bullet = new Bullet(0,0,-1);
+		Bullet bullet = new Bullet(0,0, 0,-1, 1);
 
 		do{
 

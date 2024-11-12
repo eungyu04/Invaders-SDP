@@ -29,23 +29,22 @@ public final class BulletPool {
 	 *            Requested position of the bullet in the X axis.
 	 * @param positionY
 	 *            Requested position of the bullet in the Y axis.
-	 * @param speed
-	 *            Requested speed of the bullet, positive or negative depending
-	 *            on direction - positive is down.
+	 * @param speedX Requested speedX of the bullet.
+	 * @param speedY Requested speedY of the bullet, positive or negative depending on direction.
 	 * @return Requested bullet.
 	 */
 	public static Bullet getBullet(final int positionX,
-			final int positionY, final int speed) {
+			final int positionY, final int speedX, final int speedY) {
 		Bullet bullet;
 		if (!pool.isEmpty()) {
 			bullet = pool.iterator().next();
 			pool.remove(bullet);
 			bullet.setPositionX(positionX - bullet.getWidth() / 2);
 			bullet.setPositionY(positionY);
-			bullet.setSpeed(speed);
+			bullet.setSpeed(speedX, speedY);
 			bullet.setSprite();
 		} else {
-			bullet = new Bullet(positionX, positionY, speed);
+			bullet = new Bullet(positionX, positionY, speedX, speedY, 0);
 			bullet.setPositionX(positionX - bullet.getWidth() / 2);
 		}
 		return bullet;
