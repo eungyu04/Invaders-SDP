@@ -98,7 +98,13 @@ public class DrawManager {
 		/**Item*/
 		Item, // by enemy team
 		/**Boss*/
-		Boss, // by enemy team
+		Boss,
+		NORMAL1,
+		NORMAL2,
+		MID_BOSS1,
+		MID_BOSS2,
+		FINAL_BOSS1,
+		FINAL_BOSS2,
 		/** Player Lives. */
 		/** Item */
     	ItemHeart,
@@ -148,7 +154,7 @@ public class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipSpecial, new boolean[16][7]);
 			spriteMap.put(SpriteType.Explosion, new boolean[13][7]);
 			spriteMap.put(SpriteType.Heart, new boolean[13][8]);
-			spriteMap.put(SpriteType.Boss, new boolean[24][16]); // by Enemy team
+			spriteMap.put(SpriteType.Boss, new boolean[24][16]);
 			spriteMap.put(SpriteType.Coin, new boolean[5][5]); // by Starter Team
 			spriteMap.put(SpriteType.AddSign, new boolean[5][5]); // by Starter Team
 			spriteMap.put(SpriteType.Gem, new boolean[7][6]); // CtrlS: res/graphics, line 20
@@ -162,6 +168,12 @@ public class DrawManager {
 			spriteMap.put(SpriteType.ItemPierce, new boolean[7][7]);
 			spriteMap.put(SpriteType.ItemSpeedUp, new boolean[9][9]);
 			spriteMap.put(SpriteType.ItemSpeedSlow, new boolean[9][9]);
+			spriteMap.put(SpriteType.NORMAL1, new boolean[10][13]);
+			spriteMap.put(SpriteType.NORMAL2, new boolean[10][12]);
+			spriteMap.put(SpriteType.MID_BOSS1, new boolean[10][13]);
+			spriteMap.put(SpriteType.MID_BOSS2, new boolean[10][12]);
+			spriteMap.put(SpriteType.FINAL_BOSS1, new boolean[11][12]);
+			spriteMap.put(SpriteType.FINAL_BOSS2, new boolean[11][11]);
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");

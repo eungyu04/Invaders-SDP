@@ -3,6 +3,8 @@ package inventory_develop;
 import Enemy.PiercingBullet;
 import Enemy.PiercingBulletPool;
 import engine.Core;
+import entity.Bullet;
+import entity.BulletPool;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -41,11 +43,11 @@ public class NumberOfBullet{
      *
      * @return
      */
-    public Set<PiercingBullet> addBullet(int positionX, int positionY, int speed, boolean canShootBomb) {
-        Set<PiercingBullet> bullets = new HashSet<>();
+    public Set<Bullet> addBullet(int positionX, int positionY, int speed, boolean canShootBomb, int damage) {
+        Set<Bullet> bullets = new HashSet<>();
 
         if (canShootBomb) {
-            bullets.add(PiercingBulletPool.getPiercingBullet(positionX, positionY, speed, 1));
+            bullets.add(PiercingBulletPool.getPiercingBullet(positionX, positionY, speed,  1));
             return bullets;
         }
 
@@ -59,7 +61,7 @@ public class NumberOfBullet{
                 break;
             case 3:
                 bullets.add(PiercingBulletPool.getPiercingBullet(positionX + OFFSET_X_THREEBULLETS, positionY, speed, piercingbulletLevel));
-                bullets.add(PiercingBulletPool.getPiercingBullet(positionX, positionY, speed,piercingbulletLevel));
+                bullets.add(PiercingBulletPool.getPiercingBullet(positionX, positionY, speed, piercingbulletLevel));
                 bullets.add(PiercingBulletPool.getPiercingBullet(positionX - OFFSET_X_THREEBULLETS, positionY, speed, piercingbulletLevel));
                 break;
         }

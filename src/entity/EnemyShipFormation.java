@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 import javax.swing.Timer;
 
@@ -24,7 +23,7 @@ import engine.GameSettings;
 import static java.lang.Math.*;
 import Enemy.PiercingBulletPool;
 //Sound_Operator
-import Sound_Operator.SoundManager;
+
 
 /**
  * Groups enemy ships into a formation that moves together.
@@ -194,11 +193,11 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 					if (shipCount == (nShipsHigh*1)+1 ||shipCount == (nShipsHigh*3)+1) //Edited by Enemy
 						spriteType = SpriteType.ExplosiveEnemyShip1;
 					else if (i / (float) this.nShipsHigh < PROPORTION_C)
-						spriteType = SpriteType.EnemyShipC1;
+						spriteType = SpriteType.NORMAL1;
 					else if (i / (float) this.nShipsHigh < PROPORTION_B + PROPORTION_C)
-						spriteType = SpriteType.EnemyShipB1;
+						spriteType = SpriteType.MID_BOSS1;
 					else
-						spriteType = SpriteType.EnemyShipA1;
+						spriteType = SpriteType.FINAL_BOSS1;
 				if(isCircle){
 					x = (int) round(RADIUS * cos(angle) + positionX + ( SEPARATION_DISTANCE_CIRCLE* this.enemyShips.indexOf(column)));
 					y = (int) (RADIUS * sin(angle)) + positionY;}
@@ -210,7 +209,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				if(shipCount == nShipsHigh*(nShipsWide/2))
 					hp = 2; // Edited by Enemy, It just an example to insert EnemyShip that hp is 2.
 
-				column.add(new EnemyShip(x, y, spriteType,hp,this.enemyShips.indexOf(column),i));// Edited by Enemy
+				column.add(new EnemyShip(x, y, spriteType.NORMAL1,hp, this.enemyShips.indexOf(column), i));// Edited by Enemy
 				this.shipCount++;
 				hp = 1;// Edited by Enemy
 			}
@@ -419,7 +418,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 * @param bullets
 	 *            Bullets set to add the bullet being shot.
 	 */
-	public final void shoot(final Set<PiercingBullet> bullets) { // Edited by Enemy
+	public final void shoot(final Set<Bullet> bullets) { // Edited by Enemy
 		// For now, only ships in the bottom row are able to shoot.
 		if (!shooters.isEmpty()) { // Added by team Enemy
 			int index = (int) (random() * this.shooters.size());
@@ -428,6 +427,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				this.shootingCooldown.reset();
 				sm = SoundManager.getInstance();
 				sm.playES("Enemy_Gun_Shot_1_ES");
+				int damage = 3;
 				bullets.add(PiercingBulletPool.getPiercingBullet( // Edited by Enemy
 						shooter.getPositionX() + shooter.width / 2,
 						shooter.getPositionY(),
@@ -541,8 +541,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 		// Checks if this ship is 'chainExploded' due to recursive call
 		if (isChainExploded
-				&& !destroyedShip.spriteType.equals(SpriteType.ExplosiveEnemyShip1)
-				&& !destroyedShip.spriteType.equals(SpriteType.ExplosiveEnemyShip2)){
+				&& !destroyedShip.getSpriteType().equals(SpriteType.ExplosiveEnemyShip1)
+				&& !destroyedShip.getSpriteType().equals(SpriteType.ExplosiveEnemyShip2)){
 			destroyedShip.chainExplode();
 		}
 
@@ -558,7 +558,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 			for (List<EnemyShip> column : this.enemyShips) // Add by team Enemy
 				for (int i = 0; i < column.size(); i++) {
 					if (column.get(i).equals(destroyedShip)) {
-						switch (destroyedShip.spriteType){
+						switch (destroyedShip.getSpriteType()){
 							case ExplosiveEnemyShip1:
 							case ExplosiveEnemyShip2:
 								HpEnemyShip.hit(destroyedShip);
@@ -663,7 +663,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		int point = 0;
 		int mob = 0;
 
-		Bullet bullet = new Bullet(0,0,-1);
+		Bullet bullet = new Bullet(0,0,-1, 1);
 
 		do{
 

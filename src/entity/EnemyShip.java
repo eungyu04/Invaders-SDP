@@ -9,17 +9,18 @@ import engine.DrawManager.SpriteType;
 // Sound Operator
 import Sound_Operator.SoundManager;
 
+import static engine.DrawManager.SpriteType.NORMAL1;
 /**
  * Implements a enemy ship, to be destroyed by the player.
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  */
 public class EnemyShip extends Entity {
 	/** Point value of a type A enemy. */
-	private static final int A_TYPE_POINTS = 10;
+	private static final int NORMAL_POINTS = 10;
 	/** Point value of a type B enemy. */
-	private static final int B_TYPE_POINTS = 20;
+	private static final int  MID_BOSS_POINTS = 20;
 	/** Point value of a type C enemy. */
-	private static final int C_TYPE_POINTS = 30;
+	private static final int FINAL_BOSS_POINTS = 30;
 	/** Point value of a type Explosive enemy. */
 	private static final int EXPLOSIVE_TYPE_POINTS = 50; //Edited by Enemy
 	/** Point value of a bonus enemy. */
@@ -27,6 +28,7 @@ public class EnemyShip extends Entity {
 
 	/** EnemyShip's health point */
 	private int hp; // Add by team Enemy
+	private SpriteType spriteType;
 	/** EnemyShip's Initial x-coordinate **/
 	private int x; // Add by team Enemy
 	/** EnemyShip's Initial y=coordinate **/
@@ -48,6 +50,10 @@ public class EnemyShip extends Entity {
 	private double speedMultiplier;
 	private double defaultSpeedMultiplier;
 
+	public static EnemyShip basicEnemy;
+	public static EnemyShip midBossEnemy;
+	public static EnemyShip bossEnemy;
+
 	/**
 	 * Constructor, establishes the ship's properties.
 	 *
@@ -61,10 +67,11 @@ public class EnemyShip extends Entity {
 
 
 	public EnemyShip(final int positionX, final int positionY,
-					 final SpriteType spriteType,int hp,int x, int y) {// Edited by Enemy
-		super(positionX, positionY, 12 * 2, 8 * 2, HpEnemyShip.determineColor(hp));
+					 final SpriteType spriteType,int hp, int x, int y) {// Edited by Enemy
+		super(positionX, positionY, 12 * 2, 8 * 2, HpEnemyShip.determineColor(spriteType));
 
-		this.hp = hp;// Add by team Enemy
+		this.hp = hp;
+		//this.type = type;
 		this.spriteType = spriteType;
 		this.animationCooldown = Core.getCooldown(500);
 		this.isDestroyed = false;
@@ -74,23 +81,31 @@ public class EnemyShip extends Entity {
 		this.defaultSpeedMultiplier = 1.0;
 
 		switch (this.spriteType) {
-			case EnemyShipA1:
-			case EnemyShipA2:
-				this.pointValue = A_TYPE_POINTS;
+			case NORMAL1:
+			case NORMAL2:
+				this.pointValue = NORMAL_POINTS;
 				break;
-			case EnemyShipB1:
-			case EnemyShipB2:
-				this.pointValue = B_TYPE_POINTS;
+			case MID_BOSS1:
+			case MID_BOSS2:
+				this.pointValue = MID_BOSS_POINTS;
 				break;
-			case EnemyShipC1:
-			case EnemyShipC2:
-				this.pointValue = C_TYPE_POINTS;
+			case FINAL_BOSS1:
+			case FINAL_BOSS2:
+				this.pointValue = FINAL_BOSS_POINTS;
 				break;
-			case ExplosiveEnemyShip1: //Edited by Enemy
-			case ExplosiveEnemyShip2:
-				super.setColor(new Color(237, 28, 36)); //set ExplosiveEnemyShip Color
-				this.pointValue = EXPLOSIVE_TYPE_POINTS;
-				break;
+//			case EnemyShipB1:
+//			case EnemyShipB2:
+//				this.pointValue =  B_TYPE_POINTS;
+//				break;
+//			case EnemyShipC1:
+//			case EnemyShipC2:
+//				this.pointValue = C_TYPE_POINTS ;
+//				break;
+//			case ExplosiveEnemyShip1: //Edited by Enemy
+//			case ExplosiveEnemyShip2:
+//				super.setColor(new Color(237, 28, 36)); //set ExplosiveEnemyShip Color
+//				this.pointValue = EXPLOSIVE_TYPE_POINTS;
+//				break;
 			default:
 				this.pointValue = 0;
 				break;
@@ -104,7 +119,8 @@ public class EnemyShip extends Entity {
 	public EnemyShip() {
 		super(-32, 60, 16 * 2, 7 * 2, Color.RED);
 
-		this.hp = 1; // Add by team Enemy
+		this.spriteType = NORMAL1;
+		this.hp = hp; // Add by team Enemy
 		this.spriteType = SpriteType.EnemyShipSpecial;
 		this.isDestroyed = false;
 		this.pointValue = BONUS_TYPE_POINTS;
@@ -112,9 +128,43 @@ public class EnemyShip extends Entity {
 		this.y = -2; // Add by team Enemy
 	}
 
+	public EnemyShip(final SpriteType spriteType, int hp) {
+		super(-32, 60, 16 * 2, 7 * 2, Color.RED);
+		this.spriteType = spriteType;
+		this.hp = hp;
+		this.isDestroyed = false;
+		this.pointValue = BONUS_TYPE_POINTS;
+	}
+
+	public SpriteType getType() {
+		return spriteType;
+	}
+	public void setType(SpriteType spriteType) {
+		this.spriteType = spriteType;
+	}
+
+
+	public static void initializeEnemies() {
+		basicEnemy = new EnemyShip(SpriteType.NORMAL1, 5);
+		basicEnemy.setColor(HpEnemyShip.determineColor(basicEnemy.getType()));
+
+		midBossEnemy = new EnemyShip(SpriteType.MID_BOSS1, 5);
+		midBossEnemy.setColor(HpEnemyShip.determineColor(midBossEnemy.getType()));
+
+		bossEnemy = new EnemyShip(SpriteType.FINAL_BOSS1, 10);
+		bossEnemy.setColor(HpEnemyShip.determineColor(bossEnemy.getType()));
+	}
+
+
+	public void applyDamage(int damage) {
+		this.hp -= damage;
+		if(this.hp <= 0) {
+			destroy();
+		}
+	}
 
 	/**
-	 * Getter for the score bonus if this ship is destroyed.
+	 * Getter for the sco re bonus if this ship is destroyed.
 	 *
 	 * @return Value of the ship.
 	 */
@@ -143,23 +193,23 @@ public class EnemyShip extends Entity {
 			this.animationCooldown.reset();
 
 			switch (this.spriteType) {
-				case EnemyShipA1:
-					this.spriteType = SpriteType.EnemyShipA2;
+				case NORMAL1:
+					this.spriteType = SpriteType.NORMAL2;
 					break;
-				case EnemyShipA2:
-					this.spriteType = SpriteType.EnemyShipA1;
+				case NORMAL2:
+					this.spriteType = SpriteType.NORMAL1;
 					break;
-				case EnemyShipB1:
-					this.spriteType = SpriteType.EnemyShipB2;
+				case MID_BOSS1:
+					this.spriteType = SpriteType.MID_BOSS2;
 					break;
-				case EnemyShipB2:
-					this.spriteType = SpriteType.EnemyShipB1;
+				case MID_BOSS2:
+					this.spriteType = SpriteType.MID_BOSS1;
 					break;
-				case EnemyShipC1:
-					this.spriteType = SpriteType.EnemyShipC2;
+				case FINAL_BOSS1:
+					this.spriteType = SpriteType.FINAL_BOSS2;
 					break;
-				case EnemyShipC2:
-					this.spriteType = SpriteType.EnemyShipC1;
+				case FINAL_BOSS2:
+					this.spriteType = SpriteType.FINAL_BOSS1;
 					break;
 				case ExplosiveEnemyShip1: //Edited by Enemy
 					this.spriteType = SpriteType.ExplosiveEnemyShip2;
@@ -201,10 +251,10 @@ public class EnemyShip extends Entity {
 
 	/** Constructor for original EnemyShip that did not have hp.
 	 * That enemyShip is moved to a constructor with the hp default of 1*/
-	public EnemyShip(final int positionX, final int positionY,
-					 final SpriteType spriteType){
-		this(positionX,positionY,spriteType,1,-2,-2);
-	}// Edited by Enemy
+//	public EnemyShip(final int positionX, final int positionY,
+//					 final SpriteType spriteType){
+//		this(positionX,positionY, NORMAL1,1,-2,-2);
+//	}// Edited by Enemy
 
 	/**
 	 * Getter for the Hp of this Enemy ship.

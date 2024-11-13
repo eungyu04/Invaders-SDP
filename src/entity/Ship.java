@@ -96,7 +96,7 @@ public class Ship extends Entity {
 	 * You can set Number of enemies the bullet can pierce at here.
 	 */
 	//Edit by Enemy and Inventory
-	public final boolean shoot(final Set<PiercingBullet> bullets) {
+	public final boolean shoot(final Set<Bullet> bullets) {
 
 		if (this.shootingCooldown.checkFinished()) {
 
@@ -107,11 +107,12 @@ public class Ship extends Entity {
 			sm.playES("My_Gun_Shot");
 
 			// Use NumberOfBullet to generate bullets
-			Set<PiercingBullet> newBullets = numberOfBullet.addBullet(
+			Set<Bullet> newBullets = numberOfBullet.addBullet(
 					positionX + this.width / 2,
 					positionY,
 					growth.getBulletSpeed(), // Use PlayerGrowth for bullet speed
-					Bomb.getCanShoot()
+					Bomb.getCanShoot(),
+					10
 			);
 
 			// now can't shoot bomb

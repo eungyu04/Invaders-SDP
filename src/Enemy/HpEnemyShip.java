@@ -2,6 +2,7 @@ package Enemy;
 
 import java.awt.Color;
 import entity.EnemyShip;
+import engine.DrawManager.SpriteType;
 
 public class HpEnemyShip {
 
@@ -38,17 +39,17 @@ public class HpEnemyShip {
      * 		   if hp is 3, return orange
      * 		   if hp is 1, return white
      */
-    public static Color determineColor(int hp) {
-        Color color = Color.WHITE; // Declare a variable to store the color
-                                    // set basic color WHITE
-
-        if (hp == 2)
-            return new Color(0xFFEB3B);
-        else if (hp == 3)
-            return new Color(0xFFA500);
-        else if (hp == 1)
-            return Math.random() < magentaProbability ? Color.MAGENTA : Color.WHITE;
-        return Color.WHITE;
+    public static Color determineColor(SpriteType spriteType) {
+        switch (spriteType) {
+            case MID_BOSS1:
+            case MID_BOSS2:
+                return new Color(128, 0, 128); // 중간 보스는 보라색
+            case FINAL_BOSS1:
+            case FINAL_BOSS2:
+                return Color.RED; // 최종 보스는 빨간색
+            default:
+                return Color.WHITE; // 기본 적은 흰색
+        }
     }
 
     /**
@@ -63,8 +64,7 @@ public class HpEnemyShip {
         if (hp <= 0) {
             enemyShip.destroy();
         }
-        if(!enemyShip.getColor().equals(Color.magenta))
-            enemyShip.setColor(determineColor(hp));
+        enemyShip.setColor(determineColor(enemyShip.getType()));
     }
 
 

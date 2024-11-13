@@ -20,6 +20,7 @@ public class Bullet extends Entity {
 	 */
 	private int speed;
 	// Ctrl S
+	private int damage;
 	/**
 	 * Check if there is count on the bullet.
 	 * if hit occur then checkCount will be false
@@ -41,12 +42,13 @@ public class Bullet extends Entity {
 	 *            Speed of the bullet, positive or negative depending on
 	 *            direction - positive is down.
 	 */
-	public Bullet(final int positionX, final int positionY, final int speed) {
+	public Bullet(final int positionX, final int positionY, final int speed, final int damage) {
 		super(positionX, positionY, 3 * 2, 5 * 2, Color.WHITE);
 		// CtrlS
 		this.checkCount = true;
 		// CtrlS
 		this.speed = speed;
+		this.damage = damage;
 		setSprite();
 	}
 
@@ -120,4 +122,16 @@ public class Bullet extends Entity {
 	 * 	          New fire_id of the bullet.
 	 */
 	public final void setFire_id(final int id) { this.fire_id = id; }
+
+	public int getDamage(){
+		return damage;
+	}
+	public void setDamage(int damage){
+		this.damage = damage;
+	}
+
+	public void onCollision(EnemyShip enemy) {
+		enemy.applyDamage(this.getDamage());
+	}
+
 }

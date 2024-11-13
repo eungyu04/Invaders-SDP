@@ -68,7 +68,7 @@ public class GameScreen extends Screen {
 	/** Time from finishing the level to screen change. */
 	private Cooldown screenFinishedCooldown;
 	/** Set of all bullets fired by on screen ships. */
-	public Set<PiercingBullet> bullets; //by Enemy team
+	public Set<Bullet> bullets; //by Enemy team
 	/** Add an itemManager Instance */
 	public ItemManager itemManager; //by Enemy team
 	/** Shield item */
@@ -148,6 +148,7 @@ public class GameScreen extends Screen {
 
 	/** CtrlS: Count the number of coin collected in game */
 	private int coinItemsCollected;
+	private PiercingBullet piercingbullet;
 
 	/**
 	 * Constructor, establishes the properties of the screen.
@@ -214,6 +215,8 @@ public class GameScreen extends Screen {
 		/** initialize background **/
 		drawManager.loadBackground(this.level);
 
+		EnemyShip.initializeEnemies();
+		//this.enemyShipFormation.initializeEnemies(DrawManager.SpriteType.NORMAL1, DrawManager.SpriteType.MID_BOSS1, DrawManager.SpriteType.FINAL_BOSS1);
 		enemyShipFormation = new EnemyShipFormation(this.gameSettings);
 		enemyShipFormation.setScoreManager(this.scoreManager);//add by team Enemy
 		enemyShipFormation.attach(this);
@@ -238,7 +241,7 @@ public class GameScreen extends Screen {
 		this.enemyShipSpecialExplosionCooldown = Core
 				.getCooldown(BONUS_SHIP_EXPLOSION);
 		this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
-		this.bullets = new HashSet<PiercingBullet>(); // Edited by Enemy
+		this.bullets = new HashSet<>(); // Edited by Enemy
 
 		this.startTime = System.currentTimeMillis();    //clove
 
@@ -442,7 +445,7 @@ public class GameScreen extends Screen {
 		DrawManagerImpl.drawSeparatorLine(this,  this.height-65); // Ko jesung / HUD team
 
 
-		for (PiercingBullet bullet : this.bullets)
+		for (Bullet bullet : this.bullets)
 			drawManager.drawEntity(bullet, bullet.getPositionX(),
 					bullet.getPositionY());
 
@@ -508,14 +511,14 @@ public class GameScreen extends Screen {
 	 */
 	private void cleanBullets() {
 		Set<PiercingBullet> recyclable = new HashSet<PiercingBullet>(); // Edited by Enemy
-		for (PiercingBullet bullet : this.bullets) { // Edited by Enemy
+		for (Bullet bullet : this.bullets) { // Edited by Enemy
 			bullet.update();
 			if (bullet.getPositionY() < SEPARATION_LINE_HEIGHT
 					|| bullet.getPositionY() > this.height-70) // ko jesung / HUD team
 			{
 				//Ctrl-S : set true of CheckCount if the bullet is planned to recycle.
 				bullet.setCheckCount(true);
-				recyclable.add(bullet);
+				recyclable.add((PiercingBullet) bullet);
 			}
 		}
 		this.bullets.removeAll(recyclable);
@@ -587,8 +590,8 @@ public class GameScreen extends Screen {
 	 */
 	//by Enemy team
 	public void manageCollisions_add_item() {
-		Set<PiercingBullet> recyclable = new HashSet<PiercingBullet>();
-		for (PiercingBullet bullet : this.bullets)
+		Set<Bullet> recyclable = new HashSet<Bullet>();
+		for (Bullet bullet : this.bullets)
 			if (bullet.getSpeed() > 0) {
 				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
 					recyclable.add(bullet);
@@ -615,16 +618,30 @@ public class GameScreen extends Screen {
 						this.shipsDestroyed += CntAndPnt[0];
 						int feverScore = CntAndPnt[0]; //TEAM CLOVE //Edited by team Enemy
 
-						if(enemyShip.getHp() <= 0) {
+						if (enemyShip.getHp() <= 0) {
 							//inventory_f fever time is activated, the score is doubled.
-							if(feverTimeItem.isActive()) {
-								this.score += enemyShip.getPointValue()*2;
-							}
-							else{
+							if (feverTimeItem.isActive()) {
+								this.score += enemyShip.getPointValue() * 2;
+							} else {
 								this.score += enemyShip.getPointValue();
 							}
 							this.shipsDestroyed++;
 						}
+							if (bullet instanceof PiercingBullet) {
+								PiercingBullet piercingBullet = (PiercingBullet) bullet;
+								piercingBullet.onCollision(enemyShip);
+								if (piercingbullet != null && piercingBullet.getPiercingCount() <= 0) {
+									recyclable.add(piercingBullet);
+								} else {
+									// 일반 총알인 경우
+									this.enemyShipFormation.destroy(enemyShip);
+									recyclable.add(bullet);
+									bullet.onCollision(enemyShip);
+								}
+								this.scoreManager.addScore(enemyShip.getPointValue());
+								this.shipsDestroyed++;
+							}
+
 
             this.scoreManager.addScore(feverScore); //clove
             this.score += CntAndPnt[1];
@@ -640,13 +657,18 @@ public class GameScreen extends Screen {
 							}
 						}
 
-						bullet.onCollision(enemyShip); // Handle bullet collision with enemy ship
+//						try {
+//							bullet.onCollision(enemyShip); // Handle bullet collision with enemy ship
+//						} catch (Exception e){
+//							e.printStackTrace();
+//							this.logger.warning("Error during bullet collision: " + e.getMessage());
+//						}
 
 						// Check PiercingBullet piercing count and add to recyclable if necessary
-						if (bullet.getPiercingCount() <= 0) {
+						if (piercingbullet != null && piercingbullet.getPiercingCount() <= 0) {
 							//Ctrl-S : set true of CheckCount if the bullet is planned to recycle.
 							bullet.setCheckCount(true);
-							recyclable.add(bullet);
+							recyclable.add( bullet);
 						}
 					}
 					// Added by team Enemy.
@@ -685,10 +707,10 @@ public class GameScreen extends Screen {
 					bullet.onCollision(this.enemyShipSpecial); // Handle bullet collision with special enemy
 
 					// Check PiercingBullet piercing count for special enemy and add to recyclable if necessary
-					if (bullet.getPiercingCount() <= 0) {
+					if (piercingbullet != null &&  piercingbullet.getPiercingCount() <= 0) {
 						//Ctrl-S : set true of CheckCount if the bullet is planned to recycle.
 						bullet.setCheckCount(true);
-						recyclable.add(bullet);
+						recyclable.add( bullet);
 					}
 
 					//// Drop item to 100%
@@ -698,7 +720,7 @@ public class GameScreen extends Screen {
 				for (Obstacle obstacle : this.obstacles) {
 					if (!obstacle.isDestroyed() && checkCollision(bullet, obstacle)) {
 						obstacle.destroy();  // Destroy obstacle
-						recyclable.add(bullet);  // Remove bullet
+						recyclable.add( bullet);  // Remove bullet
 
 						// Sound Operator
 						sm = SoundManager.getInstance();
@@ -727,7 +749,6 @@ public class GameScreen extends Screen {
 		}
 
 		this.bullets.removeAll(recyclable);
-		PiercingBulletPool.recycle(recyclable);
 
 		//Check item and ship collision
 		for(Item item : itemManager.items){
