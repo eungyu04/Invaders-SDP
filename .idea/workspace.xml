@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c2d1df9e-7633-4932-824c-2c1f0ea58909" name="변경" comment="style: Simple comments and code modifications">
-      <change afterPath="$PROJECT_DIR$/res/backgrounds/background_level_8.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/engine/Core.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/Core.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/level_design/Background.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/level_design/Background.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/screen/GameScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/screen/GameScreen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/screen/ScoreScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/screen/ScoreScreen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/twoplayermode/TwoPlayerMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/twoplayermode/TwoPlayerMode.java" afterDir="false" />
-    </list>
+    <list default="true" id="c2d1df9e-7633-4932-824c-2c1f0ea58909" name="변경" comment="style: Simple comments and code modifications" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -36,19 +28,15 @@
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
     &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;KIM-JEONGMIN0630&quot;
+    &quot;assignee&quot;: &quot;ise-e&quot;
   }
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/eungyu04/Invaders-SDP.git&quot;,
-    &quot;accountId&quot;: &quot;0f40ab73-8c98-4174-9fa1-04052a807363&quot;
+    &quot;url&quot;: &quot;https://github.com/eungyu04/Invaders-SDP&quot;,
+    &quot;accountId&quot;: &quot;ae5db208-9852-40cb-be41-4e5ba8a246f4&quot;
   }
 }</component>
-  <component name="JiraServerManager">
-    <selected>-1</selected>
-    <servers />
-  </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
     &quot;isMigrated&quot;: true
@@ -66,33 +54,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Core.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "feat/Storymode__stage",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/kimjeongmin/Documents/Invaders-SDP/res/backgrounds",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "모듈",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.28390804",
-    "settings.editor.selected.configurable": "tasks",
-    "vue.rearranger.settings.migration": "true",
-    "애플리케이션.Core.executor": "Run"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Core.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/소개실/Invaders-SDP-master&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;모듈&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.28390804&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
+    &quot;애플리케이션.Core.executor&quot;: &quot;Run&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="clove" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/res/backgrounds" />
     </key>
   </component>
   <component name="RunManager">
@@ -113,18 +97,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Core" />
-        <item itemvalue="Application.Core" />
+        <item itemvalue="애플리케이션.Core" />
       </list>
     </recent_temporary>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.23339.11" />
-        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.23339.11" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -165,9 +140,6 @@
       <workItem from="1729630100918" duration="5546000" />
       <workItem from="1730094406637" duration="2423000" />
       <workItem from="1730098136823" duration="630000" />
-      <workItem from="1730991391903" duration="1982000" />
-      <workItem from="1730993379602" duration="6134000" />
-      <workItem from="1731057873608" duration="20884000" />
     </task>
     <servers />
   </component>
