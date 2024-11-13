@@ -23,6 +23,7 @@ public class Achievement {
     private int requiredTrials;
     private boolean isCompleted;
     private AchievementType achievementType;
+    private int gem = 0;
 
     public Achievement(String achievementName, String achievementDescription, int requiredValue, AchievementType type) {
         this.achievementName = achievementName;
@@ -55,6 +56,10 @@ public class Achievement {
             default:
                 throw new IllegalArgumentException("Unsupported AchievementType: " + type);
         }
+    }
+    public Achievement(String achievementName, String achievementDescription, int requiredValue, AchievementType type, int gem) {
+        this(achievementName, achievementDescription, requiredValue, type);
+        this.gem = gem;
     }
 
     public void logCompleteAchievement() {
@@ -167,6 +172,7 @@ public class Achievement {
         }
     }
 
+    public int getGem() { return gem; }
 
     @Override
     public boolean equals(Object o) {

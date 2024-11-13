@@ -30,7 +30,7 @@ public class TitleScreen extends Screen {
 	private int gem;
 
 	// select One player or Two player
-	private int pnumSelectionCode; //produced by Starter
+	private int modeSelectionCode; //produced by Starter
 	private int merchantState;
 	//inventory
 	private ShipStatus shipStatus;
@@ -51,7 +51,7 @@ public class TitleScreen extends Screen {
 
 		// Defaults to play.
 		this.merchantState = 0;
-		this.pnumSelectionCode = 0;
+		this.modeSelectionCode = 0;
 		this.returnCode = 2;
 		this.selectionCooldown = Core.getCooldown(SELECTION_TIME);
 		this.selectionCooldown.reset();
@@ -81,11 +81,6 @@ public class TitleScreen extends Screen {
 	public final int run() {
 		super.run();
 
-		// produced by Starter
-		if (this.pnumSelectionCode == 1 && this.returnCode == 2){
-			return 4; //return 4 instead of 2
-		}
-
 		return this.returnCode;
 	}
 
@@ -96,6 +91,7 @@ public class TitleScreen extends Screen {
 		super.update();
 
 		draw();
+		//System.out.println("return : " + returnCode + ", game : " + modeSelectionCode);
 		if (this.selectionCooldown.checkFinished()
 				&& this.inputDelay.checkFinished()) {
 			if (inputManager.isKeyDown(KeyEvent.VK_UP)
@@ -114,7 +110,7 @@ public class TitleScreen extends Screen {
 			}
 
 			// produced by Starter
-			if (returnCode == 2) {
+			if (returnCode == 2 || returnCode == 3) {
 				if (inputManager.isKeyDown(KeyEvent.VK_LEFT)
 						|| inputManager.isKeyDown(KeyEvent.VK_A)) {
 					moveMenuLeft();
@@ -131,34 +127,12 @@ public class TitleScreen extends Screen {
 				}
 			}
 
-			if(returnCode == 4) {
-				if (inputManager.isKeyDown(KeyEvent.VK_LEFT)
-						|| inputManager.isKeyDown(KeyEvent.VK_A)) {
-					nextMerchantState();
-					this.selectionCooldown.reset();
-					// Sound Operator
-					SoundManager.getInstance().playES("menuSelect_es");
-				}
-				if (inputManager.isKeyDown(KeyEvent.VK_RIGHT)
-						|| inputManager.isKeyDown(KeyEvent.VK_D)) {
-					previousMerchantState();
-					this.selectionCooldown.reset();
-					// Sound Operator
-					SoundManager.getInstance().playES("menuSelect_es");
-				}
-
-			}
-
 			if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
-				if(returnCode == 4) {
-					testStatUpgrade();
-                    this.selectionCooldown.reset();
-				}
-				else this.isRunning = false;
+				this.isRunning = false;
 		}
 	}
 	// Use later if needed. -Starter
-	// public int getPnumSelectionCode() {return this.pnumSelectionCode;}
+	// public int getmodeSelectionCode() {return this.modeSelectionCode;}
 
 	/**
 	 * runs when player do buying things
@@ -168,7 +142,7 @@ public class TitleScreen extends Screen {
 //		if(this.currentCoin > 0){
 //			this.currentCoin -= 50;
 //		}
-
+//
 //		try{
 //			Core.getFileManager().saveCurrentCoin();
 //		} catch (IOException e) {
@@ -176,186 +150,177 @@ public class TitleScreen extends Screen {
 //		}
 //	}
 
+//	private void testStatUpgrade() {
+//		// CtrlS: testStatUpgrade should only be called after coins are spent
+//		if (this.merchantState == 1) { // bulletCount
+//			try {
+//				if (Core.getUpgradeManager().LevelCalculation(Core.getUpgradeManager().getBulletCount()) > 3){
+//					Core.getLogger().info("The level is already Max!");
+//				}
+//
+//				else if (!(Core.getUpgradeManager().getBulletCount() % 2 == 0)
+//						&& Core.getCurrencyManager().spendCoin(Core.getUpgradeManager().Price(1))) {
+//
+//					Core.getUpgradeManager().addBulletNum();
+//					Core.getLogger().info("Bullet Number: " + Core.getUpgradeManager().getBulletNum());
+//
+//					Core.getUpgradeManager().addBulletCount();
+//
+//				} else if ((Core.getUpgradeManager().getBulletCount() % 2 == 0)
+//						&& Core.getCurrencyManager().spendGem((Core.getUpgradeManager().getBulletCount() + 1) * 10)) {
+//
+//					Core.getUpgradeManager().addBulletCount();
+//					Core.getLogger().info("Upgrade has been unlocked");
+//
+//				} else {
+//					Core.getLogger().info("you don't have enough");
+//				}
+//			} catch (IOException e) {
+//				throw new RuntimeException(e);
+//			}
+//
+//		} else if (this.merchantState == 2) { // shipSpeed
+//			try {
+//				if (Core.getUpgradeManager().LevelCalculation(Core.getUpgradeManager().getSpeedCount()) > 10){
+//					Core.getLogger().info("The level is already Max!");
+//				}
+//
+//				else if (!(Core.getUpgradeManager().getSpeedCount() % 4 == 0)
+//						&& Core.getCurrencyManager().spendCoin(Core.getUpgradeManager().Price(2))) {
+//
+//					Core.getUpgradeManager().addMovementSpeed();
+//					Core.getLogger().info("Movement Speed: " + Core.getUpgradeManager().getMovementSpeed());
+//
+//					Core.getUpgradeManager().addSpeedCount();
+//
+//				} else if ((Core.getUpgradeManager().getSpeedCount() % 4 == 0)
+//						&& Core.getCurrencyManager().spendGem(Core.getUpgradeManager().getSpeedCount() / 4 * 5)) {
+//
+//					Core.getUpgradeManager().addSpeedCount();
+//					Core.getLogger().info("Upgrade has been unlocked");
+//
+//				} else {
+//					Core.getLogger().info("you don't have enough");
+//				}
+//			} catch (IOException e) {
+//				throw new RuntimeException(e);
+//			}
+//
+//		} else if (this.merchantState == 3) { // attackSpeed
+//			try {
+//				if (Core.getUpgradeManager().LevelCalculation(Core.getUpgradeManager().getAttackCount()) > 10){
+//					Core.getLogger().info("The level is already Max!");
+//				}
+//
+//				else if (!(Core.getUpgradeManager().getAttackCount() % 4 == 0)
+//						&& Core.getCurrencyManager().spendCoin(Core.getUpgradeManager().Price(3))) {
+//
+//					Core.getUpgradeManager().addAttackSpeed();
+//					Core.getLogger().info("Attack Speed: " + Core.getUpgradeManager().getAttackSpeed());
+//
+//					Core.getUpgradeManager().addAttackCount();
+//
+//				} else if ((Core.getUpgradeManager().getAttackCount() % 4 == 0)
+//						&& Core.getCurrencyManager().spendGem(Core.getUpgradeManager().getAttackCount() / 4 * 5)) {
+//
+//					Core.getUpgradeManager().addAttackCount();
+//					Core.getLogger().info("Upgrade has been unlocked");
+//
+//				} else {
+//					Core.getLogger().info("you don't have enough");
+//				}
+//			} catch (IOException e) {
+//				throw new RuntimeException(e);
+//			}
+//
+//		} else if (this.merchantState == 4) { // coinGain
+//			try {
+//				if (Core.getUpgradeManager().LevelCalculation(Core.getUpgradeManager().getCoinCount()) > 10){
+//					Core.getLogger().info("The level is already Max!");
+//				}
+//
+//				else if (!(Core.getUpgradeManager().getCoinCount() % 4 == 0)
+//						&& Core.getCurrencyManager().spendCoin(Core.getUpgradeManager().Price(4))) {
+//
+//					Core.getUpgradeManager().addCoinAcquisitionMultiplier();
+//					Core.getLogger().info("CoinBonus: " + Core.getUpgradeManager().getCoinAcquisitionMultiplier());
+//
+//					Core.getUpgradeManager().addCoinCount();
+//
+//				} else if ((Core.getUpgradeManager().getCoinCount() % 4 == 0)
+//						&& Core.getCurrencyManager().spendGem(Core.getUpgradeManager().getCoinCount() / 4 * 5)) {
+//
+//					Core.getUpgradeManager().addCoinCount();
+//					Core.getLogger().info("Upgrade has been unlocked");
+//
+//				} else {
+//					Core.getLogger().info("you don't have enough");
+//				}
+//			} catch (IOException e) {
+//				throw new RuntimeException(e);
+//			}
+//
+//		}
+//		try{
+//			this.coin = Core.getCurrencyManager().getCoin();
+//			this.gem = Core.getCurrencyManager().getGem();
+//
+//		} catch (IOException e){
+//			throw new RuntimeException(e);
+//		}
+//	}
+
 	/**
 	 * Shifts the focus to the next menu item.
 	 */
-	
-	private void testStatUpgrade() {
-		// CtrlS: testStatUpgrade should only be called after coins are spent
-		if (this.merchantState == 1) { // bulletCount
-			try {
-				if (Core.getUpgradeManager().LevelCalculation(Core.getUpgradeManager().getBulletCount()) > 3){
-					Core.getLogger().info("The level is already Max!");
-				}
-
-				else if (!(Core.getUpgradeManager().getBulletCount() % 2 == 0)
-						&& Core.getCurrencyManager().spendCoin(Core.getUpgradeManager().Price(1))) {
-
-					Core.getUpgradeManager().addBulletNum();
-					Core.getLogger().info("Bullet Number: " + Core.getUpgradeManager().getBulletNum());
-
-					Core.getUpgradeManager().addBulletCount();
-
-				} else if ((Core.getUpgradeManager().getBulletCount() % 2 == 0)
-						&& Core.getCurrencyManager().spendGem(Core.getUpgradeManager().getBulletCount() + 1)) {
-
-					Core.getUpgradeManager().addBulletCount();
-					Core.getLogger().info("Upgrade has been unlocked");
-
-				} else {
-					Core.getLogger().info("you don't have enough");
-				}
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-
-		} else if (this.merchantState == 2) { // shipSpeed
-			try {
-				if (Core.getUpgradeManager().LevelCalculation(Core.getUpgradeManager().getSpeedCount()) > 10){
-					Core.getLogger().info("The level is already Max!");
-				}
-
-				else if (!(Core.getUpgradeManager().getSpeedCount() % 4 == 0)
-						&& Core.getCurrencyManager().spendCoin(Core.getUpgradeManager().Price(2))) {
-
-					Core.getUpgradeManager().addMovementSpeed();
-					Core.getLogger().info("Movement Speed: " + Core.getUpgradeManager().getMovementSpeed());
-
-					Core.getUpgradeManager().addSpeedCount();
-
-				} else if ((Core.getUpgradeManager().getSpeedCount() % 4 == 0)
-						&& Core.getCurrencyManager().spendGem(Core.getUpgradeManager().getSpeedCount() / 4)) {
-
-					Core.getUpgradeManager().addSpeedCount();
-					Core.getLogger().info("Upgrade has been unlocked");
-
-				} else {
-					Core.getLogger().info("you don't have enough");
-				}
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-
-		} else if (this.merchantState == 3) { // attackSpeed
-			try {
-				if (Core.getUpgradeManager().LevelCalculation(Core.getUpgradeManager().getAttackCount()) > 10){
-					Core.getLogger().info("The level is already Max!");
-				}
-
-				else if (!(Core.getUpgradeManager().getAttackCount() % 4 == 0)
-						&& Core.getCurrencyManager().spendCoin(Core.getUpgradeManager().Price(3))) {
-
-					Core.getUpgradeManager().addAttackSpeed();
-					Core.getLogger().info("Attack Speed: " + Core.getUpgradeManager().getAttackSpeed());
-
-					Core.getUpgradeManager().addAttackCount();
-
-				} else if ((Core.getUpgradeManager().getAttackCount() % 4 == 0)
-						&& Core.getCurrencyManager().spendGem(Core.getUpgradeManager().getAttackCount() / 4)) {
-
-					Core.getUpgradeManager().addAttackCount();
-					Core.getLogger().info("Upgrade has been unlocked");
-
-				} else {
-					Core.getLogger().info("you don't have enough");
-				}
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-
-		} else if (this.merchantState == 4) { // coinGain
-			try {
-				if (Core.getUpgradeManager().LevelCalculation(Core.getUpgradeManager().getCoinCount()) > 10){
-					Core.getLogger().info("The level is already Max!");
-				}
-
-				else if (!(Core.getUpgradeManager().getCoinCount() % 4 == 0)
-						&& Core.getCurrencyManager().spendCoin(Core.getUpgradeManager().Price(4))) {
-
-					Core.getUpgradeManager().addCoinAcquisitionMultiplier();
-					Core.getLogger().info("CoinBonus: " + Core.getUpgradeManager().getCoinAcquisitionMultiplier());
-
-					Core.getUpgradeManager().addCoinCount();
-
-				} else if ((Core.getUpgradeManager().getCoinCount() % 4 == 0)
-						&& Core.getCurrencyManager().spendGem(Core.getUpgradeManager().getCoinCount() / 4)) {
-
-					Core.getUpgradeManager().addCoinCount();
-					Core.getLogger().info("Upgrade has been unlocked");
-
-				} else {
-					Core.getLogger().info("you don't have enough");
-				}
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-
-		}
-		try{
-			this.coin = Core.getCurrencyManager().getCoin();
-			this.gem = Core.getCurrencyManager().getGem();
-
-		} catch (IOException e){
-			throw new RuntimeException(e);
-		}
-	}
 	private void nextMenuItem() {
-		if (this.returnCode == 5) // Team Clover changed values because recordMenu added
-			this.returnCode = 0; // from '2 player mode' to 'Exit' (Starter)
+		if (this.returnCode == 6)
+			this.returnCode = 0; // from 'recent records' to 'Exit'
 		else if (this.returnCode == 0)
-			this.returnCode = 2; // from 'Exit' to 'Play' (Starter)
+//			if (modeSelectionCode == 0)
+//				this.returnCode = 2; // Exit -> normal
+//			else
+//				this.returnCode = 3; // Exit -> infinity
+			this.returnCode = modeSelectionCode + 2;
+		else if (this.returnCode == 2)
+			this.returnCode = 4; // normal & infinity -> story
 		else
-			this.returnCode++; // go next (Starter)
+			this.returnCode++; // go next
 	}
 
 	/**
 	 * Shifts the focus to the previous menu item.
 	 */
 	private void previousMenuItem() {
-		this.merchantState =0;
 		if (this.returnCode == 0)
-			this.returnCode = 5; // from 'Exit' to '2 player mode' (Starter) // Team Clover changed values because recordMenu added
-		else if (this.returnCode == 2)
-			this.returnCode = 0; // from 'Play' to 'Exit' (Starter)
+			this.returnCode = 6; // from 'Exit' to 'recent records'
+		else if (this.returnCode == 2 || this.returnCode == 3)
+			this.returnCode = 0; // from 'Play' to 'Exit'
+
+		else if (this.returnCode == 4)
+			this.returnCode = modeSelectionCode + 2; // story -> normal & infinity
 		else
-			this.returnCode--; // go previous (Starter)
+			this.returnCode--; // go previous
 	}
 
 	// left and right move -- produced by Starter
 	private void moveMenuLeft() {
-		if (this.returnCode == 2 ) {
-			if (this.pnumSelectionCode == 0)
-				this.pnumSelectionCode++;
-			else
-				this.pnumSelectionCode--;
+		if (this.modeSelectionCode == 0) {
+			this.modeSelectionCode++;
+			this.returnCode++;
+		} else {
+			this.modeSelectionCode--;
+			this.returnCode--;
 		}
-
 	}
 
 	private void moveMenuRight() {
-		if (this.returnCode == 2) {
-			if (this.pnumSelectionCode == 0)
-				this.pnumSelectionCode++;
-			else
-				this.pnumSelectionCode--;
-		}
-	}
-
-	private void nextMerchantState() {
-		if (this.returnCode == 4) {
-			if (this.merchantState == 4)
-				this.merchantState = 0;
-			else
-				this.merchantState++;
-		}
-	}
-
-	private void previousMerchantState() {
-		if (this.returnCode == 4) {
-			if (this.merchantState == 0)
-				this.merchantState = 4;
-			else
-				this.merchantState--;
+		if (this.modeSelectionCode == 0) {
+			this.modeSelectionCode++;
+			this.returnCode++;
+		} else {
+			this.modeSelectionCode--;
+			this.returnCode--;
 		}
 	}
 
@@ -366,7 +331,7 @@ public class TitleScreen extends Screen {
 		drawManager.initDrawing(this);
 
 		drawManager.drawTitle(this);
-		drawManager.drawMenu(this, this.returnCode, this.pnumSelectionCode, this.merchantState);
+		drawManager.drawMenu(this, this.returnCode, this.modeSelectionCode);
 		// CtrlS
 		drawManager.drawCurrentCoin(this, coin);
 		drawManager.drawCurrentGem(this, gem);

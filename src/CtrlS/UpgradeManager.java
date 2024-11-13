@@ -231,7 +231,7 @@ public final class UpgradeManager {
                         return shipStatus.getBullet_price() * getBulletCount();
                     }
                     else {
-                        return getBulletCount() + 1;
+                        return (getBulletCount() + 1) * 10;
                     }
 
                 case 2:  // speed price
@@ -239,7 +239,7 @@ public final class UpgradeManager {
                         return PriceCalculation(shipStatus.getSpeed_price(), getSpeedCount());
                     }
                     else {
-                        return getSpeedCount() / 4 ;
+                        return getSpeedCount() / 4 * 5;
                     }
 
                 case 3:  // attack price
@@ -247,7 +247,7 @@ public final class UpgradeManager {
                         return PriceCalculation(shipStatus.getAttack_price(), getAttackCount());
                     }
                     else {
-                        return getAttackCount() / 4 ;
+                        return getAttackCount() / 4 * 5;
                     }
 
                 case 4:  // CoinBonus price
@@ -255,7 +255,7 @@ public final class UpgradeManager {
                         return PriceCalculation(shipStatus.getCoinBonus_price(), getCoinCount());
                     }
                     else {
-                        return getCoinCount() / 4 ;
+                        return getCoinCount() / 4 * 5;
                     }
             }
         } catch (IOException e){

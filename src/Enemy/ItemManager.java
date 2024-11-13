@@ -88,6 +88,10 @@ public class ItemManager {
         }
     }
 
+    public void setEnemyShips(Set<EnemyShip> enemyShips) {
+        this.enemyShips = enemyShips;
+    }
+
     // team Inventory
     public void OperateItem(Item item) {
         if(item!= null) {
@@ -139,7 +143,6 @@ public class ItemManager {
         }
     }
 
-
     public void addItemRecycle(Item item) {
         recyclableItems.add(item);
         String itemLog = item.getSpriteType().toString().toLowerCase().substring(4);
@@ -157,9 +160,5 @@ public class ItemManager {
     public void removeAllReItems(){
         this.items.removeAll(recyclableItems);
         ItemPool.recycle(recyclableItems);
-    }
-
-    public void setEnemyShips(Set<EnemyShip> enemyShips) {
-        this.enemyShips = enemyShips;
     }
 }

@@ -67,13 +67,41 @@ public final class Core {
 	/** Difficulty settings for level 7. */
 	private static final GameSettings SETTINGS_LEVEL_7 =
 			new GameSettings(8, 7, 2, 500, 1);
-	
+
+	// Story 모드
+	/** Difficulty settings for Story mode level 1. */
+	private static final GameSettings SETTINGS_LEVEL_S1 =
+			new GameSettings(5, 4, 60, 2000, 1);
+	/** Difficulty settings for Story mode level 2. */
+	private static final GameSettings SETTINGS_LEVEL_S2 =
+			new GameSettings(5, 5, 50, 2500, 1);
+	/** Difficulty settings for Story mode level 3. */
+	private static final GameSettings SETTINGS_LEVEL_S3 =
+			new GameSettings(1, 1, -8, 500, 1);
+	/** Difficulty settings for Story mode level 4. */
+	private static final GameSettings SETTINGS_LEVEL_S4 =
+			new GameSettings(6, 6, 30, 1500, 1);
+	/** Difficulty settings for Story mode level 5. */
+	private static final GameSettings SETTINGS_LEVEL_S5 =
+			new GameSettings(7, 6, 20, 1000, 1);
+	/** Difficulty settings for Story mode level 6. */
+	private static final GameSettings SETTINGS_LEVEL_S6 =
+			new GameSettings(7, 7, 10, 1000, 1);
+	/** Difficulty settings for Story mode level 7. */
+	private static final GameSettings SETTINGS_LEVEL_S7 =
+			new GameSettings(8, 7, 2, 500, 1);
+	/** Difficulty settings for Story mode level 8. */
+	private static final GameSettings SETTINGS_LEVEL_S8 =
+			new GameSettings(8, 8, 5, 2000, 1);
+
+
 	/** Frame to draw the screen on. */
 	private static Frame frame;
 	/** Screen currently shown. */
 	private static Screen currentScreen;
 	/** Difficulty settings list. */
 	private static List<GameSettings> gameSettings;
+	private static List<GameSettings> storyModeSettings;
 	/** Application logger. */
 	private static final Logger LOGGER = Logger.getLogger(Core.class
 			.getSimpleName());
@@ -142,6 +170,17 @@ public final class Core {
 		gameSettings.add(SETTINGS_LEVEL_5);
 		gameSettings.add(SETTINGS_LEVEL_6);
 		gameSettings.add(SETTINGS_LEVEL_7);
+
+		// Story 모드 전용 gameSettings 리스트
+		storyModeSettings = new ArrayList<>();
+		storyModeSettings.add(SETTINGS_LEVEL_S1);
+		storyModeSettings.add(SETTINGS_LEVEL_S2);
+		storyModeSettings.add(SETTINGS_LEVEL_S3);
+		storyModeSettings.add(SETTINGS_LEVEL_S4);
+		storyModeSettings.add(SETTINGS_LEVEL_S5);
+		storyModeSettings.add(SETTINGS_LEVEL_S6);
+		storyModeSettings.add(SETTINGS_LEVEL_S7);
+		storyModeSettings.add(SETTINGS_LEVEL_S8);
 		
 		GameState gameState;
 		RoundState roundState;
@@ -178,7 +217,7 @@ public final class Core {
 					GameState prevState = gameState;
 					currentScreen = new GameScreen(gameState,
 							gameSettings.get(gameState.getLevel() - 1),
-							bonusLife, width, height, FPS);
+							bonusLife, width, height, FPS,2);
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 							+ " game screen at " + FPS + " fps.");
 					frame.setScreen(currentScreen);
@@ -250,59 +289,45 @@ public final class Core {
 				returnCode = frame.setScreen(currentScreen);
 				LOGGER.info("Closing score screen.");
 				break;
+
 			case 3:
-				// High scores.
-				currentScreen = new HighScoreScreen(width, height, FPS);
-				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
-						+ " high score screen at " + FPS + " fps.");
-				returnCode = frame.setScreen(currentScreen);
-				LOGGER.info("Closing high score screen.");
+				// Infinity modes.
+
 				break;
+
 			case 4:
-				LOGGER.info("Starting inGameBGM");
-				// Sound Operator
-				sm.playES("start_button_ES");
-				sm.playBGM("inGame_bgm");
+				// Story modes.
+				LOGGER.info("Starting Story mode inGameBGM");
+				// Sound Operator - 배경음악 시작
+				//+음악추가
+				long roundStartTime = System.currentTimeMillis();
+
 
 				do {
-					if (gameSettings == null || gameSettings.isEmpty()) {
-						gameSettings = new ArrayList<>();
-						gameSettings.add(SETTINGS_LEVEL_1);
-						gameSettings.add(SETTINGS_LEVEL_2);
-						gameSettings.add(SETTINGS_LEVEL_3);
-						gameSettings.add(SETTINGS_LEVEL_4);
-						gameSettings.add(SETTINGS_LEVEL_5);
-						gameSettings.add(SETTINGS_LEVEL_6);
-						gameSettings.add(SETTINGS_LEVEL_7);
-					}
-
-					GameSettings currentGameSettings = gameSettings.get(gameState.getLevel() - 1);
-
-					int fps = FPS;
-					boolean bonusLife = gameState.getLevel() % EXTRA_LIFE_FRECUENCY == 0 &&
-							(gameState.getLivesRemaining() < MAX_LIVES || gameState.getLivesTwoRemaining() < MAX_LIVES);
+					boolean bonusLife = gameState.getLevel()
+							% EXTRA_LIFE_FRECUENCY == 0
+							&& gameState.getLivesRemaining() < MAX_LIVES;
 
 					GameState prevState = gameState;
+					// GameScreen을 사용하여 단일 플레이어 모드 실행
+					currentScreen = new GameScreen(gameState,
+							storyModeSettings.get(gameState.getLevel() - 1),
+							bonusLife, width, height, FPS, 4);
+					((GameScreen) currentScreen).startRoundTimer();
 
-					// TwoPlayerMode의 생성자를 호출할 때 필요한 매개변수를 모두 전달
-					currentScreen = new TwoPlayerMode(gameState, currentGameSettings, bonusLife, width, height, fps);
-
-					Statistics statistics = new Statistics(); //Clove
-
-
-					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
-							+ " game screen at " + FPS + " fps.");
+					LOGGER.info("Starting story mode stage " + gameState.getLevel() + " with " + WIDTH + "x" + HEIGHT + " at " + FPS + " fps.");
 					frame.setScreen(currentScreen);
 					LOGGER.info("Closing game screen.");
 
 
-					achievementManager.updateAchievements(currentScreen); // TEAM CLOVER : Achievement
+					achievementManager.updateAchievements(currentScreen);
+					Statistics statistics = new Statistics();
 
-					gameState = ((TwoPlayerMode) currentScreen).getGameState();
+					gameState = ((GameScreen) currentScreen).getGameState();
 
 					roundState = new RoundState(prevState, gameState);
 
-					// Add playtime parameter - Soomin Lee / TeamHUD
+					// Add playtime parameter
 					gameState = new GameState(gameState.getLevel() + 1,
 							gameState.getScore(),
 							gameState.getLivesRemaining(),
@@ -318,47 +343,154 @@ public final class Core {
 					LOGGER.info("Round Hit Rate: " + roundState.getRoundHitRate());
 					LOGGER.info("Round Time: " + roundState.getRoundTime());
 
-					try { //Clove
+					try {
 						statistics.addTotalPlayTime(roundState.getRoundTime());
 						LOGGER.info("RoundTime Saving");
-					} catch (IOException e){
+					} catch (IOException e) {
 						LOGGER.info("Failed to Save RoundTime");
 					}
 
 					// Show receiptScreen
 					// If it is not the last round and the game is not over
-					// Ctrl-S
-					if (gameState.getLevel() <= 7 && gameState.getLivesRemaining() > 0) {
+					if (gameState.getLevel() <= 8 && gameState.getLivesRemaining() > 0) {
 						LOGGER.info("loading receiptScreen");
 						currentScreen = new ReceiptScreen(width, height, FPS, roundState, gameState);
 
-						LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
-								+ " receipt screen at " + FPS + " fps.");
+						LOGGER.info("Starting " + WIDTH + "x" + HEIGHT + " receipt screen at " + FPS + " fps.");
 						frame.setScreen(currentScreen);
 						LOGGER.info("Closing receiptScreen.");
 					}
-
-					if (achievementManager != null) { // TEAM CLOVER : Added code
+					if (achievementManager != null) {
 						achievementManager.updateAchievements(currentScreen);
 					}
 
-				} while ((gameState.getLivesRemaining() > 0 || gameState.getLivesTwoRemaining() > 0) && gameState.getLevel() <= NUM_LEVELS);
+				} while (gameState.getLivesRemaining() > 0
+						&& gameState.getLevel() <= 8);
 
-				LOGGER.info("Stop InGameBGM");
-				// Sound Operator
-				sm.stopAllBGM();
 
-				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
-						+ " score screen at " + FPS + " fps, with a score of "
-						+ gameState.getScore() + ", "
-						+ gameState.getLivesRemaining() + " lives remaining, "
-						+ gameState.getBulletsShot() + " bullets shot and "
-						+ gameState.getShipsDestroyed() + " ships destroyed.");
-				currentScreen = new ScoreScreen(width, height, FPS, gameState);
-				returnCode = frame.setScreen(currentScreen);
-				LOGGER.info("Closing score screen.");
+					LOGGER.info("Stop InGameBGM");
+					// Sound Operator - 배경음악 종료
+					//+음악추가
+
+					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT + " score screen at " + FPS + " fps, with a score of "
+							+ gameState.getScore() + ", "
+							+ gameState.getLivesRemaining() + " lives remaining, "
+							+ gameState.getBulletsShot() + " bullets shot and "
+							+ gameState.getShipsDestroyed() + " ships destroyed.");
+					currentScreen = new ScoreScreen(width, height, FPS, gameState);
+					returnCode = frame.setScreen(currentScreen);
+					LOGGER.info("Closing score screen.");
 				break;
-			case 5: // 7 -> 5 replaced by Starter
+
+			case 5:
+				// High scores.
+				currentScreen = new HighScoreScreen(width, height, FPS);
+				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+						+ " high score screen at " + FPS + " fps.");
+				returnCode = frame.setScreen(currentScreen);
+				LOGGER.info("Closing high score screen.");
+				break;
+//			case 4:
+//				LOGGER.info("Starting inGameBGM");
+//				// Sound Operator
+//				sm.playES("start_button_ES");
+//				sm.playBGM("inGame_bgm");
+//
+//				do {
+//					if (gameSettings == null || gameSettings.isEmpty()) {
+//						gameSettings = new ArrayList<>();
+//						gameSettings.add(SETTINGS_LEVEL_1);
+//						gameSettings.add(SETTINGS_LEVEL_2);
+//						gameSettings.add(SETTINGS_LEVEL_3);
+//						gameSettings.add(SETTINGS_LEVEL_4);
+//						gameSettings.add(SETTINGS_LEVEL_5);
+//						gameSettings.add(SETTINGS_LEVEL_6);
+//						gameSettings.add(SETTINGS_LEVEL_7);
+//					}
+//
+//					GameSettings currentGameSettings = gameSettings.get(gameState.getLevel() - 1);
+//
+//					int fps = FPS;
+//					boolean bonusLife = gameState.getLevel() % EXTRA_LIFE_FRECUENCY == 0 &&
+//							(gameState.getLivesRemaining() < MAX_LIVES || gameState.getLivesTwoRemaining() < MAX_LIVES);
+//
+//					GameState prevState = gameState;
+//
+//					// TwoPlayerMode의 생성자를 호출할 때 필요한 매개변수를 모두 전달
+//					currentScreen = new TwoPlayerMode(gameState, currentGameSettings, bonusLife, width, height, fps);
+//
+//					Statistics statistics = new Statistics(); //Clove
+//
+//
+//					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+//							+ " game screen at " + FPS + " fps.");
+//					frame.setScreen(currentScreen);
+//					LOGGER.info("Closing game screen.");
+//
+//
+//					achievementManager.updateAchievements(currentScreen); // TEAM CLOVER : Achievement
+//
+//					gameState = ((TwoPlayerMode) currentScreen).getGameState();
+//
+//					roundState = new RoundState(prevState, gameState);
+//
+//					// Add playtime parameter - Soomin Lee / TeamHUD
+//					gameState = new GameState(gameState.getLevel() + 1,
+//							gameState.getScore(),
+//							gameState.getLivesRemaining(),
+//							gameState.getLivesTwoRemaining(),
+//							gameState.getBulletsShot(),
+//							gameState.getShipsDestroyed(),
+//							gameState.getTime(),
+//							gameState.getCoin() + roundState.getRoundCoin(),
+//							gameState.getGem(),
+//							gameState.getHitCount(),
+//							gameState.getCoinItemsCollected());
+//					LOGGER.info("Round Coin: " + roundState.getRoundCoin());
+//					LOGGER.info("Round Hit Rate: " + roundState.getRoundHitRate());
+//					LOGGER.info("Round Time: " + roundState.getRoundTime());
+//
+//					try { //Clove
+//						statistics.addTotalPlayTime(roundState.getRoundTime());
+//						LOGGER.info("RoundTime Saving");
+//					} catch (IOException e){
+//						LOGGER.info("Failed to Save RoundTime");
+//					}
+//
+//					// Show receiptScreen
+//					// If it is not the last round and the game is not over
+//					// Ctrl-S
+//					if (gameState.getLevel() <= 7 && gameState.getLivesRemaining() > 0) {
+//						LOGGER.info("loading receiptScreen");
+//						currentScreen = new ReceiptScreen(width, height, FPS, roundState, gameState);
+//
+//						LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+//								+ " receipt screen at " + FPS + " fps.");
+//						frame.setScreen(currentScreen);
+//						LOGGER.info("Closing receiptScreen.");
+//					}
+//
+//					if (achievementManager != null) { // TEAM CLOVER : Added code
+//						achievementManager.updateAchievements(currentScreen);
+//					}
+//
+//				} while ((gameState.getLivesRemaining() > 0 || gameState.getLivesTwoRemaining() > 0) && gameState.getLevel() <= NUM_LEVELS);
+//
+//				LOGGER.info("Stop InGameBGM");
+//				// Sound Operator
+//				sm.stopAllBGM();
+//
+//				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+//						+ " score screen at " + FPS + " fps, with a score of "
+//						+ gameState.getScore() + ", "
+//						+ gameState.getLivesRemaining() + " lives remaining, "
+//						+ gameState.getBulletsShot() + " bullets shot and "
+//						+ gameState.getShipsDestroyed() + " ships destroyed.");
+//				currentScreen = new ScoreScreen(width, height, FPS, gameState);
+//				returnCode = frame.setScreen(currentScreen);
+//				LOGGER.info("Closing score screen.");
+//				break;
+			case 6:
 				// Recent Records.
 				currentScreen = new RecordScreen(width, height, FPS);
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT

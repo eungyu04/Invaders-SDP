@@ -27,6 +27,7 @@ public class ScoreScreen extends Screen {
 	private static final int SELECTION_TIME = 200;
 	/** Maximum number of high scores. */
 	private static final int MAX_HIGH_SCORE_NUM = 7;
+	private static final int MAX_HIGH_SCORE_NUM_STORY = 8;
 	/** Code of first mayus character. */
 	private static final int FIRST_CHAR = 65;
 	/** Code of last mayus character. */
@@ -103,7 +104,11 @@ public class ScoreScreen extends Screen {
 		this.gameState = gameState; // Team-Ctrl-S(Currency)
 		this.level = gameState.getLevel(); //Team Clove
 		this.statistics = new Statistics(); //Team Clove
-		this.isGameClear = this.livesRemaining > 0 && this.level > 7; // CtrlS
+
+		// 모드에 따라 게임 클리어 조건을 다르게 설정
+		int maxLevel = (returnCode == 4) ? MAX_HIGH_SCORE_NUM_STORY : MAX_HIGH_SCORE_NUM;
+		this.isGameClear = this.livesRemaining > 0 && this.level > maxLevel;
+
 
 		try {
 			this.highScores = Core.getFileManager().loadHighScores();
@@ -156,7 +161,12 @@ public class ScoreScreen extends Screen {
 				saveRecentScore(); // Team Clove
 			} else if (inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
 				// Play again.
-				this.returnCode = 2;
+				System.out.println(this.isTwoPlayerMode());
+				if (this.isTwoPlayerMode()){
+					this.returnCode = 4;
+				} else {
+					this.returnCode = 2;
+				}
 				this.isRunning = false;
 				if (this.isNewRecord) {
 					saveScore();

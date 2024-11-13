@@ -50,8 +50,8 @@ public class Ship extends Entity {
 	 *            Initial position of the ship in the Y axis.
 	 */
 	//Edit by Enemy
-	public Ship(final int positionX, final int positionY) {
-		super(positionX, positionY - 50, 13 * 2, 8 * 2, Color.GREEN);
+	public Ship(final int positionX, final int positionY, final Color color) {
+		super(positionX, positionY - 50, 13 * 2, 8 * 2, color); // add by team HUD
 
 		this.spriteType = SpriteType.Ship;
 
@@ -87,6 +87,23 @@ public class Ship extends Entity {
 	} //Edit by Enemy
 
 	/**
+	 * Moves the ship speed uni ts right, or until the right screen border is
+	 * reached.
+	 */
+	public final void moveUp() {
+		this.positionY -= growth.getMoveSpeed(); //  Use PlayerGrowth for movement speed
+	} //Edit by Enemy
+
+
+	/**
+	 * Moves the ship speed units left, or until the left screen border is
+	 * reached.
+	 */
+	public final void moveDown() {
+		this.positionY += growth.getMoveSpeed(); // Use PlayerGrowth for movement speed
+	} //Edit by Enemy
+
+	/**
 	 * Shoots a bullet upwards.
 	 *
 	 * @param bullets
@@ -99,7 +116,6 @@ public class Ship extends Entity {
 	public final boolean shoot(final Set<Bullet> bullets) {
 
 		if (this.shootingCooldown.checkFinished()) {
-
 			this.shootingCooldown.reset(); // Reset cooldown after shooting
 
 			// Sound Operator, Apply a Shooting sound
@@ -197,15 +213,16 @@ public class Ship extends Entity {
 	public final double getSpeed() {
 		return growth.getMoveSpeed();
 	}
-
+	
 	/**
-	 * Calculates and returns the attack speed in bullets per second.
+	 * Calculates and returns the bullet speed in Pixels per frame.
 	 *
-	 * @return Attack speed (bullets per second).
+	 * @return bullet speed (Pixels per frame).
 	 */
-	public final double getAttackSpeed() {
-		return 1000.0 / growth.getShootingDelay();
-	}
+	public final int getBulletSpeed() {
+		int speed = growth.getBulletSpeed();
+		return (speed >= 0) ? speed : -speed;
+	}//by SeungYun TeamHUD
 
 	public PlayerGrowth getPlayerGrowth() {
 		return growth;

@@ -91,28 +91,28 @@ public class AchievementConditions {
         // TODO Some of the codes below are non-operational.(fastKillAchievement,trialAchievement) Will be updated if related record fuctions are added.
         noDeathAchievements.add(new Achievement("Aerobatics","Maintain Maximum Life",3, Achievement.AchievementType.LIVES));
 
-        killAchievements.add(new Achievement("Rookie Pilot", "Destroy 25 enemies", 25, Achievement.AchievementType.KILLS));
-        killAchievements.add(new Achievement("Space Hunter", "Destroy 50 enemies", 100, Achievement.AchievementType.KILLS));
-        killAchievements.add(new Achievement("Space Trooper", "Destroy 100 enemies", 250, Achievement.AchievementType.KILLS));
-        killAchievements.add(new Achievement("Guardian of Universe", "Destroy 200 enemies", 500, Achievement.AchievementType.KILLS));
+        killAchievements.add(new Achievement("Rookie Pilot", "Destroy 25 enemies", 25, Achievement.AchievementType.KILLS, 1));
+        killAchievements.add(new Achievement("Space Hunter", "Destroy 50 enemies", 100, Achievement.AchievementType.KILLS, 1));
+        killAchievements.add(new Achievement("Space Trooper", "Destroy 100 enemies", 250, Achievement.AchievementType.KILLS, 1));
+        killAchievements.add(new Achievement("Guardian of Universe", "Destroy 200 enemies", 500, Achievement.AchievementType.KILLS, 1));
 
-        trialAchievements.add(new Achievement("Welcome Recruit", "Finished first game", 1, Achievement.AchievementType.TRIALS));
-        trialAchievements.add(new Achievement("Skilled Solider", "Finished 10th game", 10, Achievement.AchievementType.TRIALS));
-        trialAchievements.add(new Achievement("Veteran Pilot", "Finished 50th game", 50, Achievement.AchievementType.TRIALS));
+        trialAchievements.add(new Achievement("Welcome Recruit", "Finished first game", 1, Achievement.AchievementType.TRIALS, 1));
+        trialAchievements.add(new Achievement("Skilled Solider", "Finished 10th game", 10, Achievement.AchievementType.TRIALS, 1));
+        trialAchievements.add(new Achievement("Veteran Pilot", "Finished 50th game", 50, Achievement.AchievementType.TRIALS, 1));
 
-        streakAchievements.add(new Achievement("Preheating", "Kill streak of 10", 10, Achievement.AchievementType.KILLSTREAKS));
-        streakAchievements.add(new Achievement("Overheating", "Kill streak of 30", 30, Achievement.AchievementType.KILLSTREAKS));
-        streakAchievements.add(new Achievement("Runaway","Kill streak of 60", 60, Achievement.AchievementType.KILLSTREAKS));
+        streakAchievements.add(new Achievement("Preheating", "Kill streak of 10", 10, Achievement.AchievementType.KILLSTREAKS, 1));
+        streakAchievements.add(new Achievement("Overheating", "Kill streak of 30", 30, Achievement.AchievementType.KILLSTREAKS, 5));
+        streakAchievements.add(new Achievement("Runaway","Kill streak of 60", 60, Achievement.AchievementType.KILLSTREAKS, 10));
 
-        fastKillAchievements.add(new Achievement("Gunsliger","Kill 3 enemies 5 seconds", 3, Achievement.AchievementType.FASTKILL));
-        fastKillAchievements.add(new Achievement("Fear the Enemy","Kill 5 enemies 5 seconds", 5, Achievement.AchievementType.FASTKILL));
-        fastKillAchievements.add(new Achievement("Genocide","Kill 15 enemies 5 seconds", 15, Achievement.AchievementType.FASTKILL));
+        fastKillAchievements.add(new Achievement("Gunsliger","Kill 3 enemies 5 seconds", 3, Achievement.AchievementType.FASTKILL,5));
+        fastKillAchievements.add(new Achievement("Fear the Enemy","Kill 5 enemies 5 seconds", 5, Achievement.AchievementType.FASTKILL, 5));
+        fastKillAchievements.add(new Achievement("Genocide","Kill 15 enemies 5 seconds", 15, Achievement.AchievementType.FASTKILL, 5));
 
-        scoreAchievements.add(new Achievement("First Milestone", "Reach 1,000 points", 6000, Achievement.AchievementType.SCORE));
-        scoreAchievements.add(new Achievement("Score Hunter", "Reach 5,000 points", 15000, Achievement.AchievementType.SCORE));
-        scoreAchievements.add(new Achievement("Score Master", "Reach 10,000 points", 30000, Achievement.AchievementType.SCORE));
+        scoreAchievements.add(new Achievement("First Milestone", "Reach 1,000 points", 6000, Achievement.AchievementType.SCORE,1));
+        scoreAchievements.add(new Achievement("Score Hunter", "Reach 5,000 points", 15000, Achievement.AchievementType.SCORE,3));
+        scoreAchievements.add(new Achievement("Score Master", "Reach 10,000 points", 30000, Achievement.AchievementType.SCORE,5));
 
-        stageAchievements.add(new Achievement("Home Sweet Home","Cleared Final Stage", Core.NUM_LEVELS, Achievement.AchievementType.STAGE));
+        stageAchievements.add(new Achievement("Home Sweet Home","Cleared Final Stage", Core.NUM_LEVELS, Achievement.AchievementType.STAGE, 5));
 
         allAchievements.addAll(killAchievements);
         allAchievements.addAll(trialAchievements);
@@ -122,7 +122,7 @@ public class AchievementConditions {
         allAchievements.addAll(stageAchievements);
         allAchievements.addAll(scoreAchievements);
 
-        allAchievements.add(new Achievement("Medal of Honor", "Complete all achievements", 0, Achievement.AchievementType.STAGE));
+        allAchievements.add(new Achievement("Medal of Honor", "Complete all achievements", 0, Achievement.AchievementType.STAGE, 10));
     }
 
     // Have to check if the code right below works
@@ -256,6 +256,13 @@ public class AchievementConditions {
             getUnlockedAchievements();
             System.out.println("Unlocked achievements list: " + unlockedAchievements);
             DrawAchievementHud.achieve(achievement.getAchievementName());
+            if(achievement.getGem() > 0) {
+                try {
+                    Core.getCurrencyManager().addGem(achievement.getGem());
+                } catch (IOException e) {
+                    logger.warning("Couldn't load gem!");
+                }
+            }
         }
         else if (unlockedAchievements.contains(achievement.getAchievementName())) {
             System.out.println(achievement.getAchievementName() + " has already been unlocked.");
