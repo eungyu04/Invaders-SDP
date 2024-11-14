@@ -149,7 +149,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	public EnemyShipFormation(final GameSettings gameSettings) {
 		this.drawManager = Core.getDrawManager();
 		this.logger = Core.getLogger();
-		this.enemyShips = new ArrayList<List<EnemyShip>>();
+		this.enemyShips = new ArrayList<>();
 		this.activeSpeedItems = new ArrayList<>();
 		this.currentDirection = Direction.RIGHT;
 		this.movementInterval = 0;
@@ -162,10 +162,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.movementSpeed = this.baseSpeed;
 		this.positionX = INIT_POS_X;
 		this.positionY = INIT_POS_Y;
-		this.shooters = new ArrayList<EnemyShip>();
+		this.shooters = new ArrayList<>();
 		this.shipCount = 0;
-		SpriteType spriteType = null;
-		int hp=1;// Edited by Enemy
 		Random rand= new Random();
 		int n = rand.nextInt(2);
 		if(n%2==1){ isCircle=true;
@@ -184,9 +182,28 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		for (int i = 0; i < this.nShipsWide; i++)
 			this.enemyShips.add(new ArrayList<EnemyShip>());
 
+		setEnemyShips();
+
+		this.shipWidth = this.enemyShips.get(0).get(0).getWidth();
+		this.shipHeight = this.enemyShips.get(0).get(0).getHeight();
+
+		this.width = (this.nShipsWide - 1) * SEPARATION_DISTANCE
+				+ this.shipWidth;
+		this.height = (this.nShipsHigh - 1) * SEPARATION_DISTANCE
+				+ this.shipHeight;
+
+		for (List<EnemyShip> column : this.enemyShips)
+			this.shooters.add(column.get(column.size() - 1));
+
+	}
+
+	private void setEnemyShips(){
+		SpriteType spriteType = null;
+		int hp = 1;
+
 		for (List<EnemyShip> column : this.enemyShips) {
-			int x=0;
-			int y=0;
+			int x;
+			int y;
 			for (int i = 0; i < this.nShipsHigh; i++) {
 				double angle = 2* PI * i / this.nShipsHigh;
 
@@ -210,24 +227,11 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				if(shipCount == nShipsHigh*(nShipsWide/2))
 					hp = 2; // Edited by Enemy, It just an example to insert EnemyShip that hp is 2.
 
-				column.add(new EnemyShip(x, y, spriteType,hp,this.enemyShips.indexOf(column),i));// Edited by Enemy
+				column.add(new EnemyShip(x, y, spriteType, hp, this.enemyShips.indexOf(column), i));// Edited by Enemy
 				this.shipCount++;
 				hp = 1;// Edited by Enemy
 			}
 		}
-
-
-		this.shipWidth = this.enemyShips.get(0).get(0).getWidth();
-		this.shipHeight = this.enemyShips.get(0).get(0).getHeight();
-
-		this.width = (this.nShipsWide - 1) * SEPARATION_DISTANCE
-				+ this.shipWidth;
-		this.height = (this.nShipsHigh - 1) * SEPARATION_DISTANCE
-				+ this.shipHeight;
-
-		for (List<EnemyShip> column : this.enemyShips)
-			this.shooters.add(column.get(column.size() - 1));
-
 	}
 
 	/**
