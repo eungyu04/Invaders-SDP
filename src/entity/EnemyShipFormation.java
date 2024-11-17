@@ -82,7 +82,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	private List<List<EnemyShip>> enemyShips;
 	/** Minimum time between shots. */
 	private List<SpeedItem> activeSpeedItems;
-	private Cooldown shootingCooldown;
+	private List<Cooldown> shootingCooldown;
 	private Cooldown enemyCooldown;
 	/** Number of ships in the formation - horizontally. */
 	private int nShipsWide;
@@ -177,6 +177,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.positionX = INIT_POS_X;
 		this.positionY = INIT_POS_Y;
 		this.shooters = new ArrayList<>();
+		this.shootingCooldown = new ArrayList<>();
 		this.shipCount = 0;
 		index_x = 0;
 		index_y = 0;
@@ -195,8 +196,9 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				+ " ship formation in (" + positionX + "," + positionY + ")");
 
 		// Each sub-list is a column on the formation.
-		for (int i = 0; i < this.nShipsWide; i++)
-			this.enemyShips.add(new ArrayList<EnemyShip>());
+		for (int i = 0; i < this.nShipsWide; i++){
+			this.enemyShips.add(new ArrayList<>());
+			}
 
 		if (Objects.equals(gametype, "Normal")) {
 			setEnemyShips();
@@ -249,6 +251,9 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				column.add(new EnemyShip(x, y, spriteType, hp, this.enemyShips.indexOf(column), i));// Edited by Enemy
 				this.shipCount++;
 				this.shooters.add(column.get(column.size() - 1));
+				this.shootingCooldown.add(Core.getVariableCooldown(shootingInterval + 2000,
+						shootingVariance));
+
 				hp = 1;// Edited by Enemy
 			}
 		}
@@ -271,6 +276,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				column.add(new EnemyShip((int)(random()*610) + 10, positionY, spriteType, hp, index_y, index_x));// Edited by Enemy
 				this.shipCount++;
 				this.shooters.add(column.get(column.size() - 1));
+				this.shootingCooldown.add(Core.getVariableCooldown(shootingInterval + 2000,
+						shootingVariance));
 			}
 		}
 		if (index_x < this.nShipsHigh) index_x++;
@@ -303,11 +310,6 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 * Updates the position of the ships.
 	 */
 	public final void update() {
-		if(this.shootingCooldown == null) {
-			this.shootingCooldown = Core.getVariableCooldown(shootingInterval,
-					shootingVariance);
-			this.shootingCooldown.reset();
-		}
 
 		if (Objects.equals(gametype, "Story")){
 			if(this.enemyCooldown == null) {
@@ -483,11 +485,10 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 */
 	public final void shoot(final Set<PiercingBullet> bullets) { // Edited by Enemy
 		// For now, only ships in the bottom row are able to shoot.
-		if (!shooters.isEmpty()) { // Added by team Enemy
-			int index = (int) (random() * this.shooters.size());
-			EnemyShip shooter = this.shooters.get(index);
-			if (this.shootingCooldown.checkFinished()) {
-				this.shootingCooldown.reset();
+		for (Cooldown shoot : this.shootingCooldown){
+			if (!shooters.isEmpty() && shoot.checkFinished()){
+				EnemyShip shooter = this.shooters.get(shootingCooldown.indexOf(shoot));
+				shoot.reset();
 				sm = SoundManager.getInstance();
 				sm.playES("Enemy_Gun_Shot_1_ES");
 				bullets.add(PiercingBulletPool.getPiercingBullet( // Edited by Enemy
@@ -536,6 +537,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				this.shooters.set(destroyedShipIndex, nextShooter);
 			else {
 				this.shooters.remove(destroyedShipIndex);
+				this.shootingCooldown.remove(destroyedShipIndex);
 				this.logger.info("Shooters list reduced to "
 						+ this.shooters.size() + " members.");
 			}
@@ -688,6 +690,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 					this.shooters.set(destroyedShipIndex, nextShooter);
 				else {
 					this.shooters.remove(destroyedShipIndex);
+					this.shootingCooldown.remove(destroyedShipIndex);
 					this.logger.info("Shooters list reduced to "
 							+ this.shooters.size() + " members.");
 				}
