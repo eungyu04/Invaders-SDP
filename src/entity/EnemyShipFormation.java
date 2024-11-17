@@ -408,7 +408,6 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 					shootingCooldown.remove(shooters.indexOf(destroy));
 					shooters.remove(destroy);
 				}
-				System.out.println(shooters.size());
 				column.removeAll(destroyed);
 			}
 			double angle = (PI/this.nShipsHigh);
