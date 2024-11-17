@@ -135,36 +135,6 @@ public class Bomb{
         return returnValue;
     }
 
-    public static void nextShooterByBomb(List<List<EnemyShip>> enemyShips, List<EnemyShip> shooters,
-                                          EnemyShipFormation enemyShipFormation, Logger logger) {
-
-        for (EnemyShip destroyedByBomb : DestroyedshipByBomb)
-
-            if (destroyedByBomb.isDestroyed()) {
-                if (shooters.contains(destroyedByBomb)) {
-                    int destroyedShipIndex = shooters.indexOf(destroyedByBomb);
-                    int destroyedShipColumnIndex = -1;
-
-                    for (List<EnemyShip> column : enemyShips)
-                        if (column.contains(destroyedByBomb)) {
-                            destroyedShipColumnIndex = enemyShips.indexOf(column);
-                            break;
-                        }
-
-                    EnemyShip nextShooter = enemyShipFormation.getNextShooter(enemyShips
-                            .get(destroyedShipColumnIndex));
-
-                    if (nextShooter != null)
-                        shooters.set(destroyedShipIndex, nextShooter);
-                    else {
-                        shooters.remove(destroyedShipIndex);
-                        logger.info("Shooters list reduced to "
-                                + shooters.size() + " members.");
-                    }
-                }
-            }
-    }
-
     public static int getTotalPoint() { return totalPoint; }
 
     public static boolean isBombExploded() { return isBombExploded; }
