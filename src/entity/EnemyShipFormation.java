@@ -188,7 +188,9 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		for (int i = 0; i < this.nShipsWide; i++)
 			this.enemyShips.add(new ArrayList<EnemyShip>());
 
-		set_Story_Enemy();
+		if (true) {
+			setEnemyShips();
+		}
 
 		this.shipWidth = this.enemyShips.get(0).get(0).getWidth();
 		this.shipHeight = this.enemyShips.get(0).get(0).getHeight();
@@ -233,8 +235,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 				column.add(new EnemyShip(x, y, spriteType, hp, this.enemyShips.indexOf(column), i));// Edited by Enemy
 				this.shipCount++;
-				hp = 1;// Edited by Enemy
 				this.shooters.add(column.get(column.size() - 1));
+				hp = 1;// Edited by Enemy
 			}
 		}
 	}
@@ -251,10 +253,13 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		else
 			spriteType = SpriteType.EnemyShipA1;
 
-		enemyShips.get(0).add(new EnemyShip((int)(random()*100), (int)(random()*100), spriteType, hp, index_y, index_x));// Edited by Enemy
-		this.shipCount++;
-
-		this.shooters.add(enemyShips.get(0).get(index_x));
+		for (List<EnemyShip> column : this.enemyShips) {
+			if (enemyShips.indexOf(column) == index_y){
+				column.add(new EnemyShip((int)(random()*100), (int)(random()*100), spriteType, hp, index_y, index_x));// Edited by Enemy
+				this.shipCount++;
+				this.shooters.add(column.get(index_x));
+			}
+		}
 		if (index_x < this.nShipsHigh) index_x++;
 		else {
 			index_y++;
