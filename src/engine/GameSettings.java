@@ -16,9 +16,13 @@ public class GameSettings {
 	private int baseSpeed;
 	/** Frequency of enemy shootings, +/- 30%. */
 	private int shootingFrecuency;
+	/** Frequency of enemy. */
+	private int enemyFrecuency;
 	/** Level Design team modification
 	 * Number of enemy ships waves during the level **/
 	private int wavesNumber;
+
+	private String gametype;
 
 	/**
 	 * Constructor.
@@ -43,6 +47,20 @@ public class GameSettings {
 
 		/** Added by the Level Design team **/
 		this.wavesNumber = wavesNumber;
+		this.gametype = "Normal";
+	}
+
+	public GameSettings(final int formationWidth, final int enemyFrecuency,
+						final int baseSpeed, final int shootingFrecuency) {
+		this.formationWidth = 1;
+		this.formationHeight = formationWidth;
+		this.enemyFrecuency = enemyFrecuency;
+		this.baseSpeed = baseSpeed;
+		this.shootingFrecuency = shootingFrecuency;
+
+		/** Added by the Level Design team **/
+		this.wavesNumber = 1;
+		this.gametype = "Story";
 	}
 
 	/**
@@ -79,6 +97,14 @@ public class GameSettings {
 	 */
 	public final int getWavesNumber() {
 		return wavesNumber;
+	}
+
+	public int getEnemyFrecuency(){
+		return enemyFrecuency;
+	}
+
+	public String getGametype(){
+		return gametype;
 	}
 
 }

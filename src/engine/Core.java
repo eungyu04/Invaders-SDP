@@ -71,28 +71,28 @@ public final class Core {
 	// Story 모드
 	/** Difficulty settings for Story mode level 1. */
 	private static final GameSettings SETTINGS_LEVEL_S1 =
-			new GameSettings(5, 4, 60, 2000, 1);
+			new GameSettings(20, 1500, 600, 1500);
 	/** Difficulty settings for Story mode level 2. */
 	private static final GameSettings SETTINGS_LEVEL_S2 =
-			new GameSettings(5, 5, 50, 2500, 1);
+			new GameSettings(15, 1500, 575, 1500);
 	/** Difficulty settings for Story mode level 3. */
 	private static final GameSettings SETTINGS_LEVEL_S3 =
-			new GameSettings(1, 1, -8, 500, 1);
+			new GameSettings(15, 1500, 550, 1500);
 	/** Difficulty settings for Story mode level 4. */
 	private static final GameSettings SETTINGS_LEVEL_S4 =
-			new GameSettings(6, 6, 30, 1500, 1);
+			new GameSettings(15, 1500, 500, 1500);
 	/** Difficulty settings for Story mode level 5. */
 	private static final GameSettings SETTINGS_LEVEL_S5 =
-			new GameSettings(7, 6, 20, 1000, 1);
+			new GameSettings(15, 1500, 500, 1000);
 	/** Difficulty settings for Story mode level 6. */
 	private static final GameSettings SETTINGS_LEVEL_S6 =
-			new GameSettings(7, 7, 10, 1000, 1);
+			new GameSettings(15, 1500, 4750, 1000);
 	/** Difficulty settings for Story mode level 7. */
 	private static final GameSettings SETTINGS_LEVEL_S7 =
-			new GameSettings(8, 7, 2, 500, 1);
+			new GameSettings(15, 1500, 450, 500);
 	/** Difficulty settings for Story mode level 8. */
 	private static final GameSettings SETTINGS_LEVEL_S8 =
-			new GameSettings(8, 8, 5, 2000, 1);
+			new GameSettings(15, 1500, 1000, 2000);
 
 
 	/** Frame to draw the screen on. */

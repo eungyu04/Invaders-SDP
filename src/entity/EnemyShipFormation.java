@@ -119,6 +119,9 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/** Number of not destroyed ships. */
 	private int shipCount;
 
+	private int enemyFrecuency;
+	private String gametype;
+
 	private ScoreManager scoreManager; //add by team Enemy
 	private ItemManager itemManager; //add by team Enemy
 
@@ -163,6 +166,13 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.shootingVariance = (int) (gameSettings.getShootingFrecuency()
 				* SHOOTING_VARIANCE);
 		this.baseSpeed = gameSettings.getBaseSpeed();
+		this.enemyFrecuency = gameSettings.getEnemyFrecuency();
+		this.gametype = gameSettings.getGametype();
+
+		if (gametype.equals("Story") || gametype.equals("Normal")){
+			Core.getLogger().warning("game type is wrong type");
+		}
+
 		this.movementSpeed = this.baseSpeed;
 		this.positionX = INIT_POS_X;
 		this.positionY = INIT_POS_Y;
@@ -188,8 +198,11 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		for (int i = 0; i < this.nShipsWide; i++)
 			this.enemyShips.add(new ArrayList<EnemyShip>());
 
-		if (true) {
+		if (Objects.equals(gametype, "Normal")) {
 			setEnemyShips();
+		}
+		else if (Objects.equals(gametype, "Story")){
+			set_Story_Enemy();
 		}
 
 		this.shipWidth = this.enemyShips.get(0).get(0).getWidth();
@@ -255,9 +268,9 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 		for (List<EnemyShip> column : this.enemyShips) {
 			if (enemyShips.indexOf(column) == index_y){
-				column.add(new EnemyShip((int)(random()*100), (int)(random()*100), spriteType, hp, index_y, index_x));// Edited by Enemy
+				column.add(new EnemyShip((int)(random()*610) + 10, positionY, spriteType, hp, index_y, index_x));// Edited by Enemy
 				this.shipCount++;
-				this.shooters.add(column.get(index_x));
+				this.shooters.add(column.get(column.size() - 1));
 			}
 		}
 		if (index_x < this.nShipsHigh) index_x++;
@@ -296,14 +309,16 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 			this.shootingCooldown.reset();
 		}
 
-		if(this.enemyCooldown == null) {
-			this.enemyCooldown = Core.getCooldown(500);
-			this.enemyCooldown.reset();
-		}
+		if (Objects.equals(gametype, "Story")){
+			if(this.enemyCooldown == null) {
+				this.enemyCooldown = Core.getCooldown(500);
+				this.enemyCooldown.reset();
+			}
 
-		if (this.enemyCooldown.checkFinished()) {
-			this.enemyCooldown.reset();
-			set_Story_Enemy();
+			if (this.enemyCooldown.checkFinished()) {
+				this.enemyCooldown.reset();
+				set_Story_Enemy();
+			}
 		}
 
 		cleanUp();
