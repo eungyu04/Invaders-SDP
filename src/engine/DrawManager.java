@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 
 import CtrlS.RoundState;
 import CtrlS.Gem;
+import Enemy.PiercingBullet;
 import entity.AddSign;
 import entity.Coin;
 import inventory_develop.Bomb;
@@ -62,6 +63,7 @@ public class DrawManager {
 
 	/** Sprite types mapped to their images. */
 	private static Map<SpriteType, boolean[][]> spriteMap;
+	private static Map<SpriteType, BufferedImage> spriteMapImage;
 
 	/** Sprite types. */
 	public static enum SpriteType {
@@ -131,12 +133,12 @@ public class DrawManager {
 		logger.info("Started loading resources.");
 
 		try {
-			spriteMap = new LinkedHashMap<SpriteType, boolean[][]>();
+			spriteMap = new LinkedHashMap<>();
 			spriteMap.put(SpriteType.Obstacle, new boolean[12][12]); // by Level Design Team
-			spriteMap.put(SpriteType.Ship, new boolean[13][8]);
-			spriteMap.put(SpriteType.ShipDestroyed, new boolean[13][8]);
-			spriteMap.put(SpriteType.Bullet, new boolean[3][5]);
-			spriteMap.put(SpriteType.EnemyBullet, new boolean[3][5]);
+//			spriteMap.put(SpriteType.Ship, new boolean[13][8]);
+//			spriteMap.put(SpriteType.ShipDestroyed, new boolean[13][8]);
+//			spriteMap.put(SpriteType.Bullet, new boolean[3][5]);
+//			spriteMap.put(SpriteType.EnemyBullet, new boolean[3][5]);
 			spriteMap.put(SpriteType.EnemyShipA1, new boolean[12][8]);
 			spriteMap.put(SpriteType.EnemyShipA2, new boolean[12][8]);
 			spriteMap.put(SpriteType.EnemyShipB1, new boolean[12][8]);
@@ -155,8 +157,8 @@ public class DrawManager {
 			// by Item team
 			spriteMap.put(SpriteType.ItemHeart, new boolean[7][5]);
 			spriteMap.put(SpriteType.ItemBarrier, new boolean[9][10]);
-			spriteMap.put(SpriteType.ItemBomb, new boolean[7][9]);
-			spriteMap.put(SpriteType.ShipBarrierStatus, new boolean[13][8]);	// temporary
+//			spriteMap.put(SpriteType.ItemBomb, new boolean[7][9]);
+//			spriteMap.put(SpriteType.ShipBarrierStatus, new boolean[13][8]);
 			spriteMap.put(SpriteType.ItemCoin, new boolean[7][7]);
 			spriteMap.put(SpriteType.ItemFeverTime, new boolean[9][9]);
 			spriteMap.put(SpriteType.ItemPierce, new boolean[7][7]);
@@ -176,6 +178,18 @@ public class DrawManager {
 		} catch (FontFormatException e) {
 			logger.warning("Font formating failed.");
 		}
+
+		try {
+			spriteMapImage = new LinkedHashMap<>();
+			spriteMapImage.put(SpriteType.Ship, fileManager.loadImage("ship.png"));
+			spriteMapImage.put(SpriteType.ShipDestroyed, fileManager.loadImage("shipdestroyed.png"));
+			spriteMapImage.put(SpriteType.Bullet, fileManager.loadImage("bullet.png"));
+			spriteMapImage.put(SpriteType.EnemyBullet, fileManager.loadImage("enemybullet.png"));
+			spriteMapImage.put(SpriteType.ItemBomb, fileManager.loadImage("bomb.png"));
+			spriteMapImage.put(SpriteType.ShipBarrierStatus, fileManager.loadImage("shipbarrierstatus.png"));
+		} catch (IOException e) {
+			logger.warning("Loading failed.");
+		}	
 	}
 
 	/**
@@ -249,20 +263,40 @@ public class DrawManager {
 						   final int positionY) {
 
 		try {
-			boolean[][] image = spriteMap.get(entity.getSpriteType());
+			Object sprite = spriteMap.get(entity.getSpriteType());
+			if (sprite == null) sprite = spriteMapImage.get(entity.getSpriteType());
 
-			backBufferGraphics.setColor(entity.getColor());
-			for (int i = 0; i < image.length; i++)
-				for (int j = 0; j < image[i].length; j++)
-					if (image[i][j])
-						backBufferGraphics.drawRect(positionX + i * 2, positionY
-								+ j * 2, 1, 1);
+			if (sprite instanceof boolean[][]) {
+				boolean[][] image = (boolean[][]) sprite;
+				backBufferGraphics.setColor(entity.getColor());
+				for (int i = 0; i < image.length; i++) {
+					for (int j = 0; j < image[i].length; j++) {
+						if (image[i][j]) {
+							backBufferGraphics.drawRect(positionX + i * 2, positionY + j * 2, 1, 1);
+						}
+					}
+				}
+			} else if (sprite instanceof BufferedImage) {
+				BufferedImage image = (BufferedImage) sprite;
+				backBufferGraphics.drawImage(image, positionX, positionY, null);
+
+			}
 
 		} catch(Exception e) {
 
 			System.out.println(e);
 			System.exit(1);
 		}
+	}
+
+	public static void drawRotateEntity(final Entity entity, final int positionX,
+										final int positionY, final double angle) {
+		Object sprite = spriteMapImage.get(entity.getSpriteType());
+
+		BufferedImage image = (BufferedImage) sprite;
+		BufferedImage rotateImage = fileManager.rotateImage(image, angle);
+
+		backBufferGraphics.drawImage(rotateImage, positionX, positionY, null);
 
 
 	}

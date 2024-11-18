@@ -54,7 +54,7 @@ public class Ship extends Entity {
 	//Edit by Enemy
 	public Ship(final int positionX, final int positionY, final Color color) {
 		super(positionX, positionY - 50, 13 * 2, 8 * 2, color); // add by team HUD
-		this.angle = 0;
+		this.angle = -1.5708;	// 90도 기본
 
 		this.spriteType = SpriteType.Ship;
 
@@ -132,7 +132,8 @@ public class Ship extends Entity {
 					growth.getBulletSpeedX(), // Use PlayerGrowth for bullet speed
 					growth.getBulletSpeedY(),
 					Bomb.getCanShoot(),
-					0	// bulletType -> 아군 총알은 0
+					0,	// bulletType -> 아군 총알은 0,
+					0	// angle
 			);
 
 			// now can't shoot bomb
@@ -156,16 +157,30 @@ public class Ship extends Entity {
 			sm = SoundManager.getInstance();
 			sm.playES("My_Gun_Shot");
 
+			int centerX = positionX + this.width / 2;
+			int centerY = positionY + this.height / 2;
+
+			int headX = centerX;
+			int headY = positionY + 8;	// positionY로 하였을 때 총알 위치가 이상해 값을 임의로 수정
+
+			// 새롭게 총알을 발사할 x좌표와 y좌표 계산
+			int newheadX = (int) (Math.cos(this.angle) * (headX - centerX)
+                                - Math.sin(this.angle) * (headY - centerY)
+                                + centerX);
+			int newheadY = (int) (Math.sin(this.angle) * (headX - centerX)
+                                + Math.cos(this.angle) * (headY - centerY)
+                                + centerY);
+
 			// Use NumberOfBullet to generate bullets
 			Set<PiercingBullet> newBullets = numberOfBullet.addBullet(
-					positionX + this.width / 2,
-					positionY,
+					newheadX,
+					newheadY,
                     (int) (10 * Math.cos(angle)),	// 임시 수치
 					(int) (10 * Math.sin(angle)),
 					Bomb.getCanShoot(),
-					0
+					0,
+					this.angle
 			);
-			System.out.println(Math.cos(angle));
 
 			Bomb.setCanShoot(false);
 			bullets.addAll(newBullets);

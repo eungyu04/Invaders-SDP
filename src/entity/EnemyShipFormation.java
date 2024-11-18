@@ -436,7 +436,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 						BULLET_SPEEDX,
 						BULLET_SPEEDY,
 						0,
-						1)); // Edited by Enemy
+						1,
+						0)); // Edited by Enemy
 			}
 		}
 	}
@@ -667,7 +668,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		int point = 0;
 		int mob = 0;
 
-		Bullet bullet = new Bullet(0,0, 0,-1, 1);
+		Bullet bullet = new Bullet(0,0, 0,-1, 1, 0);
 
 		do{
 
