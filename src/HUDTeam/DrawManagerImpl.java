@@ -242,4 +242,35 @@ public class DrawManagerImpl extends DrawManager {
         backBufferGraphics.drawString(speedString, 500, screen.getHeight() - 35);
     
     }
+
+    /**
+     * Draws Percentage of game progress on screen
+     *
+     * @param screen
+     *            Screen to draw on.
+     * @param percent
+     *            AFAFAF
+     *
+     */
+    public static void drawPercentage(final Screen screen, final int percent) {
+        int x = screen.getWidth() - 25;
+        int y = 200;
+        int width = 15;
+        int height = 300;
+
+        // 전체 진행 바 외곽선
+        backBufferGraphics.setColor(Color.GRAY);
+        backBufferGraphics.fillRoundRect(x, y, width, height, 30, 30);
+
+        // 채워지는 부분
+        int fillHeight = (int) (height * (percent / 100.0));
+        backBufferGraphics.setColor(Color.BLACK);
+        backBufferGraphics.fillRoundRect(x, y+height - percent*3, width, fillHeight, 30, 30);
+
+        // 진행률 텍스트
+        backBufferGraphics.setColor(Color.WHITE);
+        backBufferGraphics.setFont(fontSmall);
+        backBufferGraphics.drawString(percent + "%", x-5, y + height + 20);
+
+    }
 }

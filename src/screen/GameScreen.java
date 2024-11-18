@@ -546,6 +546,7 @@ public class GameScreen extends Screen {
 		DrawManagerImpl.drawTime(this, this.playTime);
 		// Call the method in DrawManagerImpl - Soomin Lee / TeamHUD
 		drawManager.drawItem(this); // HUD team - Jo Minseo
+		if(returnCode == 4) DrawManagerImpl.drawPercentage(this, 50);	// story모드 time에 따른 percent 적용 필요
 
 		if(player2 != null){
 			DrawManagerImpl.drawBulletSpeed2P(this, player2.getBulletSpeedY());
