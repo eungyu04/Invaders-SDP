@@ -1,7 +1,7 @@
 package engine;
 
-import java.awt.Font;
-import java.awt.FontFormatException;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,11 +16,14 @@ import java.io.OutputStreamWriter;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.List;
 import java.util.logging.Logger;
 import CtrlS.EncryptionSupport;
 import engine.DrawManager.SpriteType;
 
 import clove.Statistics; //Team Clove
+
+import javax.imageio.ImageIO;
 
 /**
  * Manages files used in the application.
@@ -98,6 +101,53 @@ public final class FileManager {
 				inputStream.close();
 		}
 	}
+
+	public BufferedImage loadImage(String path) throws IOException{
+		try {
+			InputStream image = FileManager.class.getResourceAsStream("/Imagegraphics/" + path);
+			return ImageIO.read(image);
+		} finally {}
+	}
+
+	// 방법 1 : png이미지들을 n*n 정사각형으로 저장해야함
+	public BufferedImage rotateImage(BufferedImage img, double angle) {
+		int w = img.getWidth();
+		int h = img.getHeight();
+		BufferedImage rotatedImage = new BufferedImage(w, h, img.getType());
+		Graphics2D g2d = rotatedImage.createGraphics();
+
+		// 이미지 회전
+		g2d.rotate(Math.toRadians(Math.toDegrees(angle)+90), w / 2, h / 2);  // 중심을 기준으로 회전
+		g2d.drawImage(img, 0, 0, null);
+		g2d.dispose();
+		return rotatedImage;
+	}
+
+	// 방법 2 : 회전할 때 객체 흔들림이 심해서 보류
+//	public BufferedImage rotateImage(BufferedImage image, double angle) {
+//		int width = image.getWidth();
+//		int height = image.getHeight();
+//		angle = Math.toRadians(Math.toDegrees(angle)+90);
+//
+//		int newWidth = (int) Math.ceil(Math.abs(Math.cos(angle) * width) +
+//				Math.abs(Math.sin(angle) * height));
+//		int newHeight = (int) Math.ceil(Math.abs(Math.sin(angle) * width) +
+//				Math.abs(Math.cos(angle) * height));
+//
+//		BufferedImage rotatedImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+//		Graphics2D g2d = rotatedImage.createGraphics();
+//
+//		g2d.rotate(angle, newWidth / 2, newHeight / 2);
+//
+//		// 원래 이미지를 새 캔버스의 중심으로 그리기
+//		int x = (newWidth - width) / 2;
+//		int y = (newHeight - height) / 2;
+//		g2d.drawImage(image, x, y, null);
+//		g2d.dispose();
+//
+//		return rotatedImage;
+//	}
+
 
 	/**
 	 * Loads a font of a given size.

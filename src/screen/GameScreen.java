@@ -493,8 +493,14 @@ public class GameScreen extends Screen {
 		DrawManagerImpl.drawRect(0, 0, this.width, SEPARATION_LINE_HEIGHT, Color.BLACK);
 		DrawManagerImpl.drawRect(0, this.height - 70, this.width, 70, Color.BLACK); // by Saeum Jung - TeamHUD
 
-		drawManager.drawEntity(this.ship, this.ship.getPositionX(),
-				this.ship.getPositionY());
+		if (returnCode == 2) {    // 임시
+			drawManager.drawRotateEntity(this.ship, this.ship.getPositionX(),
+					this.ship.getPositionY(), this.ship.getAngle());
+		} else {
+			drawManager.drawEntity(this.ship, this.ship.getPositionX(),
+					this.ship.getPositionY());
+		}
+
 		if (player2 != null) {
 			drawManager.drawEntity(player2, player2.getPositionX(), player2.getPositionY());
 		}
@@ -510,8 +516,12 @@ public class GameScreen extends Screen {
 
 
 		for (PiercingBullet bullet : this.bullets)
-			drawManager.drawEntity(bullet, bullet.getPositionX(),
-					bullet.getPositionY());
+			if (returnCode == 2 && bullet.getBulletType() == 0)
+				drawManager.drawRotateEntity(bullet, bullet.getPositionX(),
+								bullet.getPositionY(), bullet.getAngle());
+			else
+				drawManager.drawEntity(bullet, bullet.getPositionX(),
+						bullet.getPositionY());
 
 		this.itemManager.drawItems(); //by Enemy team
 
