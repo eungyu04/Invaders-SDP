@@ -48,6 +48,8 @@ public class DrawManager {
 	public static Graphics backBufferGraphics;	// Modifying Access Restrictor to public - Lee Hyun Woo
 	/** Buffer image. */
 	private static BufferedImage backBuffer;
+	/** Small sized font. */
+	public static Font fontSmall;
 	/** Normal sized font. */
 	public static Font fontRegular;  // Modifying Access Restrictor to public - Lee Hyun Woo
 	/** Normal sized font properties. */
@@ -169,6 +171,7 @@ public class DrawManager {
 			logger.info("Finished loading the sprites.");
 
 			// Font loading.
+			fontSmall = fileManager.loadFont(12f);
 			fontRegular = fileManager.loadFont(14f);
 			fontBig = fileManager.loadFont(24f);
 			logger.info("Finished loading the fonts.");
