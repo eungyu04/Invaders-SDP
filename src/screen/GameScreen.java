@@ -448,8 +448,10 @@ public class GameScreen extends Screen {
 		* **/
 		if ((getRemainingEnemies() == 0
 		&& !this.levelFinished
-		&& waveCounter == this.gameSettings.getWavesNumber())
+		&& waveCounter == this.gameSettings.getWavesNumber()
+		&& this.returnCode != 4)
 		|| (this.lives == 0)
+		|| isRoundClearedByTime()
 		) {
 			this.levelFinished = true;
 			//this.screenFinishedCooldown.reset(); It works now -- With love, Level Design Team
@@ -546,7 +548,9 @@ public class GameScreen extends Screen {
 		DrawManagerImpl.drawTime(this, this.playTime);
 		// Call the method in DrawManagerImpl - Soomin Lee / TeamHUD
 		drawManager.drawItem(this); // HUD team - Jo Minseo
-		if(returnCode == 4) DrawManagerImpl.drawPercentage(this, 50);	// story모드 time에 따른 percent 적용 필요
+		double percent = (System.currentTimeMillis() - playStartTime) > 0 ?
+			 (double) ((System.currentTimeMillis() - playStartTime) * 100) / (1000 * 15) : 0;
+		if(returnCode == 4) DrawManagerImpl.drawPercentage(this, percent);	// story모드 time에 따른 percent 적용 필요
 
 		if(player2 != null){
 			DrawManagerImpl.drawBulletSpeed2P(this, player2.getBulletSpeedY());
@@ -905,10 +909,7 @@ public class GameScreen extends Screen {
 	public SpeedItem getSpeedItem() {
 		return this.speedItem;
 	}
-	public void startRoundTimer() {
-		this.roundStartTime = System.currentTimeMillis();
-	}
 	public boolean isRoundClearedByTime() {
-		return (returnCode == 4) && (System.currentTimeMillis() - this.roundStartTime >= ROUND_CLEAR_DURATION);
+		return (returnCode == 4) && (playTime - playTimePre >= 15);
 	}
 }

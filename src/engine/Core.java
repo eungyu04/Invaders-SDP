@@ -313,8 +313,6 @@ public final class Core {
 					currentScreen = new GameScreen(gameState,
 							storyModeSettings.get(gameState.getLevel() - 1),
 							bonusLife, width, height, FPS, 4);
-					((GameScreen) currentScreen).startRoundTimer();
-
 					LOGGER.info("Starting story mode stage " + gameState.getLevel() + " with " + WIDTH + "x" + HEIGHT + " at " + FPS + " fps.");
 					frame.setScreen(currentScreen);
 					LOGGER.info("Closing game screen.");
