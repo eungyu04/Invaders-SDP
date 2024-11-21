@@ -4,7 +4,9 @@ import engine.DrawManager;
 import screen.GameScreen;
 import screen.Screen;
 import entity.Entity;
-import java.awt.Color;
+
+import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
 
 public class DrawManagerImpl extends DrawManager {
 
@@ -252,7 +254,7 @@ public class DrawManagerImpl extends DrawManager {
      *            AFAFAF
      *
      */
-    public static void drawPercentage(final Screen screen, final int percent) {
+    public static void drawPercentage(final Screen screen, final double percent) {
         int x = screen.getWidth() - 25;
         int y = 200;
         int width = 15;
@@ -262,15 +264,19 @@ public class DrawManagerImpl extends DrawManager {
         backBufferGraphics.setColor(Color.GRAY);
         backBufferGraphics.fillRoundRect(x, y, width, height, 30, 30);
 
-        // 채워지는 부분
-        int fillHeight = (int) (height * (percent / 100.0));
+        // 채워지는 부분 (fillRoundRect는 인자로 int밖에 받지 못해 g2d사용함)
+        Graphics2D g2d = (Graphics2D) backBufferGraphics;
+        
+        double fillHeight = (height * (percent / 100.0));
         backBufferGraphics.setColor(Color.BLACK);
-        backBufferGraphics.fillRoundRect(x, y+height - percent*3, width, fillHeight, 30, 30);
+        RoundRectangle2D.Double roundedRect =
+                new RoundRectangle2D.Double(x, y+height - percent * 3, width, fillHeight, 30, 30);
+        g2d.fill(roundedRect);
 
         // 진행률 텍스트
         backBufferGraphics.setColor(Color.WHITE);
         backBufferGraphics.setFont(fontSmall);
-        backBufferGraphics.drawString(percent + "%", x-5, y + height + 20);
+        backBufferGraphics.drawString((int)percent + "%", x-5, y + height + 20);
 
     }
 }
