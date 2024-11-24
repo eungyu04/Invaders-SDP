@@ -60,9 +60,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/** Downwards speed of the formation. */
 	private static final int Y_SPEED = 4;
 	/** SpeedX of the bullets shot by the members. */
-	private static final int BULLET_SPEEDX = 4;
-	/** SpeedY of the bullets shot by the members. */
-	private static final int BULLET_SPEEDY = 4;
+	private static final int BULLET_SPEED = 4;
 	/** Proportion of differences between shooting times. */
 	private static final double SHOOTING_VARIANCE = .2;
 	/** Margin on the sides of the screen. */
@@ -283,8 +281,20 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				column.add(new EnemyShip((int)(random()*610) + 10, positionY, spriteType, hp, index_y, index_x));// Edited by Enemy
 				this.shipCount++;
 				this.shooters.add(column.get(column.size() - 1));
-				this.shootingCooldown.add(Core.getVariableCooldown(shootingInterval + 2000,
-						shootingVariance));
+
+				// 몹 종류에 따른 공격속도 설정, 이 부분은 나중에 다른 값들이랑 같이 따로 클래스를 생성할 수도 있습니다.
+				if (spriteType == SpriteType.EnemyShipC1){
+					this.shootingCooldown.add(Core.getVariableCooldown(shootingInterval + 2000,
+							shootingVariance));
+				}
+				else if (spriteType == SpriteType.EnemyShipB1){
+					this.shootingCooldown.add(Core.getVariableCooldown(shootingInterval + 2000,
+							shootingVariance));
+				}
+				else {
+					this.shootingCooldown.add(Core.getVariableCooldown(shootingInterval + 2000,
+							shootingVariance));
+				}
 			}
 		}
 		if (index_x < this.nShipsHigh) index_x++;
@@ -496,37 +506,33 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 */
 	public final void shoot(final Set<PiercingBullet> bullets) { // Edited by Enemy
 		// For now, only ships in the bottom row are able to shoot.
-		int bulletcount = 1;
 		for (Cooldown shoot : this.shootingCooldown){
 			if (!shooters.isEmpty() && shoot.checkFinished()){
 				EnemyShip shooter = this.shooters.get(shootingCooldown.indexOf(shoot));
 				shoot.reset();
 
+				// 몹 종류에 따른 공격방식 설정, 이 부분은 나중에 다른 값들이랑 같이 따로 클래스를 생성할 수도 있습니다.
 				if (shooter.getSpriteType() == SpriteType.EnemyShipC1){
-					bulletcount = 1;
 					angle = Math.atan2(shippositionY - shooter.getPositionY(), shippositionX - shooter.getPositionX());
 				}
 				else if (shooter.getSpriteType() == SpriteType.EnemyShipB1){  //임시 기믹 변경 예정
-					bulletcount = 1;
 					angle = Math.atan2(shippositionY - shooter.getPositionY(), shippositionX - shooter.getPositionX());
 				}
 				else {
-					bulletcount = 1;
 					angle = 1.5708;
 				}
 
 				sm = SoundManager.getInstance();
 				sm.playES("Enemy_Gun_Shot_1_ES");
-				for (int i = 0; i < bulletcount; i++) {
-					bullets.add(PiercingBulletPool.getPiercingBullet( // Edited by Enemy
-							shooter.getPositionX() + shooter.width / 2,
-							shooter.getPositionY(),
-							(int) (BULLET_SPEEDX * Math.cos(angle)),
-							(int) (BULLET_SPEEDY * Math.sin(angle)),
-							0,
-							1,
-							angle)); // Edited by Enemy
-				}
+				bullets.add(PiercingBulletPool.getPiercingBullet( // Edited by Enemy
+						shooter.getPositionX() + shooter.width / 2,
+						shooter.getPositionY(),
+						(int) (BULLET_SPEED * Math.cos(angle)),
+						(int) (BULLET_SPEED * Math.sin(angle)),
+						0,
+						1,
+						angle)); // Edited by Enemy
+
 			}
 		}
 	}
