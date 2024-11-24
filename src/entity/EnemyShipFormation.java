@@ -49,6 +49,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/** Radius of circle */
 	private int RADIUS=0;
 	private int MINIRADIUS= 0;
+	private double angle;
 
 	/** Proportion of C-type ships. */
 	private static final double PROPORTION_C = 0.2;
@@ -59,7 +60,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/** Downwards speed of the formation. */
 	private static final int Y_SPEED = 4;
 	/** SpeedX of the bullets shot by the members. */
-	private static final int BULLET_SPEEDX = 0;
+	private static final int BULLET_SPEEDX = 4;
 	/** SpeedY of the bullets shot by the members. */
 	private static final int BULLET_SPEEDY = 4;
 	/** Proportion of differences between shooting times. */
@@ -112,6 +113,10 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	private int positionX;
 	/** Position in the y-axis of the upper left corner of the formation. */
 	private int positionY;
+	/** Position in the x-axis of player ship. */
+	private int shippositionX;
+	/** Position in the y-axis of player ship. */
+	private int shippositionY;
 	/** Width of one ship. */
 	private int shipWidth;
 	/** Height of one ship. */
@@ -185,7 +190,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		index_y = 0;
 		Random rand= new Random();
 		int n = rand.nextInt(2);
-		if(n%2==1){ isCircle=true;
+		if(n%2==1 && (Objects.equals(gametype, "Normal"))){ isCircle=true;
 			this.logger.info("cercle"+ 2);
 		}
 		else isCircle=false;
@@ -491,20 +496,37 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 */
 	public final void shoot(final Set<PiercingBullet> bullets) { // Edited by Enemy
 		// For now, only ships in the bottom row are able to shoot.
+		int bulletcount = 1;
 		for (Cooldown shoot : this.shootingCooldown){
 			if (!shooters.isEmpty() && shoot.checkFinished()){
 				EnemyShip shooter = this.shooters.get(shootingCooldown.indexOf(shoot));
 				shoot.reset();
+
+				if (shooter.getSpriteType() == SpriteType.EnemyShipC1){
+					bulletcount = 1;
+					angle = Math.atan2(shippositionY - shooter.getPositionY(), shippositionX - shooter.getPositionX());
+				}
+				else if (shooter.getSpriteType() == SpriteType.EnemyShipB1){  //임시 기믹 변경 예정
+					bulletcount = 1;
+					angle = Math.atan2(shippositionY - shooter.getPositionY(), shippositionX - shooter.getPositionX());
+				}
+				else {
+					bulletcount = 1;
+					angle = 1.5708;
+				}
+
 				sm = SoundManager.getInstance();
 				sm.playES("Enemy_Gun_Shot_1_ES");
-				bullets.add(PiercingBulletPool.getPiercingBullet( // Edited by Enemy
-						shooter.getPositionX() + shooter.width / 2,
-						shooter.getPositionY(),
-						BULLET_SPEEDX,
-						BULLET_SPEEDY,
-						0,
-						1,
-						0)); // Edited by Enemy
+				for (int i = 0; i < bulletcount; i++) {
+					bullets.add(PiercingBulletPool.getPiercingBullet( // Edited by Enemy
+							shooter.getPositionX() + shooter.width / 2,
+							shooter.getPositionY(),
+							(int) (BULLET_SPEEDX * Math.cos(angle)),
+							(int) (BULLET_SPEEDY * Math.sin(angle)),
+							0,
+							1,
+							angle)); // Edited by Enemy
+				}
 			}
 		}
 	}
@@ -757,5 +779,9 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	}
 	public final void BecomeCircle(boolean iscircle){
 		this.isCircle=iscircle;
+	}
+	public void setShipposition(int shippositionX, int shippositionY){
+		this.shippositionX = shippositionX;
+		this.shippositionY = shippositionY;
 	}
 }

@@ -393,6 +393,8 @@ public class GameScreen extends Screen {
 			this.item.updateBarrierAndShip(this.ship);   // team Inventory
 			this.speedItem.update();         // team Inventory
 			this.feverTimeItem.update();
+
+			this.enemyShipFormation.setShipposition(this.ship.getPositionX(), this.ship.getPositionY());
 			this.enemyShipFormation.update();
 			this.enemyShipFormation.shoot(this.bullets);
 		}
@@ -518,7 +520,7 @@ public class GameScreen extends Screen {
 
 
 		for (PiercingBullet bullet : this.bullets)
-			if (returnCode == 2 && bullet.getBulletType() == 0)
+			if ((returnCode == 2 && bullet.getBulletType() == 0) || bullet.getBulletType() == 1)
 				drawManager.drawRotateEntity(bullet, bullet.getPositionX(),
 								bullet.getPositionY(), bullet.getAngle());
 			else
