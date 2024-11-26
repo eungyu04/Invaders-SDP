@@ -1,0 +1,52 @@
+name: Analyze CK Metrics with Java
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  ck-metrics:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Run CK Metrics on PR code
+        run: |
+          mkdir -p ck_metrics
+          java -jar ck-0.7.0.jar . -o ck_metrics/pr_metrics.csv
+
+      - name: Checkout base branch for comparison
+        run: |
+          git fetch origin main
+          git checkout main
+
+      - name: Run CK Metrics on base branch
+        run: |
+          mkdir -p ck_metrics
+          java -jar ck-0.7.0.jar . -o ck_metrics/base_metrics.csv
+
+      - name: Compare CK Metrics using Java
+        run: |
+          java -cp ck-metrics-comparator.jar CompareMetrics ck_metrics/base_metrics.csv ck_metrics/pr_metrics.csv > comparison_output.txt
+
+      - name: Output Comparison Results
+        run: cat metrics_comparison_result.txt
+
+      - name: Comment on PR
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: |
+            CK Metrics Comparison:
+            ```
+            $(cat metrics_comparison_result.txt)
+            ```
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
