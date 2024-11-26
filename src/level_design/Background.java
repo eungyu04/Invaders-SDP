@@ -45,7 +45,6 @@ public class Background {
     }
 
     public static List<String> levelBackgrounds;
-    public static List<String> storyModeBackgrounds;
     // Static block to initialize levelBackgrounds
     static {
         levelBackgrounds = new ArrayList<>();
@@ -58,12 +57,30 @@ public class Background {
         levelBackgrounds.add("/backgrounds/background_level_7.jpg");
         levelBackgrounds.add("/backgrounds/background_level_8.jpg");
     }
+    private static final List<String> storyModeBackgrounds = new ArrayList<>();
+    static {
+        storyModeBackgrounds.add("/Storybackgrounds/S1.png");
+        storyModeBackgrounds.add("/Storybackgrounds/S2.png");
+        storyModeBackgrounds.add("/Storybackgrounds/S3.png");
+        storyModeBackgrounds.add("/Storybackgrounds/S4.png");
+        storyModeBackgrounds.add("/Storybackgrounds/S5.png");
+        storyModeBackgrounds.add("/Storybackgrounds/S6.png");
+        storyModeBackgrounds.add("/Storybackgrounds/S7.png");
+        storyModeBackgrounds.add("/Storybackgrounds/S8.png");
+    }
     // Static method to get background image stream
     public static InputStream getBackgroundImageStream(int levelIndex) {
         if (levelBackgrounds != null && levelIndex >= 0 && levelIndex <= levelBackgrounds.size()) {
             return Background.class.getResourceAsStream(levelBackgrounds.get(levelIndex-1));
         } else {
             throw new IllegalArgumentException("Invalid index or levelBackgrounds not initialized");
+        }
+    }
+    public static InputStream getStoryModeBackgroundImageStream(int storyIndex) {
+        if (storyModeBackgrounds != null && storyIndex >= 0 && storyIndex <= storyModeBackgrounds.size()) {
+            return Background.class.getResourceAsStream(storyModeBackgrounds.get(storyIndex - 1));
+        } else {
+            throw new IllegalArgumentException("Invalid index or storyModeBackgrounds not initialized");
         }
     }
 

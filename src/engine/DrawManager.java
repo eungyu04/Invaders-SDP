@@ -951,6 +951,22 @@ public class DrawManager {
 		backBufferGraphics.drawImage(backgroundImage, horizontalOffset, verticalOffset, null);
 	}
 
+	public void loadCutsceneBackground(int index) {
+		InputStream imageStream = Background.getStoryModeBackgroundImageStream(index);
+		try {
+			assert imageStream != null;
+			backgroundImage = ImageIO.read(imageStream);
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to load cutscene image.", e);
+		}
+	}
+
+	public void drawCutscene() {
+		backBufferGraphics.drawImage(backgroundImage, 0, 0, frame.getWidth(), frame.getHeight(), null);
+	}
+
+
+
 	/**
 	* ### TEAM INTERNATIONAL ###
 	*
