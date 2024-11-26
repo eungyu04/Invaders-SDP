@@ -22,6 +22,9 @@ import Sound_Operator.SoundManager;
 import clove.AchievementManager;
 import screen.*;
 import twoplayermode.TwoPlayerMode;
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
+import javax.imageio.ImageIO;
 
 
 /**
@@ -297,7 +300,34 @@ public final class Core {
 
 			case 4:
 				// Story modes.
-				LOGGER.info("Starting Story mode inGameBGM");
+				LOGGER.info("Starting Story mode cutscenes");
+				DrawManager drawManager = DrawManager.getInstance();
+
+				BufferedImage[] cutsceneImages = new BufferedImage[8];
+				for (int i = 0; i < 8; i++) {
+					InputStream imageStream = Background.getStoryModeBackgroundImageStream(i + 1);
+					try {
+						cutsceneImages[i] = ImageIO.read(imageStream);
+					} catch (IOException e) {
+						throw new RuntimeException("Failed to load cutscene image " + (i + 1), e);
+					}
+				}
+
+				for (BufferedImage cutsceneImage : cutsceneImages) {
+					DrawManager.getInstance().initDrawing(currentScreen);
+					DrawManager.backBufferGraphics.drawImage(cutsceneImage, 0, 0, frame.getWidth(), frame.getHeight(), null);
+					DrawManager.getInstance().completeDrawing(currentScreen);
+
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+						LOGGER.warning("Cutscene interrupted");
+					}
+				}
+
+
+				LOGGER.info("Starting Story mode game");
 				// Sound Operator - 배경음악 시작
 				//+음악추가
 				long roundStartTime = System.currentTimeMillis();
