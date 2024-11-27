@@ -55,6 +55,7 @@ public class Background {
     }
 
     public static List<String> levelBackgrounds;
+    private static final List<String> storyModeBackgrounds;
     // Static block to initialize levelBackgrounds
     static {
         levelBackgrounds = new ArrayList<>();
@@ -78,7 +79,7 @@ public class Background {
         storyModeBackgrounds.add("/backgrounds/storyBackground_level_1.jpg"); // 예시
 
     }
-    private static final List<String> storyModeBackgrounds = new ArrayList<>();
+    storyModeBackgrounds = new ArrayList<>();
     static {
         storyModeBackgrounds.add("/Storybackgrounds/S1.png");
         storyModeBackgrounds.add("/Storybackgrounds/S2.png");

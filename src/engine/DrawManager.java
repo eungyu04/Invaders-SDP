@@ -157,7 +157,7 @@ public class DrawManager {
 			spriteMap.put(SpriteType.Boss, new boolean[24][16]); // by Enemy team
 			spriteMap.put(SpriteType.Coin, new boolean[5][5]); // by Starter Team
 			spriteMap.put(SpriteType.AddSign, new boolean[5][5]); // by Starter Team
-//			spriteMap.put(SpriteType.Gem, new boolean[7][6]); // CtrlS: res/graphics, line 20
+			spriteMap.put(SpriteType.Gem, new boolean[7][6]); // CtrlS: res/graphics, line 20
 			// by Item team
 			spriteMap.put(SpriteType.ItemHeart, new boolean[7][5]);
 			spriteMap.put(SpriteType.ItemBarrier, new boolean[9][10]);
