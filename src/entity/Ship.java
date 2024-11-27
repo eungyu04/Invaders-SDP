@@ -134,7 +134,7 @@ public class Ship extends Entity {
 					Bomb.getCanShoot(),
 					0,	// bulletType -> 아군 총알은 0,
 					0,
-					0// angle
+					1
 			);
 
 			// now can't shoot bomb

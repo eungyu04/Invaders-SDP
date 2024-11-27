@@ -69,7 +69,7 @@ public final class Core {
 			new GameSettings(7, 7, 10, 1000, 3);
 	/** Difficulty settings for level 7. */
 	private static final GameSettings SETTINGS_LEVEL_7 =
-			new GameSettings(8, 7, 2, 500, 1);
+			new GameSettings(8,  7, 2, 500, 1);
 
 	// Story 모드
 	/** Difficulty settings for Story mode level 1. */
