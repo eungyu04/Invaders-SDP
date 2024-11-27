@@ -37,6 +37,7 @@ public class Bullet extends Entity {
 
 	protected int BulletType;
 	protected double angle;
+	private int damage;
 
 	/**
 	 * Constructor, establishes the bullet's properties.
@@ -51,7 +52,7 @@ public class Bullet extends Entity {
 	 *            Speed of the bullet in the Y axis, positive or negative depending on
 	 *            direction - positive is down.
 	 */
-	public Bullet(final int positionX, final int positionY, final int speedX, final int speedY, final int bulletType, final double angle) {
+	public Bullet(final int positionX, final int positionY, final int speedX, final int speedY, final int bulletType, final double angle, final int damage) {
 		super(positionX, positionY, 3 * 2, 5 * 2, Color.WHITE);
 		// CtrlS
 		this.checkCount = true;
@@ -152,5 +153,8 @@ public class Bullet extends Entity {
 
 	public void setAngle(double angle) {this.angle = angle;}
 	public double getAngle() {return angle;}
+
+	public void setDamage(int damage) {this.damage = damage;}
+	public int getDamage() {return damage;}
 
 }

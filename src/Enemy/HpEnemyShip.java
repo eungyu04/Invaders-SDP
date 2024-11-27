@@ -2,6 +2,7 @@ package Enemy;
 
 import java.awt.Color;
 import entity.EnemyShip;
+import entity.Bullet;
 
 public class HpEnemyShip {
 
@@ -56,9 +57,10 @@ public class HpEnemyShip {
      * @param enemyShip
      *          The ship that was hit
      */
-    public static void hit(EnemyShip enemyShip) {
+    public static void hit(EnemyShip enemyShip, Bullet bullet) {
         int hp = enemyShip.getHp();
-        hp -= 1;
+        int damage = bullet.getDamage();
+        hp -= damage;
         enemyShip.setHp(hp);
         if (hp <= 0) {
             enemyShip.destroy();
