@@ -221,7 +221,7 @@ public class GameScreen extends Screen {
 	public void initialize() {
 		super.initialize();
 		/** initialize background **/
-		drawManager.loadBackground(this.level);
+		drawManager.loadBackground(this.level, this.returnCode);
 
 		enemyShipFormation = new EnemyShipFormation(this.gameSettings);
 		enemyShipFormation.setScoreManager(this.scoreManager);//add by team Enemy
@@ -490,7 +490,7 @@ public class GameScreen extends Screen {
 		drawManager.initDrawing(this);
 
 		/** ### TEAM INTERNATIONAL ### */
-		drawManager.drawBackground(backgroundMoveRight, backgroundMoveLeft);
+		drawManager.drawBackground(backgroundMoveRight, backgroundMoveLeft, returnCode);
 		this.backgroundMoveRight = false;
 		this.backgroundMoveLeft = false;
 

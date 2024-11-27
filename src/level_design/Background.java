@@ -1,12 +1,20 @@
 package level_design;
 
+import java.awt.*;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import engine.DrawManager;
 import engine.Frame;
+import screen.GameScreen;
+
+import javax.swing.*;
 
 public class Background {
     private static Background instance;
+    protected DrawManager drawManager;
+    public static Graphics backBufferGraphics;
 
     private int backgroundWidth;
     private int backgroundHeight;
@@ -17,6 +25,7 @@ public class Background {
     private int scrollSpeedHorizontal;
     private int scrollSpeedVertical;
     private int offsetUpdateInterval;
+    private int storyModeScrollSpeedVertical;
 
     private Background() {
         // Empty constructor
@@ -40,8 +49,9 @@ public class Background {
         this.horizontalOffset = -screenWidth;
         this.verticalOffset = 0;
         this.scrollSpeedHorizontal = 3;
-        this.scrollSpeedVertical = 1;
+        this.scrollSpeedVertical = 10;
         this.offsetUpdateInterval = 0;
+        this.storyModeScrollSpeedVertical = 20;
     }
 
     public static List<String> levelBackgrounds;
@@ -57,18 +67,37 @@ public class Background {
         levelBackgrounds.add("/backgrounds/background_level_6.jpg");
         levelBackgrounds.add("/backgrounds/background_level_7.jpg");
         levelBackgrounds.add("/backgrounds/background_level_8.jpg");
+
+        storyModeBackgrounds = new ArrayList<>();
+        storyModeBackgrounds.add("/backgrounds/storyBackground_level_1.jpg"); // 예시
+        storyModeBackgrounds.add("/backgrounds/storyBackground_level_1.jpg"); // 예시
+        storyModeBackgrounds.add("/backgrounds/storyBackground_level_1.jpg"); // 예시
+        storyModeBackgrounds.add("/backgrounds/storyBackground_level_1.jpg"); // 예시
+        storyModeBackgrounds.add("/backgrounds/storyBackground_level_1.jpg"); // 예시
+        storyModeBackgrounds.add("/backgrounds/storyBackground_level_1.jpg"); // 예시
+        storyModeBackgrounds.add("/backgrounds/storyBackground_level_1.jpg"); // 예시
+        storyModeBackgrounds.add("/backgrounds/storyBackground_level_1.jpg"); // 예시
+
     }
     // Static method to get background image stream
-    public static InputStream getBackgroundImageStream(int levelIndex) {
-        if (levelBackgrounds != null && levelIndex >= 0 && levelIndex <= levelBackgrounds.size()) {
-            return Background.class.getResourceAsStream(levelBackgrounds.get(levelIndex-1));
+    public static InputStream getBackgroundImageStream(int levelIndex, int returncode) {
+        if (returncode == 4) { // story mode
+            if (storyModeBackgrounds != null && levelIndex >= 0 && levelIndex <= storyModeBackgrounds.size()) {
+                return Background.class.getResourceAsStream(storyModeBackgrounds.get(levelIndex - 1));
+            } else {
+                throw new IllegalArgumentException("Invalid index or storyModeBackgrounds not initialized");
+            }
         } else {
-            throw new IllegalArgumentException("Invalid index or levelBackgrounds not initialized");
+            if (levelBackgrounds != null && levelIndex >= 0 && levelIndex <= levelBackgrounds.size()) {
+                return Background.class.getResourceAsStream(levelBackgrounds.get(levelIndex - 1));
+            } else {
+                throw new IllegalArgumentException("Invalid index or levelBackgrounds not initialized");
+            }
         }
     }
 
     // Dynamic method to update background image vertical offset
-    public int getVerticalOffset() {
+    public int getVerticalOffset(int returnCode) {
         int scrollLimit = backgroundHeight - screenHeight;
 
         if (scrollLimit == -verticalOffset) {
@@ -76,7 +105,11 @@ public class Background {
         }
 
         if (offsetUpdateInterval % 3 == 0) {
-            verticalOffset -= scrollSpeedVertical;
+            if (returnCode == 4) {
+                verticalOffset += scrollSpeedVertical;
+            } else {
+                verticalOffset -= scrollSpeedVertical;
+            }
             offsetUpdateInterval = 0;
         }
         offsetUpdateInterval++;
@@ -93,5 +126,17 @@ public class Background {
             horizontalOffset += scrollSpeedHorizontal;
         }
         return horizontalOffset;
+    }
+
+    public int getStoryModeVerticalOffset() {
+
+
+        if (offsetUpdateInterval % 3 == 0) {
+            verticalOffset -= scrollSpeedVertical;
+            offsetUpdateInterval = 0;
+        }
+        offsetUpdateInterval++;
+
+        return verticalOffset;
     }
 }
