@@ -79,16 +79,17 @@ public class Background {
         storyModeBackgrounds.add("/backgrounds/storyBackground_level_1.jpg"); // 예시
 
     }
-    storyModeBackgrounds = new ArrayList<>();
+
+    private static final List<String> storyModePainting = new ArrayList<>();
     static {
-        storyModeBackgrounds.add("/Storybackgrounds/S1.png");
-        storyModeBackgrounds.add("/Storybackgrounds/S2.png");
-        storyModeBackgrounds.add("/Storybackgrounds/S3.png");
-        storyModeBackgrounds.add("/Storybackgrounds/S4.png");
-        storyModeBackgrounds.add("/Storybackgrounds/S5.png");
-        storyModeBackgrounds.add("/Storybackgrounds/S6.png");
-        storyModeBackgrounds.add("/Storybackgrounds/S7.png");
-        storyModeBackgrounds.add("/Storybackgrounds/S8.png");
+        storyModePainting.add("/Storybackgrounds/S1.png");
+        storyModePainting.add("/Storybackgrounds/S2.png");
+        storyModePainting.add("/Storybackgrounds/S3.png");
+        storyModePainting.add("/Storybackgrounds/S4.png");
+        storyModePainting.add("/Storybackgrounds/S5.png");
+        storyModePainting.add("/Storybackgrounds/S6.png");
+        storyModePainting.add("/Storybackgrounds/S7.png");
+        storyModePainting.add("/Storybackgrounds/S8.png");
     }
     // Static method to get background image stream
     public static InputStream getBackgroundImageStream(int levelIndex, int returncode) {
@@ -107,10 +108,10 @@ public class Background {
         }
     }
     public static InputStream getStoryModeBackgroundImageStream(int storyIndex) {
-        if (storyModeBackgrounds != null && storyIndex >= 0 && storyIndex <= storyModeBackgrounds.size()) {
-            return Background.class.getResourceAsStream(storyModeBackgrounds.get(storyIndex - 1));
+        if (storyModePainting != null && storyIndex >= 0 && storyIndex <= storyModePainting.size()) {
+            return Background.class.getResourceAsStream(storyModePainting.get(storyIndex - 1));
         } else {
-            throw new IllegalArgumentException("Invalid index or storyModeBackgrounds not initialized");
+            throw new IllegalArgumentException("Invalid index or storyModePainting not initialized");
         }
     }
 
