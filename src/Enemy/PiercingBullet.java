@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import engine.DrawManager;
 import entity.Bullet;
+import entity.EnemyShip;
 import entity.Entity;
 
 /**
@@ -14,6 +15,7 @@ public class PiercingBullet extends Bullet {
 
     // Variable to track how many enemies the bullet can pierce.
     private int piercingCount;
+    private Entity previousEnemy = null;
 
     /**
      * Constructor for PiercingBullet.
@@ -37,9 +39,14 @@ public class PiercingBullet extends Bullet {
      * @param entity The entity the bullet collided with.
      */
     public void onCollision(Entity entity) {
-        this.piercingCount--;
-        if (this.piercingCount <= 0) {
-            this.destroy(); // Destroys the bullet when it can no longer pierce.
+        if (previousEnemy != entity) {
+            this.piercingCount--;
+            if (this.piercingCount <= 0) {
+                this.destroy(); // Destroys the bullet when it can no longer pierce.
+            }
+            this.previousEnemy = entity;
+
+            HpEnemyShip.hit((EnemyShip)entity, this);
         }
     }
 

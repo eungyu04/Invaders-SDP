@@ -621,7 +621,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 						switch (destroyedShip.spriteType){
 							case ExplosiveEnemyShip1:
 							case ExplosiveEnemyShip2:
-								HpEnemyShip.hit(destroyedShip, bullet);
+//								HpEnemyShip.hit(destroyedShip, bullet);
 
 								//Sound_Operator
 								if (destroyedShip.isDestroyed()) {
@@ -642,7 +642,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 								break;
 							default:
-								HpEnemyShip.hit(destroyedShip, bullet);
+//								HpEnemyShip.hit(destroyedShip, bullet);
 
 								if(destroyedShip.getHp() > 0 ){
 									this.logger.info("Enemy ship lost 1 HP in ("
