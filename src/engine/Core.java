@@ -204,7 +204,7 @@ public final class Core {
 				returnCode = frame.setScreen(currentScreen);
 				LOGGER.info("Closing title screen.");
 				break;
-			case 2:
+			case 2: // normal mode
 				// Game & score.
 				LOGGER.info("Starting inGameBGM");
 				// Sound Operator

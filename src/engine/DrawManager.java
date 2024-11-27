@@ -15,8 +15,6 @@ import java.util.logging.Logger;
 
 import CtrlS.RoundState;
 import CtrlS.Gem;
-import Enemy.PiercingBullet;
-import entity.AddSign;
 import entity.Coin;
 import inventory_develop.Bomb;
 import screen.Screen;
@@ -50,9 +48,9 @@ public class DrawManager {
 	private static BufferedImage backBuffer;
 	/** Small sized font. */
 	public static Font fontSmall;
-	/** Normal sized font. */
+	/** Normal-sized font. */
 	public static Font fontRegular;  // Modifying Access Restrictor to public - Lee Hyun Woo
-	/** Normal sized font properties. */
+	/** Normal-sized font properties. */
 	public static FontMetrics fontRegularMetrics; // Modifying Access Restrictor to public - Lee Hyun Woo
 	/** Big sized font. */
 	private static Font fontBig;
@@ -63,12 +61,16 @@ public class DrawManager {
 	private Background background;
 	private BufferedImage backgroundImage;
 
+	private int yOffset = 0;
+
 	/** Sprite types mapped to their images. */
 	private static Map<SpriteType, boolean[][]> spriteMap;
 	private static Map<SpriteType, BufferedImage> spriteMapImage;
 
 	/** Sprite types. */
 	public static enum SpriteType {
+		/** Story mode background image */
+		BackgroundSImage,
 		/** Player ship. */
 		Ship,
 		/** Destroyed player ship. */
@@ -155,7 +157,7 @@ public class DrawManager {
 			spriteMap.put(SpriteType.Boss, new boolean[24][16]); // by Enemy team
 			spriteMap.put(SpriteType.Coin, new boolean[5][5]); // by Starter Team
 			spriteMap.put(SpriteType.AddSign, new boolean[5][5]); // by Starter Team
-			spriteMap.put(SpriteType.Gem, new boolean[7][6]); // CtrlS: res/graphics, line 20
+//			spriteMap.put(SpriteType.Gem, new boolean[7][6]); // CtrlS: res/graphics, line 20
 			// by Item team
 			spriteMap.put(SpriteType.ItemHeart, new boolean[7][5]);
 			spriteMap.put(SpriteType.ItemBarrier, new boolean[9][10]);
@@ -192,7 +194,7 @@ public class DrawManager {
 			spriteMapImage.put(SpriteType.ShipBarrierStatus, fileManager.loadImage("shipbarrierstatus.png"));
 		} catch (IOException e) {
 			logger.warning("Loading failed.");
-		}	
+		}
 	}
 
 	/**
@@ -931,10 +933,10 @@ public class DrawManager {
 	* Background draw and update method
 	*/
 
-	public void loadBackground(int levelNumber) {
+	public void loadBackground(int levelNumber, int returnCode) {
 		background = Background.getInstance();
 		// I still have no clue how relative pathing or class pathing works
-		InputStream imageStream = Background.getBackgroundImageStream(levelNumber);
+		InputStream imageStream = Background.getBackgroundImageStream(levelNumber, returnCode);
 		try {
 			assert imageStream != null;
 			backgroundImage = ImageIO.read(imageStream);
@@ -944,11 +946,22 @@ public class DrawManager {
 		}
 	}
 
-	public void drawBackground(boolean backgroundMoveRight, boolean backgroundMoveLeft) {
-		int verticalOffset = background.getVerticalOffset();
-		int horizontalOffset = background.getHorizontalOffset(backgroundMoveRight, backgroundMoveLeft);
+	public void drawBackground(boolean backgroundMoveRight, boolean backgroundMoveLeft, int returnCode) {
+		if (returnCode == 4) {
+			int verticalOffset = background.getVerticalOffset(returnCode);
+			int horizontalOffset = background.getHorizontalOffset(false, false);
+			int imageHeight = backgroundImage.getHeight(null);
 
-		backBufferGraphics.drawImage(backgroundImage, horizontalOffset, verticalOffset, null);
+			verticalOffset = verticalOffset % imageHeight;
+
+			backBufferGraphics.drawImage(backgroundImage, horizontalOffset, verticalOffset, null);
+			backBufferGraphics.drawImage(backgroundImage, horizontalOffset, verticalOffset-imageHeight, null);
+		} else {
+			int verticalOffset = background.getVerticalOffset(returnCode);
+			int horizontalOffset = background.getHorizontalOffset(backgroundMoveRight, backgroundMoveLeft);
+
+			backBufferGraphics.drawImage(backgroundImage, horizontalOffset, verticalOffset, null);
+		}
 	}
 
 	public void loadCutsceneBackground(int index) {
@@ -964,8 +977,6 @@ public class DrawManager {
 	public void drawCutscene() {
 		backBufferGraphics.drawImage(backgroundImage, 0, 0, frame.getWidth(), frame.getHeight(), null);
 	}
-
-
 
 	/**
 	* ### TEAM INTERNATIONAL ###
