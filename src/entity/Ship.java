@@ -133,7 +133,8 @@ public class Ship extends Entity {
 					growth.getBulletSpeedY(),
 					Bomb.getCanShoot(),
 					0,	// bulletType -> 아군 총알은 0,
-					0	// angle
+					0,
+					0// angle
 			);
 
 			// now can't shoot bomb
@@ -179,7 +180,8 @@ public class Ship extends Entity {
 					(int) (10 * Math.sin(angle)),
 					Bomb.getCanShoot(),
 					0,
-					this.angle
+					this.angle,
+					1
 			);
 
 			Bomb.setCanShoot(false);

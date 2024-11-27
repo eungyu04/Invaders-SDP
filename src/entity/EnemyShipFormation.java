@@ -531,7 +531,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 						(int) (BULLET_SPEED * Math.sin(angle)),
 						0,
 						1,
-						angle)); // Edited by Enemy
+						angle,
+						0)); // Edited by Enemy
 
 			}
 		}
@@ -620,7 +621,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 						switch (destroyedShip.spriteType){
 							case ExplosiveEnemyShip1:
 							case ExplosiveEnemyShip2:
-								HpEnemyShip.hit(destroyedShip);
+								HpEnemyShip.hit(destroyedShip, bullet);
 
 								//Sound_Operator
 								if (destroyedShip.isDestroyed()) {
@@ -641,7 +642,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 								break;
 							default:
-								HpEnemyShip.hit(destroyedShip);
+								HpEnemyShip.hit(destroyedShip, bullet);
 
 								if(destroyedShip.getHp() > 0 ){
 									this.logger.info("Enemy ship lost 1 HP in ("
@@ -694,7 +695,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		int point = 0;
 		int mob = 0;
 
-		Bullet bullet = new Bullet(0,0, 0,-1, 1, 0);
+		Bullet bullet = new Bullet(0,0, 0,-1, 1, 0, 0);
 
 		do{
 

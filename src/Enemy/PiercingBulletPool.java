@@ -36,7 +36,7 @@ public final class PiercingBulletPool {
      */
     public static PiercingBullet getPiercingBullet(final int positionX,
                                                    final int positionY, final int speedX, final int speedY,
-                                                   final int piercingCount, final int bulletType, final double angle) {
+                                                   final int piercingCount, final int bulletType, final double angle, final int damage) {
         PiercingBullet bullet;
         if (!pool.isEmpty()) {
             bullet = pool.iterator().next();
@@ -47,9 +47,10 @@ public final class PiercingBulletPool {
             bullet.setPiercingCount(piercingCount);  // Reset piercing count when recycling
             bullet.setBulletType(bulletType);
             bullet.setAngle(angle);
+            bullet.setDamage(damage);
             bullet.setSprite(); // Prevents destroyed bullets from being reused incorrectly
         } else {
-            bullet = new PiercingBullet(positionX, positionY, speedX, speedY, piercingCount, bulletType, angle);
+            bullet = new PiercingBullet(positionX, positionY, speedX, speedY, piercingCount, bulletType, angle, damage);
             bullet.setPositionX(positionX - bullet.getWidth() / 2);
         }
         return bullet;
