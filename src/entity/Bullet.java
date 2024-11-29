@@ -61,6 +61,7 @@ public class Bullet extends Entity {
 		this.speedY = speedY;
 		this.BulletType = bulletType;
 		this.angle = angle;
+		this.damage = damage;
 		setSprite();
 	}
 
