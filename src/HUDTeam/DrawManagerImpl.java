@@ -1,6 +1,7 @@
 package HUDTeam;
 
 import engine.DrawManager;
+import entity.EnemyShip;
 import screen.GameScreen;
 import screen.Screen;
 import entity.Entity;
@@ -278,5 +279,22 @@ public class DrawManagerImpl extends DrawManager {
         backBufferGraphics.setFont(fontSmall);
         backBufferGraphics.drawString((int)percent + "%", x-5, y + height + 20);
 
+    }
+
+    public static void drawEnemyHp(final Screen screen, final EnemyShip enemyship) {
+        if (enemyship.getHp() < enemyship.getMaxhp()) {
+            int x = enemyship.getPositionX() + 2;
+            int y = enemyship.getPositionY() + enemyship.getHeight();
+
+            int width = enemyship.getWidth() - 5;
+            int currentHpWidth = (int) ((enemyship.getHp() / (double) enemyship.getMaxhp()) * width);
+            int height = 5;
+
+            backBufferGraphics.setColor(Color.black);
+            backBufferGraphics.fillRect(x, y, width, height);
+
+            backBufferGraphics.setColor(Color.RED);
+            backBufferGraphics.fillRect(x, y, currentHpWidth, height);
+        }
     }
 }

@@ -53,7 +53,7 @@ public class Ship extends Entity {
 	 */
 	//Edit by Enemy
 	public Ship(final int positionX, final int positionY, final Color color) {
-		super(positionX, positionY - 50, 17 * 2, 17 * 2, color); // add by team HUD
+		super(positionX, positionY - 70, 17 * 2, 17 * 2, color); // add by team HUD
 		this.angle = -1.5708;	// 90도 기본
 
 		this.spriteType = SpriteType.Ship;
@@ -162,7 +162,7 @@ public class Ship extends Entity {
 			int centerY = positionY + this.height / 2;
 
 			int headX = centerX;
-			int headY = positionY + 8;	// positionY로 하였을 때 총알 위치가 이상해 값을 임의로 수정
+			int headY = positionY + 20;	// positionY로 하였을 때 총알 위치가 이상해 값을 임의로 수정
 
 			// 새롭게 총알을 발사할 x좌표와 y좌표 계산
 			int newheadX = (int) (Math.cos(this.angle) * (headX - centerX)

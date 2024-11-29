@@ -32,6 +32,7 @@ public class EnemyShip extends Entity {
 
 	/** EnemyShip's health point */
 	private int hp; // Add by team Enemy
+	private int Maxhp;
 	/** EnemyShip's Initial x-coordinate **/
 	private int x; // Add by team Enemy
 	/** EnemyShip's Initial y=coordinate **/
@@ -70,6 +71,7 @@ public class EnemyShip extends Entity {
 		super(positionX, positionY, 12 * 2, 8 * 2, HpEnemyShip.determineColor(hp));
 
 		this.hp = hp;// Add by team Enemy
+		this.Maxhp = hp;
 		this.spriteType = spriteType;
 		this.animationCooldown = Core.getCooldown(500);
 		this.isDestroyed = false;
@@ -330,5 +332,8 @@ public class EnemyShip extends Entity {
 	}
 	public double getSpeedMultiplier() {
 		return this.speedMultiplier;
+	}
+	public int getMaxhp() {
+		return Maxhp;
 	}
 }

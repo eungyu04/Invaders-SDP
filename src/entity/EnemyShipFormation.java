@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.swing.Timer;
 
 import Enemy.*;
+import HUDTeam.DrawManagerImpl;
 import Sound_Operator.SoundManager;
 import clove.ScoreManager;
 import inventory_develop.Bomb;
@@ -323,9 +324,11 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 */
 	public final void draw() {
 		for (List<EnemyShip> column : this.enemyShips)
-			for (EnemyShip enemyShip : column)
+			for (EnemyShip enemyShip : column) {
 				drawManager.drawEntity(enemyShip, enemyShip.getPositionX(),
 						enemyShip.getPositionY());
+				DrawManagerImpl.drawEnemyHp(screen, enemyShip);
+			}
 	}
 	/**
 	 * Updates the position of the ships.
