@@ -703,7 +703,8 @@ public class GameScreen extends Screen {
 				bullet.setFire_id(fire_id);
 				for (EnemyShip enemyShip : this.enemyShipFormation) {
 					if (!enemyShip.isDestroyed()
-							&& checkCollision(bullet, enemyShip)) {
+							&& checkCollision(bullet, enemyShip)
+							&& (bullet.getPreviousEnemy() != enemyShip)) {
 						int CntAndPnt[] = this.enemyShipFormation._destroy(bullet, enemyShip, false);    // team Inventory
 						this.shipsDestroyed += CntAndPnt[0];
 						int feverScore = CntAndPnt[0]; //TEAM CLOVE //Edited by team Enemy
@@ -716,8 +717,8 @@ public class GameScreen extends Screen {
 							this.shipsDestroyed++;
 						}
 
-            this.scoreManager.addScore(feverScore); //clove
-            this.score += CntAndPnt[1];
+            			this.scoreManager.addScore(feverScore); //clove
+            			this.score += CntAndPnt[1];
 
 						// CtrlS - If collision occur then check the bullet can process
 						if (!processedFireBullet.contains(bullet.getFire_id())) {
