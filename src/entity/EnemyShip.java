@@ -100,17 +100,17 @@ public class EnemyShip extends Entity {
 			case EnemyShipD1:
 			case EnemyShipD2:
 				this.pointValue = D_TYPE_POINTS;
-				this.width = 10 * 2; this.height = 12 * 2;
+				this.width = 14 * 2; this.height = 14 * 2;
 				break;
 			case EnemyShipE1:
 			case EnemyShipE2:
 				this.pointValue = E_TYPE_POINTS;
-				this.width = 10 * 2; this.height = 12 * 2;
+				this.width = 14 * 2; this.height = 14 * 2;
 				break;
 			case EnemyShipF1:
 			case EnemyShipF2:
 				this.pointValue = F_TYPE_POINTS;
-				this.width = 11 * 2; this.height = 11 * 2;
+				this.width = 13 * 2; this.height = 13 * 2;
 				break;
 			default:
 				this.pointValue = 0;
@@ -224,10 +224,16 @@ public class EnemyShip extends Entity {
 		}
 
 		// story mode enemy
-		if (this.spriteType == SpriteType.EnemyShipD1 || this.spriteType == SpriteType.EnemyShipD2 ||
-				this.spriteType == SpriteType.EnemyShipE1 || this.spriteType == SpriteType.EnemyShipE2 ||
-				this.spriteType == SpriteType.EnemyShipF1 || this.spriteType == SpriteType.EnemyShipF2) {
-			this.spriteType = SpriteType.Boss;	// 임시
+		if (this.spriteType == SpriteType.EnemyShipD1 || this.spriteType == SpriteType.EnemyShipD2){
+			this.spriteType = SpriteType.ExplosionD3;
+			sm.playES("story_enemy_die");	// 임시
+		}
+		else if(this.spriteType == SpriteType.EnemyShipE1 || this.spriteType == SpriteType.EnemyShipE2){
+			this.spriteType = SpriteType.ExplosionE3;
+			sm.playES("story_enemy_die");	// 임시
+		}
+		else if(this.spriteType == SpriteType.EnemyShipF1 || this.spriteType == SpriteType.EnemyShipF2) {
+			this.spriteType = SpriteType.ExplosionF3;	// 임시
 			sm.playES("story_enemy_die");	// 임시
 		} else {
 			this.spriteType = SpriteType.Explosion;
