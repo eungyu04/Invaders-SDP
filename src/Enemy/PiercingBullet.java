@@ -15,7 +15,7 @@ public class PiercingBullet extends Bullet {
 
     // Variable to track how many enemies the bullet can pierce.
     private int piercingCount;
-    private Entity previousEnemy = null;
+    private Entity previousEnemy;
 
     /**
      * Constructor for PiercingBullet.
@@ -29,6 +29,7 @@ public class PiercingBullet extends Bullet {
     public PiercingBullet(final int positionX, final int positionY, final int speedX, final int speedY, int piercingCount, int bulletType, double angle, int damage) {
         super(positionX, positionY, speedX, speedY, bulletType, angle, damage);  // Piercing bullets do not use isPiercing flag anymore.
         this.piercingCount = piercingCount;
+        previousEnemy = null;
         setSprite();    // team Inventory
     }
 
@@ -39,15 +40,14 @@ public class PiercingBullet extends Bullet {
      * @param entity The entity the bullet collided with.
      */
     public void onCollision(Entity entity) {
-        if (previousEnemy != entity) {
-            this.piercingCount--;
-            if (this.piercingCount <= 0) {
-                this.destroy(); // Destroys the bullet when it can no longer pierce.
-            }
-            this.previousEnemy = entity;
-
-            HpEnemyShip.hit((EnemyShip)entity, this);
+        this.piercingCount--;
+        if (this.piercingCount <= 0) {
+            this.destroy(); // Destroys the bullet when it can no longer pierce.
         }
+        if (this.piercingCount > 0) {
+            this.previousEnemy = entity;
+        }
+        HpEnemyShip.hit((EnemyShip)entity, this);
     }
 
     /**
@@ -73,5 +73,13 @@ public class PiercingBullet extends Bullet {
      */
     public void destroy() {
         this.spriteType = DrawManager.SpriteType.Explosion;
+    }
+
+    public void setPreviousEnemy(Entity previousEnemy) {
+        this.previousEnemy = previousEnemy;
+    }
+
+    public Entity getPreviousEnemy() {
+        return previousEnemy;
     }
 }
