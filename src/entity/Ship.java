@@ -53,7 +53,7 @@ public class Ship extends Entity {
 	 */
 	//Edit by Enemy
 	public Ship(final int positionX, final int positionY, final Color color) {
-		super(positionX, positionY - 50, 13 * 2, 8 * 2, color); // add by team HUD
+		super(positionX, positionY - 50, 17 * 2, 17 * 2, color); // add by team HUD
 		this.angle = -1.5708;	// 90도 기본
 
 		this.spriteType = SpriteType.Ship;

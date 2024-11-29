@@ -98,13 +98,15 @@ public class DrawManager {
 		/** storymode enemyship */
 		EnemyShipD1,
 		EnemyShipD2,
+		ExplosionD3,
 		EnemyShipE1,
 		EnemyShipE2,
+		ExplosionE3,
 		EnemyShipF1,
 		EnemyShipF2,
+		ExplosionF3,
 		/** Destroyed enemy ship. */
 		Explosion,
-		ExplosionStory,
 		/**HEART Graphics Produced by Nice HUD Team*/
 		Heart, // Please have the Nice HUD team fix it. - Enemy team
 		/**Item*/
@@ -157,12 +159,12 @@ public class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipC2, new boolean[12][8]);
 			spriteMap.put(SpriteType.ExplosiveEnemyShip1, new boolean[12][8]); // Edited by Enemy
 			spriteMap.put(SpriteType.ExplosiveEnemyShip2, new boolean[12][8]); // Edited by Enemy
-			spriteMap.put(SpriteType.EnemyShipD1, new boolean[10][13]);
-			spriteMap.put(SpriteType.EnemyShipD2, new boolean[10][12]);
-			spriteMap.put(SpriteType.EnemyShipE1, new boolean[10][13]);
-			spriteMap.put(SpriteType.EnemyShipE2, new boolean[10][12]);
-			spriteMap.put(SpriteType.EnemyShipF1, new boolean[11][12]);
-			spriteMap.put(SpriteType.EnemyShipF2, new boolean[11][11]);
+//			spriteMap.put(SpriteType.EnemyShipD1, new boolean[10][13]);
+//			spriteMap.put(SpriteType.EnemyShipD2, new boolean[10][12]);
+//			spriteMap.put(SpriteType.EnemyShipE1, new boolean[10][13]);
+//			spriteMap.put(SpriteType.EnemyShipE2, new boolean[10][12]);
+//			spriteMap.put(SpriteType.EnemyShipF1, new boolean[11][12]);
+//			spriteMap.put(SpriteType.EnemyShipF2, new boolean[11][11]);
 			spriteMap.put(SpriteType.EnemyShipSpecial, new boolean[16][7]);
 			spriteMap.put(SpriteType.Explosion, new boolean[13][7]);
 			spriteMap.put(SpriteType.Heart, new boolean[13][8]);
@@ -204,7 +206,16 @@ public class DrawManager {
 			spriteMapImage.put(SpriteType.EnemyBullet, fileManager.loadImage("enemybullet.png"));
 			spriteMapImage.put(SpriteType.ItemBomb, fileManager.loadImage("bomb.png"));
 			spriteMapImage.put(SpriteType.ShipBarrierStatus, fileManager.loadImage("shipbarrierstatus.png"));
-//			spriteMapImage.put(SpriteType.ExplosionStory, fileManager.loadImage("explosionstory.png"));
+			spriteMapImage.put(SpriteType.EnemyShipD1, fileManager.loadImage("enemyshipD1.png"));
+			spriteMapImage.put(SpriteType.EnemyShipD2, fileManager.loadImage("enemyshipD2.png"));
+			spriteMapImage.put(SpriteType.ExplosionD3, fileManager.loadImage("explosionD3.png"));
+			spriteMapImage.put(SpriteType.EnemyShipE1, fileManager.loadImage("enemyshipE1.png"));
+			spriteMapImage.put(SpriteType.EnemyShipE2, fileManager.loadImage("enemyshipE2.png"));
+			spriteMapImage.put(SpriteType.ExplosionE3, fileManager.loadImage("explosionE3.png"));
+			spriteMapImage.put(SpriteType.EnemyShipF1, fileManager.loadImage("enemyshipF1.png"));
+			spriteMapImage.put(SpriteType.EnemyShipF2, fileManager.loadImage("enemyshipF2.png"));
+			spriteMapImage.put(SpriteType.ExplosionF3, fileManager.loadImage("explosionF3.png"));
+
 		} catch (IOException e) {
 			logger.warning("Loading failed.");
 		}	
