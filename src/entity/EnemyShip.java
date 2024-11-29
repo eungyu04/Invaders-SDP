@@ -1,6 +1,7 @@
 package entity;
 
 import java.awt.Color;
+import java.util.Objects;
 
 import Enemy.HpEnemyShip;
 import engine.Cooldown;
@@ -20,6 +21,10 @@ public class EnemyShip extends Entity {
 	private static final int B_TYPE_POINTS = 20;
 	/** Point value of a type C enemy. */
 	private static final int C_TYPE_POINTS = 30;
+	/** Point value of a type Story enemy(D, E, F) */
+	private static final int D_TYPE_POINTS = 10;
+	private static final int E_TYPE_POINTS = 20;
+	private static final int F_TYPE_POINTS = 30;
 	/** Point value of a type Explosive enemy. */
 	private static final int EXPLOSIVE_TYPE_POINTS = 50; //Edited by Enemy
 	/** Point value of a bonus enemy. */
@@ -61,7 +66,7 @@ public class EnemyShip extends Entity {
 
 
 	public EnemyShip(final int positionX, final int positionY,
-					 final SpriteType spriteType,int hp,int x, int y) {// Edited by Enemy
+					 final SpriteType spriteType, int hp,int x, int y) {// Edited by Enemy
 		super(positionX, positionY, 12 * 2, 8 * 2, HpEnemyShip.determineColor(hp));
 
 		this.hp = hp;// Add by team Enemy
@@ -73,6 +78,7 @@ public class EnemyShip extends Entity {
 		this.speedMultiplier=1.0; // default 1.0
 		this.defaultSpeedMultiplier = 1.0;
 
+		// 적 함선 형태에 따라 점수 및 크기(필요시) 조정
 		switch (this.spriteType) {
 			case EnemyShipA1:
 			case EnemyShipA2:
@@ -90,6 +96,21 @@ public class EnemyShip extends Entity {
 			case ExplosiveEnemyShip2:
 				super.setColor(new Color(237, 28, 36)); //set ExplosiveEnemyShip Color
 				this.pointValue = EXPLOSIVE_TYPE_POINTS;
+				break;
+			case EnemyShipD1:
+			case EnemyShipD2:
+				this.pointValue = D_TYPE_POINTS;
+				this.width = 10 * 2; this.height = 12 * 2;
+				break;
+			case EnemyShipE1:
+			case EnemyShipE2:
+				this.pointValue = E_TYPE_POINTS;
+				this.width = 10 * 2; this.height = 12 * 2;
+				break;
+			case EnemyShipF1:
+			case EnemyShipF2:
+				this.pointValue = F_TYPE_POINTS;
+				this.width = 11 * 2; this.height = 11 * 2;
 				break;
 			default:
 				this.pointValue = 0;
@@ -167,6 +188,24 @@ public class EnemyShip extends Entity {
 				case ExplosiveEnemyShip2: //Edited by Enemy
 					this.spriteType = SpriteType.ExplosiveEnemyShip1;
 					break;
+				case EnemyShipD1:
+					this.spriteType = SpriteType.EnemyShipD2;
+					break;
+				case EnemyShipD2:
+					this.spriteType = SpriteType.EnemyShipD1;
+					break;
+				case EnemyShipE1:
+					this.spriteType = SpriteType.EnemyShipE2;
+					break;
+				case EnemyShipE2:
+					this.spriteType = SpriteType.EnemyShipE1;
+					break;
+				case EnemyShipF1:
+					this.spriteType = SpriteType.EnemyShipF2;
+					break;
+				case EnemyShipF2:
+					this.spriteType = SpriteType.EnemyShipF1;
+					break;
 				default:
 					break;
 			}
@@ -182,10 +221,18 @@ public class EnemyShip extends Entity {
 		sm = SoundManager.getInstance();
 		if(this.spriteType == SpriteType.EnemyShipSpecial){
 			sm.playES("special_enemy_die");
-		}else{
+		}
+
+		// story mode enemy
+		if (this.spriteType == SpriteType.EnemyShipD1 || this.spriteType == SpriteType.EnemyShipD2 ||
+				this.spriteType == SpriteType.EnemyShipE1 || this.spriteType == SpriteType.EnemyShipE2 ||
+				this.spriteType == SpriteType.EnemyShipF1 || this.spriteType == SpriteType.EnemyShipF2) {
+			this.spriteType = SpriteType.Boss;	// 임시
+			sm.playES("story_enemy_die");	// 임시
+		} else {
+			this.spriteType = SpriteType.Explosion;
 			sm.playES("basic_enemy_die");
 		}
-		this.spriteType = SpriteType.Explosion;
 
 	}
 
