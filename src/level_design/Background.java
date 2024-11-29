@@ -69,14 +69,14 @@ public class Background {
         levelBackgrounds.add("/backgrounds/background_level_8.jpg");
 
         storyModeBackgrounds = new ArrayList<>();
-        storyModeBackgrounds.add("/backgrounds/storyBackground_level_1.jpg"); // 예시
-        storyModeBackgrounds.add("/backgrounds/storyBackground_level_1.jpg"); // 예시
-        storyModeBackgrounds.add("/backgrounds/storyBackground_level_1.jpg"); // 예시
-        storyModeBackgrounds.add("/backgrounds/storyBackground_level_1.jpg"); // 예시
-        storyModeBackgrounds.add("/backgrounds/storyBackground_level_1.jpg"); // 예시
-        storyModeBackgrounds.add("/backgrounds/storyBackground_level_1.jpg"); // 예시
-        storyModeBackgrounds.add("/backgrounds/storyBackground_level_1.jpg"); // 예시
-        storyModeBackgrounds.add("/backgrounds/storyBackground_level_1.jpg"); // 예시
+        storyModeBackgrounds.add("/Storybackgrounds/Sbackgrounds1-3,5-7.png"); // 예시
+        storyModeBackgrounds.add("/Storybackgrounds/Sbackgrounds1-3,5-7.png"); // 예시
+        storyModeBackgrounds.add("/Storybackgrounds/Sbackgrounds1-3,5-7.png"); // 예시
+        storyModeBackgrounds.add("/Storybackgrounds/SbackgroundsBoss1.png"); // 예시
+        storyModeBackgrounds.add("/Storybackgrounds/Sbackgrounds1-3,5-7.png"); // 예시
+        storyModeBackgrounds.add("/Storybackgrounds/Sbackgrounds1-3,5-7.png"); // 예시
+        storyModeBackgrounds.add("/Storybackgrounds/Sbackgrounds1-3,5-7.png"); // 예시
+        storyModeBackgrounds.add("/Storybackgrounds/SbackgroundsBoss2.png"); // 예시
 
     }
 
@@ -116,7 +116,7 @@ public class Background {
     }
 
     // Dynamic method to update background image vertical offset
-    public int getVerticalOffset(int returnCode) {
+    public int getVerticalOffset(int returnCode, int level) {
         int scrollLimit = backgroundHeight - screenHeight;
 
         if (scrollLimit == -verticalOffset) {
@@ -125,7 +125,11 @@ public class Background {
 
         if (offsetUpdateInterval % 3 == 0) {
             if (returnCode == 4) {
-                verticalOffset += scrollSpeedVertical;
+                if (!(level == 4 || level == 8)) {
+                    verticalOffset += scrollSpeedVertical;
+                } else {
+                    verticalOffset = 0;
+                }
             } else {
                 verticalOffset -= scrollSpeedVertical;
             }
@@ -145,17 +149,5 @@ public class Background {
             horizontalOffset += scrollSpeedHorizontal;
         }
         return horizontalOffset;
-    }
-
-    public int getStoryModeVerticalOffset() {
-
-
-        if (offsetUpdateInterval % 3 == 0) {
-            verticalOffset -= scrollSpeedVertical;
-            offsetUpdateInterval = 0;
-        }
-        offsetUpdateInterval++;
-
-        return verticalOffset;
     }
 }

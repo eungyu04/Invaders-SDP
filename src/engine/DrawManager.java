@@ -972,9 +972,9 @@ public class DrawManager {
 		}
 	}
 
-	public void drawBackground(boolean backgroundMoveRight, boolean backgroundMoveLeft, int returnCode) {
+	public void drawBackground(boolean backgroundMoveRight, boolean backgroundMoveLeft, int returnCode, int level) {
 		if (returnCode == 4) {
-			int verticalOffset = background.getVerticalOffset(returnCode);
+			int verticalOffset = background.getVerticalOffset(returnCode, level);
 			int horizontalOffset = background.getHorizontalOffset(false, false);
 			int imageHeight = backgroundImage.getHeight(null);
 
@@ -983,7 +983,7 @@ public class DrawManager {
 			backBufferGraphics.drawImage(backgroundImage, horizontalOffset, verticalOffset, null);
 			backBufferGraphics.drawImage(backgroundImage, horizontalOffset, verticalOffset-imageHeight, null);
 		} else {
-			int verticalOffset = background.getVerticalOffset(returnCode);
+			int verticalOffset = background.getVerticalOffset(returnCode, level);
 			int horizontalOffset = background.getHorizontalOffset(backgroundMoveRight, backgroundMoveLeft);
 
 			backBufferGraphics.drawImage(backgroundImage, horizontalOffset, verticalOffset, null);
