@@ -490,7 +490,7 @@ public class GameScreen extends Screen {
 		drawManager.initDrawing(this);
 
 		/** ### TEAM INTERNATIONAL ### */
-		drawManager.drawBackground(backgroundMoveRight, backgroundMoveLeft, returnCode);
+		drawManager.drawBackground(backgroundMoveRight, backgroundMoveLeft, returnCode, level);
 		this.backgroundMoveRight = false;
 		this.backgroundMoveLeft = false;
 
