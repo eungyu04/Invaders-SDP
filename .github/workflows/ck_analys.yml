@@ -1,0 +1,60 @@
+name: Analyze CK Metrics with Java
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  ck-metrics:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Run CK Metrics on PR code
+        run: |
+          mkdir -p ck_metrics
+          java -jar action/ck-0.7.0-jar-with-dependencies.jar ./src true 0 true ck_metrics/pr_metrics.csv
+
+      - name: Checkout base branch for comparison
+        run: |
+          git fetch origin main
+          git checkout main
+
+      - name: Run CK Metrics on base branch
+        run: |
+          mkdir -p ck_metrics
+          java -jar action/ck-0.7.0-jar-with-dependencies.jar ./src true 0 true ck_metrics/base_metrics.csv
+
+      - name: Compare CK Metrics using Java
+        run: |
+          java -jar action/ck-metrics-comparator.jar ck_metrics/base_metrics.csvclass.csv ck_metrics/pr_metrics.csvclass.csv > comparison_output.txt
+          
+      - name: Debug
+        run: |
+          cat comparison_output.txt
+          ls -l comparison_output.txt
+
+      - name: Post file content to PR
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const content = fs.readFileSync('comparison_output.txt', 'utf8');
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: `### Metrics Comparison\n\`\`\`\n${content}\n\`\`\``
+            });
