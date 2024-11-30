@@ -25,7 +25,7 @@ jobs:
       - name: Run CK Metrics on PR code
         run: |
           mkdir -p ck_metrics
-          java -jar action/ck-0.7.0-jar-with-dependencies.jar ./src true 0 true ck_metrics/pr_metrics.csv
+          java -jar res/action/ck-0.7.0-jar-with-dependencies.jar ./src true 0 true ck_metrics/pr_metrics.csv
 
       - name: Checkout base branch for comparison
         run: |
@@ -35,11 +35,11 @@ jobs:
       - name: Run CK Metrics on base branch
         run: |
           mkdir -p ck_metrics
-          java -jar action/ck-0.7.0-jar-with-dependencies.jar ./src true 0 true ck_metrics/base_metrics.csv
+          java -jar res/action/ck-0.7.0-jar-with-dependencies.jar ./src true 0 true ck_metrics/base_metrics.csv
 
       - name: Compare CK Metrics using Java
         run: |
-          java -jar action/ck-metrics-comparator.jar ck_metrics/base_metrics.csvclass.csv ck_metrics/pr_metrics.csvclass.csv > comparison_output.txt
+          java -jar res/action/ck-metrics-comparator.jar ck_metrics/base_metrics.csvclass.csv ck_metrics/pr_metrics.csvclass.csv > comparison_output.txt
           
       - name: Debug
         run: |
