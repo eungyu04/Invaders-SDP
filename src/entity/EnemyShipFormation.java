@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.swing.Timer;
 
 import Enemy.*;
+import HUDTeam.DrawManagerImpl;
 import Sound_Operator.SoundManager;
 import clove.ScoreManager;
 import inventory_develop.Bomb;
@@ -269,12 +270,16 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 		int hp = 1;
 
-		if ((int) (random() * 100) < 33)
-			spriteType = SpriteType.EnemyShipC1;
-		else if ((int) (random() * 100) < 66)
-			spriteType = SpriteType.EnemyShipB1;
+		if ((int) (random() * 100) < 33) {
+			spriteType = SpriteType.EnemyShipF1;
+			hp = 3;
+		}
+		else if ((int) (random() * 100) < 66) {
+			spriteType = SpriteType.EnemyShipE1;
+			hp = 2;
+		}
 		else
-			spriteType = SpriteType.EnemyShipA1;
+			spriteType = SpriteType.EnemyShipD1;
 
 		for (List<EnemyShip> column : this.enemyShips) {
 			if (enemyShips.indexOf(column) == index_y){
@@ -283,11 +288,11 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				this.shooters.add(column.get(column.size() - 1));
 
 				// 몹 종류에 따른 공격속도 설정, 이 부분은 나중에 다른 값들이랑 같이 따로 클래스를 생성할 수도 있습니다.
-				if (spriteType == SpriteType.EnemyShipC1){
+				if (spriteType == SpriteType.EnemyShipF1){
 					this.shootingCooldown.add(Core.getVariableCooldown(shootingInterval + 2000,
 							shootingVariance));
 				}
-				else if (spriteType == SpriteType.EnemyShipB1){
+				else if (spriteType == SpriteType.EnemyShipE1){
 					this.shootingCooldown.add(Core.getVariableCooldown(shootingInterval + 2000,
 							shootingVariance));
 				}
@@ -319,9 +324,11 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 */
 	public final void draw() {
 		for (List<EnemyShip> column : this.enemyShips)
-			for (EnemyShip enemyShip : column)
+			for (EnemyShip enemyShip : column) {
 				drawManager.drawEntity(enemyShip, enemyShip.getPositionX(),
 						enemyShip.getPositionY());
+				DrawManagerImpl.drawEnemyHp(screen, enemyShip);
+			}
 	}
 	/**
 	 * Updates the position of the ships.
@@ -512,10 +519,13 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				shoot.reset();
 
 				// 몹 종류에 따른 공격방식 설정, 이 부분은 나중에 다른 값들이랑 같이 따로 클래스를 생성할 수도 있습니다.
-				if (shooter.getSpriteType() == SpriteType.EnemyShipC1){
+				if (shooter.getSpriteType() == SpriteType.EnemyShipD1){  //임시 기믹 변경 예정
 					angle = Math.atan2(shippositionY - shooter.getPositionY(), shippositionX - shooter.getPositionX());
 				}
-				else if (shooter.getSpriteType() == SpriteType.EnemyShipB1){  //임시 기믹 변경 예정
+				else if (shooter.getSpriteType() == SpriteType.EnemyShipE1){
+					angle = Math.atan2(shippositionY - shooter.getPositionY(), shippositionX - shooter.getPositionX());
+				}
+				else if (shooter.getSpriteType() == SpriteType.EnemyShipF1){
 					angle = Math.atan2(shippositionY - shooter.getPositionY(), shippositionX - shooter.getPositionX());
 				}
 				else {

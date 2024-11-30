@@ -490,7 +490,7 @@ public class GameScreen extends Screen {
 		drawManager.initDrawing(this);
 
 		/** ### TEAM INTERNATIONAL ### */
-		drawManager.drawBackground(backgroundMoveRight, backgroundMoveLeft, returnCode);
+		drawManager.drawBackground(backgroundMoveRight, backgroundMoveLeft, returnCode, level);
 		this.backgroundMoveRight = false;
 		this.backgroundMoveLeft = false;
 
@@ -678,8 +678,55 @@ public class GameScreen extends Screen {
 	 * Manages collisions between bullets and ships. -Edited code for Drop Item
 	 * Manages collisions between bullets and ships. -Edited code for Piercing Bullet
 	 */
-	//by Enemy team
+	private void adjustShipPositionAfterCollision(Ship ship, EnemyShip enemyShip) {
+		int adjustmentDistance = 10; // 충돌 후 벌어질 거리
+
+
+		if (ship.getPositionX() < enemyShip.getPositionX()) {
+			ship.setPositionX(ship.getPositionX() - adjustmentDistance);
+		} else {
+			ship.setPositionX(ship.getPositionX() + adjustmentDistance);
+		}
+
+		if (ship.getPositionY() < enemyShip.getPositionY()) {
+			ship.setPositionY(ship.getPositionY() - adjustmentDistance);
+		} else {
+			ship.setPositionY(ship.getPositionY() + adjustmentDistance);
+		}
+
+		System.out.println("Ship position adjusted to avoid repeated collisions.");
+	}
+
 	public void manageCollisions_add_item() {
+		for (EnemyShip enemyShip : this.enemyShipFormation) {
+			if (!enemyShip.isDestroyed() && checkCollision(this.ship, enemyShip)) {
+				if (this.ship.isInvincible()) {
+					System.out.println("Collision ignored due to invincibility.");
+				} else if (this.item.isbarrierActive()) {
+					this.ship.activateFrozen();
+					adjustShipPositionAfterCollision(this.ship, enemyShip);
+					System.out.println("Collision blocked by shield.");
+
+				} else {
+					System.out.println("Collision detected. Player lives decreased.");
+					if (this.ship.isInvincible()) {
+						System.out.println("Collision ignored due to invincibility.");
+					} else {
+						this.lives--;
+						System.out.println("Collision detected. Player lives decreased.");
+					}
+					this.ship.activateInvincibility();
+					this.ship.destroy();
+					this.logger.info("Player ship collided with enemy. Lives remaining: " + this.lives);
+
+					if (this.lives <= 0) {
+						sm = SoundManager.getInstance();
+						sm.playShipDieSounds();
+						System.out.println("Player is out of lives.");
+					}
+				}
+			}
+		}
 		Set<PiercingBullet> recyclable = new HashSet<PiercingBullet>();
 		for (PiercingBullet bullet : this.bullets)
 			if (bullet.getBulletType() != 0) {
@@ -703,7 +750,8 @@ public class GameScreen extends Screen {
 				bullet.setFire_id(fire_id);
 				for (EnemyShip enemyShip : this.enemyShipFormation) {
 					if (!enemyShip.isDestroyed()
-							&& checkCollision(bullet, enemyShip)) {
+							&& checkCollision(bullet, enemyShip)
+							&& (bullet.getPreviousEnemy() != enemyShip)) {
 						int CntAndPnt[] = this.enemyShipFormation._destroy(bullet, enemyShip, false);    // team Inventory
 						this.shipsDestroyed += CntAndPnt[0];
 						int feverScore = CntAndPnt[0]; //TEAM CLOVE //Edited by team Enemy
@@ -716,8 +764,8 @@ public class GameScreen extends Screen {
 							this.shipsDestroyed++;
 						}
 
-            this.scoreManager.addScore(feverScore); //clove
-            this.score += CntAndPnt[1];
+            			this.scoreManager.addScore(feverScore); //clove
+            			this.score += CntAndPnt[1];
 
 						// CtrlS - If collision occur then check the bullet can process
 						if (!processedFireBullet.contains(bullet.getFire_id())) {

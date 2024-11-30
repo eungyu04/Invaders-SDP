@@ -42,6 +42,14 @@ public class Ship extends Entity {
 	private NumberOfBullet numberOfBullet;
 	/** angle of ship */
 	private double angle;
+	//무적
+	private boolean isInvincible;
+	private long invincibilityStartTime;
+	private static final int INVINCIBILITY_DURATION = 1000;
+
+	private boolean isFrozen;
+	private long frozenStartTime;
+	private static final int FROZEN_DURATION = 1000;
 
 	/**
 	 * Constructor, establishes the ship's properties.
@@ -53,7 +61,7 @@ public class Ship extends Entity {
 	 */
 	//Edit by Enemy
 	public Ship(final int positionX, final int positionY, final Color color) {
-		super(positionX, positionY - 50, 13 * 2, 8 * 2, color); // add by team HUD
+		super(positionX, positionY - 70, 17 * 2, 17 * 2, color); // add by team HUD
 		this.angle = -1.5708;	// 90도 기본
 
 		this.spriteType = SpriteType.Ship;
@@ -70,41 +78,67 @@ public class Ship extends Entity {
 		this.destructionCooldown = Core.getCooldown(1000);
 
 		this.numberOfBullet = new NumberOfBullet();
+		this.isInvincible = false;
+		this.invincibilityStartTime = 0;
+		this.isFrozen = false;
+		this.frozenStartTime = 0;
 	}
 
-	/**
-	 * Moves the ship speed uni ts right, or until the right screen border is
-	 * reached.
-	 */
 	public final void moveRight() {
-		this.positionX += growth.getMoveSpeed(); //  Use PlayerGrowth for movement speed
-	} //Edit by Enemy
-
-
-	/**
-	 * Moves the ship speed units left, or until the left screen border is
-	 * reached.
-	 */
+		if (!isFrozen()) {
+			this.positionX += growth.getMoveSpeed();
+		}
+	}
 	public final void moveLeft() {
-		this.positionX -= growth.getMoveSpeed(); // Use PlayerGrowth for movement speed
-	} //Edit by Enemy
-
-	/**
-	 * Moves the ship speed uni ts up, or until the up screen border is
-	 * reached.
-	 */
+		if (!isFrozen()) {
+			this.positionX -= growth.getMoveSpeed();
+		}
+	}
 	public final void moveUp() {
-		this.positionY -= growth.getMoveSpeed(); //  Use PlayerGrowth for movement speed
-	} //Edit by Enemy
+		if (!isFrozen()) {
+			this.positionY -= growth.getMoveSpeed();
+		}
+	}
 
-
-	/**
-	 * Moves the ship speed units down, or until the down screen border is
-	 * reached.
-	 */
 	public final void moveDown() {
-		this.positionY += growth.getMoveSpeed(); // Use PlayerGrowth for movement speed
-	} //Edit by Enemy
+		if (!isFrozen()) {
+			this.positionY += growth.getMoveSpeed();
+		}
+	}
+
+
+	public void activateInvincibility() {
+		this.isInvincible = true;
+		this.invincibilityStartTime = System.currentTimeMillis();
+		System.out.println("Invincibility activated for 3 seconds.");
+	}
+
+	public boolean isInvincible() {
+		if (this.isInvincible) {
+			long elapsed = System.currentTimeMillis() - this.invincibilityStartTime;
+			if (elapsed > INVINCIBILITY_DURATION) {
+				this.isInvincible = false;
+				System.out.println("Invincibility expired.");
+			}
+		}
+		return this.isInvincible;
+	}
+
+	public void activateFrozen() {
+		this.isFrozen = true;
+		this.frozenStartTime = System.currentTimeMillis();
+		System.out.println("Player is frozen for 1 second.");
+	}
+	public boolean isFrozen() {
+		if (this.isFrozen) {
+			long elapsed = System.currentTimeMillis() - this.frozenStartTime;
+			if (elapsed > FROZEN_DURATION) {
+				this.isFrozen = false; // 멈춤 상태 해제
+				System.out.println("Frozen state expired.");
+			}
+		}
+		return this.isFrozen;
+	}
 
 	/**
 	 * Shoots a bullet upwards.
@@ -162,21 +196,21 @@ public class Ship extends Entity {
 			int centerY = positionY + this.height / 2;
 
 			int headX = centerX;
-			int headY = positionY + 8;	// positionY로 하였을 때 총알 위치가 이상해 값을 임의로 수정
+			int headY = positionY + 20;	// positionY로 하였을 때 총알 위치가 이상해 값을 임의로 수정
 
 			// 새롭게 총알을 발사할 x좌표와 y좌표 계산
 			int newheadX = (int) (Math.cos(this.angle) * (headX - centerX)
-                                - Math.sin(this.angle) * (headY - centerY)
-                                + centerX);
+					- Math.sin(this.angle) * (headY - centerY)
+					+ centerX);
 			int newheadY = (int) (Math.sin(this.angle) * (headX - centerX)
-                                + Math.cos(this.angle) * (headY - centerY)
-                                + centerY);
+					+ Math.cos(this.angle) * (headY - centerY)
+					+ centerY);
 
 			// Use NumberOfBullet to generate bullets
 			Set<PiercingBullet> newBullets = numberOfBullet.addBullet(
 					newheadX,
 					newheadY,
-                    (int) (10 * Math.cos(angle)),	// 임시 수치
+					(int) (10 * Math.cos(angle)),	// 임시 수치
 					(int) (10 * Math.sin(angle)),
 					Bomb.getCanShoot(),
 					0,
@@ -262,7 +296,7 @@ public class Ship extends Entity {
 	public final double getSpeed() {
 		return growth.getMoveSpeed();
 	}
-	
+
 	/**
 	 * Calculates and returns the bullet speed in Pixels per frame.
 	 *

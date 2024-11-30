@@ -49,6 +49,7 @@ public final class PiercingBulletPool {
             bullet.setAngle(angle);
             bullet.setDamage(damage);
             bullet.setSprite(); // Prevents destroyed bullets from being reused incorrectly
+            bullet.setPreviousEnemy(null);
         } else {
             bullet = new PiercingBullet(positionX, positionY, speedX, speedY, piercingCount, bulletType, angle, damage);
             bullet.setPositionX(positionX - bullet.getWidth() / 2);
