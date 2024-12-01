@@ -79,8 +79,6 @@ public class EnemyShip extends Entity {
 		this.y = y; // Add by team enemy
 		this.speedMultiplier=1.0; // default 1.0
 		this.defaultSpeedMultiplier = 1.0;
-		// Sound Operator
-		sm = SoundManager.getInstance();
 
 		// 적 함선 형태에 따라 점수 및 크기(필요시) 조정
 		switch (this.spriteType) {
@@ -135,8 +133,6 @@ public class EnemyShip extends Entity {
 		this.pointValue = BONUS_TYPE_POINTS;
 		this.x = -2;  // Add by team Enemy
 		this.y = -2; // Add by team Enemy
-		// Sound Operator
-		sm = SoundManager.getInstance();
 	}
 
 
@@ -340,7 +336,7 @@ public class EnemyShip extends Entity {
 	}
 
 	// for test
-	public void setSoundManager(SoundManager sm) {
+	public static void setSoundManager(SoundManager sm) {
 		EnemyShip.sm = sm;
 	}
 }
