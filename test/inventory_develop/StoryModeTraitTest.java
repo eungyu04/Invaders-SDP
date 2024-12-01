@@ -1,17 +1,13 @@
 package inventory_develop;
 
-import CtrlS.UpgradeManager;
-import engine.Core;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.Mockito.*;
 
 public class StoryModeTraitTest {
     StoryModeTrait storyModeTrait;
@@ -84,28 +80,28 @@ public class StoryModeTraitTest {
     void selectedTraitsTest1() {
         // BulletDamage
         assertEquals("basic", storyModeTrait.getTraits().get("BulletDamage"));
-        storyModeTrait.setSelectedTraits("BulletDamage");
+        storyModeTrait.upgradeSelectedTraits("BulletDamage");
         assertEquals("common", storyModeTrait.getTraits().get("BulletDamage"));
-        storyModeTrait.setSelectedTraits("BulletDamage");
+        storyModeTrait.upgradeSelectedTraits("BulletDamage");
         assertEquals("rare", storyModeTrait.getTraits().get("BulletDamage"));
-        storyModeTrait.setSelectedTraits("BulletDamage");
+        storyModeTrait.upgradeSelectedTraits("BulletDamage");
         assertEquals("epic", storyModeTrait.getTraits().get("BulletDamage"));
 
         // ShipShoot360
         assertEquals("common", storyModeTrait.getTraits().get("ShipShoot360"));
-        storyModeTrait.setSelectedTraits("ShipShoot360");
+        storyModeTrait.upgradeSelectedTraits("ShipShoot360");
         assertEquals("rare", storyModeTrait.getTraits().get("ShipShoot360"));
     }
 
     @Test
     @DisplayName("trait 적용 테스트2")
     void selectedTraitsTest2() {
-        assertDoesNotThrow(() -> { storyModeTrait.setSelectedTraits("BulletSpeed");});
-        assertDoesNotThrow(() -> { storyModeTrait.setSelectedTraits("BulletSpeed");});
-        assertDoesNotThrow(() -> { storyModeTrait.setSelectedTraits("BulletSpeed");});
-        assertDoesNotThrow(() -> { storyModeTrait.setSelectedTraits("BulletSpeed");});  //없음
-        assertDoesNotThrow(() -> { storyModeTrait.setSelectedTraits("ShipShoot360");});
-        assertThrows(NullPointerException.class, () -> storyModeTrait.setSelectedTraits("ShipShoot360")); //없음
+        assertDoesNotThrow(() -> { storyModeTrait.upgradeSelectedTraits("BulletSpeed");});
+        assertDoesNotThrow(() -> { storyModeTrait.upgradeSelectedTraits("BulletSpeed");});
+        assertDoesNotThrow(() -> { storyModeTrait.upgradeSelectedTraits("BulletSpeed");});
+        assertDoesNotThrow(() -> { storyModeTrait.upgradeSelectedTraits("BulletSpeed");});  //없음
+        assertDoesNotThrow(() -> { storyModeTrait.upgradeSelectedTraits("ShipShoot360");});
+        assertThrows(NullPointerException.class, () -> storyModeTrait.upgradeSelectedTraits("ShipShoot360")); //없음
     }
 
 //    @Test
