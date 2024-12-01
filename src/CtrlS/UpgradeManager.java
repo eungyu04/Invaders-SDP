@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Properties;
 import java.util.logging.Logger;
+
+import inventory_develop.Bomb;
 import inventory_develop.ShipStatus;
 
 public final class UpgradeManager {
@@ -20,8 +22,12 @@ public final class UpgradeManager {
     // Upgrade keys
     private static final String COIN_ACQUISITION_MULTIPLIER = "coin_acquisition_multiplier";
     private static final String ATTACK_SPEED = "attack_speed";
-    private static final String MOVEMENT_SPEED = "movement_speed";
+    // Upgrade keys - StoryModeTrait
+    private static final String BULLET_DAMAGE = "bullet_damage";
     private static final String BULLET_NUM = "bullet_num";
+    private static final String BULLET_SPEED = "bullet_speed";
+    private static final String MOVEMENT_SPEED = "movement_speed";
+    private static final String SHIP_SHOOT360 = "ship_shoot360";
 
     // inventory, Upgrade count
     private static final String Speed_Count = "speed_LevelCount";
@@ -110,7 +116,6 @@ public final class UpgradeManager {
     /**
      * Add to the current attack speed.
      *
-     *
      * @throws IOException In case of saving problems.
      */
     public void addAttackSpeed() throws IOException {
@@ -134,9 +139,14 @@ public final class UpgradeManager {
         return Double.parseDouble(properties.getProperty(MOVEMENT_SPEED, "1"));
     }
 
+    public void setMovementSpeed(double movementSpeed) throws IOException {
+        Properties properties = fileManager.loadUpgradeStatus();
+        properties.setProperty(MOVEMENT_SPEED, Double.toString(movementSpeed));
+        fileManager.saveUpgradeStatus(properties);
+    }
+
     /**
      * Add to the current movement speed.
-     *
      *
      * @throws IOException In case of saving problems.
      */
@@ -167,11 +177,50 @@ public final class UpgradeManager {
         return Integer.parseInt(properties.getProperty(BULLET_NUM, "1"));
     }
 
+    public void setBulletNum(int bulletNum) throws IOException {
+        Properties properties = fileManager.loadUpgradeStatus();
+        properties.setProperty(BULLET_NUM, Integer.toString(bulletNum));
+        fileManager.saveUpgradeStatus(properties);
+    }
+
     public void addBulletNum() throws IOException {
         int currentValue = getBulletNum();
         currentValue += 1;
         Properties properties = fileManager.loadUpgradeStatus();
         properties.setProperty(BULLET_NUM, Integer.toString(currentValue));
+        fileManager.saveUpgradeStatus(properties);
+    }
+
+    public int getBulletSpeed() throws IOException {
+        Properties properties = fileManager.loadUpgradeStatus();
+        return Integer.parseInt(properties.getProperty(BULLET_SPEED, "1"));
+    }
+
+    public void setBulletSpeed(int bulletSpeed) throws IOException {
+        Properties properties = fileManager.loadUpgradeStatus();
+        properties.setProperty(BULLET_SPEED, Integer.toString(bulletSpeed));
+        fileManager.saveUpgradeStatus(properties);
+    }
+
+    public int getBulletDamage() throws IOException {
+        Properties properties = fileManager.loadUpgradeStatus();
+        return Integer.parseInt(properties.getProperty(BULLET_DAMAGE, "1"));
+    }
+
+    public void setBulletDamage(int bulletDamage) throws IOException {
+        Properties properties = fileManager.loadUpgradeStatus();
+        properties.setProperty(BULLET_DAMAGE, Integer.toString(bulletDamage));
+        fileManager.saveUpgradeStatus(properties);
+    }
+
+    public boolean getShipShoot360() throws IOException {
+        Properties properties = fileManager.loadUpgradeStatus();
+        return Boolean.parseBoolean(properties.getProperty(SHIP_SHOOT360, "1"));
+    }
+
+    public void setShipShoot360(boolean shipShoot360) throws IOException {
+        Properties properties = fileManager.loadUpgradeStatus();
+        properties.setProperty(SHIP_SHOOT360, Boolean.toString(shipShoot360));
         fileManager.saveUpgradeStatus(properties);
     }
 
@@ -299,4 +348,8 @@ public final class UpgradeManager {
         }
     }
 
+    // for Test
+    public static void setFileManager(FileManager fileManager) {
+        UpgradeManager.fileManager = fileManager;
+    }
 }

@@ -8,9 +8,9 @@ public class PlayerGrowth {
     //Player's base stats
     private int health;          //Health
     private static double moveSpeed = 1.5;       //Movement speed
-    private static int bulletSpeedX = 0;      // Bullet speedX
-    private static int bulletSpeedY = -4;     // Bullet speedY
+    private static int bulletSpeed = 15;     // Bullet speedY
     private static int shootingDelay = 750;   // Shooting delay
+    private static boolean canShoot360;     // 360도로 쏠 수 있는지 없는지
 
     //Constructor to set initial values
     public PlayerGrowth() {//  Base shooting delay is 750ms
@@ -18,7 +18,9 @@ public class PlayerGrowth {
         // CtrlS: set player growth based on upgrade_status.properties
         try {
             moveSpeed = Core.getUpgradeManager().getMovementSpeed();
+            bulletSpeed = Core.getUpgradeManager().getBulletSpeed();
             shootingDelay = Core.getUpgradeManager().getAttackSpeed();
+            canShoot360 = Core.getUpgradeManager().getShipShoot360();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -35,11 +37,8 @@ public class PlayerGrowth {
     }
 
     // Increases bullet speed (makes bullets faster)
-    public void increaseBulletSpeedX(int increment) {
-        this.bulletSpeedX -= increment; // Increase by subtracting (since negative speed)
-    }
-    public void increaseBulletSpeedY(int increment) {
-        this.bulletSpeedY -= increment; // Increase by subtracting (since negative speed)
+    public void increaseBulletSpeed(int increment) {
+        this.bulletSpeed += increment; // Increase by subtracting (since negative speed)
     }
 
     // Decreases shooting delay (makes shooting faster)
@@ -52,9 +51,8 @@ public class PlayerGrowth {
 
     // reset bullet speed
     //Edit by inventory
-    public void ResetBulletSpeed(){
-        bulletSpeedX = 0;
-        bulletSpeedY = -4;
+    public void ResetBulletSpeed() {
+        bulletSpeed = 5;
     }
 
     // Returns current health
@@ -68,11 +66,8 @@ public class PlayerGrowth {
     }
 
     // Returns current bullet speed
-    public int getBulletSpeedX() {
-        return this.bulletSpeedX;
-    }
-    public int getBulletSpeedY() {
-        return this.bulletSpeedY;
+    public int getBulletSpeed() {
+        return this.bulletSpeed;
     }
 
     //  Returns current shooting delay
@@ -80,12 +75,15 @@ public class PlayerGrowth {
         return this.shootingDelay;
     }
 
+    public boolean getCanShoot360() {
+        return this.canShoot360;
+    }
+
     // Prints player stats (for debugging)
     public void printStats() {
         System.out.println("Health: " + this.health);
         System.out.println("MoveSpeed: " + this.moveSpeed);
-        System.out.println("BulletSpeedX: " + this.bulletSpeedX);
-        System.out.println("BulletSpeedY: " + this.bulletSpeedY);
+        System.out.println("BulletSpeed: " + this.bulletSpeed);
         System.out.println("ShootingDelay: " + this.shootingDelay + "ms");
     }
 }

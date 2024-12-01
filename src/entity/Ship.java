@@ -163,12 +163,11 @@ public class Ship extends Entity {
 			Set<PiercingBullet> newBullets = numberOfBullet.addBullet(
 					positionX + this.width / 2,
 					positionY,
-					growth.getBulletSpeedX(), // Use PlayerGrowth for bullet speed
-					growth.getBulletSpeedY(),
+					0,
+					-growth.getBulletSpeed(), // Use PlayerGrowth for bullet speed
 					Bomb.getCanShoot(),
 					0,	// bulletType -> 아군 총알은 0,
-					0,
-					1
+					0
 			);
 
 			// now can't shoot bomb
@@ -210,12 +209,11 @@ public class Ship extends Entity {
 			Set<PiercingBullet> newBullets = numberOfBullet.addBullet(
 					newheadX,
 					newheadY,
-					(int) (10 * Math.cos(angle)),	// 임시 수치
-					(int) (10 * Math.sin(angle)),
+					(int) ((growth.getBulletSpeed()+1) * Math.cos(angle)),	// (int)로 인한 값 수치 보정
+					(int) ((growth.getBulletSpeed()+1) * Math.sin(angle)),
 					Bomb.getCanShoot(),
 					0,
-					this.angle,
-					1
+					this.angle
 			);
 
 			Bomb.setCanShoot(false);
@@ -277,7 +275,7 @@ public class Ship extends Entity {
 	// Increases bullet speed
 	//Edit by Enemy
 	public void increaseBulletSpeedY() {
-		growth.increaseBulletSpeedY(shipStatus.getBulletSpeedIn());
+		growth.increaseBulletSpeed(shipStatus.getBulletSpeedIn());
 	}
 
 	//  Decreases shooting delay
@@ -303,7 +301,7 @@ public class Ship extends Entity {
 	 * @return bullet speed (Pixels per frame).
 	 */
 	public final int getBulletSpeedY() {
-		int speedY = growth.getBulletSpeedY();
+		int speedY = -growth.getBulletSpeed();
 		return (speedY >= 0) ? speedY : -speedY;
 	}//by SeungYun TeamHUD
 
@@ -319,4 +317,7 @@ public class Ship extends Entity {
 		return this.angle;
 	}
 
+	public boolean getCanShoot360() {
+		return growth.getCanShoot360();
+	}
 }
