@@ -4,8 +4,10 @@ import engine.Core;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class StoryModeTrait {
+    private static Logger logger;
 
     // basic - normal - rare - epic
     private final Map<String, Integer> trait_BulletDamage
@@ -23,6 +25,7 @@ public class StoryModeTrait {
 
     // Construct
     public StoryModeTrait() {
+        logger = Core.getLogger();
         // 특성 초기화
         traits.put("BulletDamage", "basic");
         traits.put("BulletCount", "basic");
@@ -96,16 +99,23 @@ public class StoryModeTrait {
     }
 
     // 선택된 특성을 traits에 적용
-    public void setSelectedTraits(String type) {
+    public void upgradeSelectedTraits(String type) {
         String rarity = traits.get(type);
+        String beforerarity = rarity;
 
-        if (rarity.equals("basic")) rarity = "common";
-        else if (rarity.equals("common")) rarity = "rare";
-        else if (rarity.equals("rare")) rarity = "epic";
+        rarity = setNextRarity(rarity);
 
         traits.put(type, rarity);
 
+        logger.info("User's " + type + " changed from " + beforerarity + " to " + rarity);
         update();
+    }
+
+    public String setNextRarity(String rarity) {
+        if (rarity.equals("basic")) return "common";
+        else if (rarity.equals("common")) return "rare";
+        else if (rarity.equals("rare")) return "epic";
+        return rarity;
     }
 
     // update() - 다른 update()들과 다르게 필요 시에만 작동하게 적용

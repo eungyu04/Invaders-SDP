@@ -15,14 +15,17 @@ import java.util.logging.Logger;
 
 import CtrlS.RoundState;
 import CtrlS.Gem;
+import HUDTeam.DrawManagerImpl;
 import entity.Coin;
 import inventory_develop.Bomb;
+import inventory_develop.StoryModeTrait;
 import screen.Screen;
 import entity.Entity;
 
 import level_design.Background;
 
 import javax.imageio.ImageIO;
+import javax.swing.text.html.StyleSheet;
 
 /**
 * Manages screen drawing.
@@ -925,6 +928,73 @@ public class DrawManager {
 		backBufferGraphics.setColor(Color.GRAY);
 		drawCenteredRegularString(screen, instructionsString,
 				screen.getHeight() / 2 + fontRegularMetrics.getHeight() * 10);
+	}
+
+	/**
+	 * Show ReceiptScreen
+	 *
+	 * @param screen
+	 *            Screen to draw on.
+	 * @param gameState
+	 *            State of one game
+	 */
+	int blinkCounter = 0;
+	boolean isBlinking = false;
+	public void drawTarit(final Screen screen, final GameState gameState,
+						  String[] traits, String[] rarities, int traitIndex) {
+		String traitListString = "Trait List";
+		String chooseTraitString = "Choose Trait!";
+		String AllTraitString = "Acquire all Traits!";
+		String BossClearString = "* Boss Clear *";
+		String StageClearString = "* Stage Clear *";
+		String instructionsString = "Press Space to Continue Story Mode";
+
+		backBufferGraphics.setColor(Color.GREEN);
+		drawCenteredBigString(screen, traitListString, screen.getHeight() * 2 / 10);
+
+		// 그냥 깜박거리는 효과 추가해보고싶어서 해봄
+		blinkCounter++;
+		if (blinkCounter >= 20) {
+			isBlinking = !isBlinking;
+			blinkCounter = 0;
+		}
+
+		if (gameState.getLevel() == 4) {
+			backBufferGraphics.setColor(Color.WHITE);
+			drawCenteredBigString(screen, BossClearString, screen.getHeight() * 2 / 10 + fontBigMetrics.getHeight() * 3 / 2);
+
+			if (isBlinking) {
+				backBufferGraphics.setColor(Color.GREEN);
+				drawCenteredBigString(screen, AllTraitString, screen.getHeight() * 2 / 10 + fontBigMetrics.getHeight() * 5 / 2);
+			}
+			DrawManagerImpl.drawRect(58, screen.getHeight() * 3 / 8 - 2, 144, 234, Color.WHITE);
+			DrawManagerImpl.drawRect(58 + 180, screen.getHeight() * 3 / 8 - 2, 144, 234, Color.WHITE);
+			DrawManagerImpl.drawRect(58 + 180 + 180, screen.getHeight() * 3 / 8 - 2, 144, 234, Color.WHITE);
+		} else {
+			backBufferGraphics.setColor(Color.WHITE);
+			drawCenteredBigString(screen, StageClearString, screen.getHeight() * 2 / 10 + fontBigMetrics.getHeight() * 3 / 2);
+
+			if (isBlinking) {
+				backBufferGraphics.setColor(Color.GREEN);
+				drawCenteredBigString(screen, chooseTraitString, screen.getHeight() * 2 / 10 + fontBigMetrics.getHeight() * 5 / 2);
+			}
+
+			DrawManagerImpl.drawRect(58 + 180*(traitIndex), screen.getHeight() * 3 / 8 - 2, 144, 234, Color.WHITE);
+		}
+
+		// 특성 선택창
+		try {
+			for (int i = 0; i < traits.length; i++) {
+				BufferedImage traitImage = fileManager.loadTraitImage(traits[i] + "_" + rarities[i] + ".png");
+				backBufferGraphics.drawImage(traitImage, 60 + 180*(i), screen.getHeight() * 3 / 8, null);
+			}
+		} catch (IOException e) {
+			logger.warning("Loading TraitImage failed.");
+		}
+
+		backBufferGraphics.setColor(Color.GRAY);
+		drawCenteredRegularString(screen, instructionsString,
+				screen.getHeight() / 2 + fontRegularMetrics.getHeight() * 13);
 	}
 
 	/**

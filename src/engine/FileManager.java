@@ -963,4 +963,11 @@ public final class FileManager {
 
 		return defaultProperties;
 	}
+
+	public BufferedImage loadTraitImage(String path) throws IOException{
+		try {
+			InputStream image = FileManager.class.getResourceAsStream("/Traits/" + path);
+			return ImageIO.read(image);
+		} finally {}
+	}
 }

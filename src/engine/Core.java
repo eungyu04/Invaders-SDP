@@ -1,6 +1,8 @@
 package engine;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
@@ -18,14 +20,9 @@ import clove.Statistics;
 import entity.EnemyShip;
 import inventory_develop.StoryModeTrait;
 import level_design.Background;
-import CtrlS.RoundState;
-import CtrlS.ReceiptScreen;
-import Sound_Operator.SoundManager;
 import clove.AchievementManager;
 import screen.*;
-import twoplayermode.TwoPlayerMode;
-import java.awt.image.BufferedImage;
-import java.io.InputStream;
+
 import javax.imageio.ImageIO;
 
 
@@ -365,6 +362,15 @@ public final class Core {
 
 					roundState = new RoundState(prevState, gameState);
 
+					// Show TraitScreen
+					if (gameState.getLevel() <= 7 && gameState.getLivesRemaining() > 0) {
+						String[] traits = storyModeTrait.getRandomTraits(gameState.getLevel());
+						LOGGER.info("loading traitScreen");
+						currentScreen = new TraitScreen(width, height, FPS, gameState, storyModeTrait, traits);
+						frame.setScreen(currentScreen);
+						LOGGER.info("Closing traitScreen.");
+					}
+
 					// Add playtime parameter
 					gameState = new GameState(gameState.getLevel() + 1,
 							gameState.getScore(),
@@ -388,27 +394,18 @@ public final class Core {
 						LOGGER.info("Failed to Save RoundTime");
 					}
 
-					// 특성 선택 화면 추가 예정
-					int index = 0;	// 임시
-					String[] traits = storyModeTrait.getRandomTraits(gameState.getLevel());
-					if (gameState.getLevel() == 4) {
-						storyModeTrait.setSelectedTraits(traits[0]);
-						storyModeTrait.setSelectedTraits(traits[1]);
-						storyModeTrait.setSelectedTraits(traits[2]);
-					} else {
-						storyModeTrait.setSelectedTraits(traits[index]);
-					}
 
 					// Show receiptScreen
 					// If it is not the last round and the game is not over
-					if (gameState.getLevel() <= 8 && gameState.getLivesRemaining() > 0) {
-						LOGGER.info("loading receiptScreen");
-						currentScreen = new ReceiptScreen(width, height, FPS, roundState, gameState);
-
-						LOGGER.info("Starting " + WIDTH + "x" + HEIGHT + " receipt screen at " + FPS + " fps.");
-						frame.setScreen(currentScreen);
-						LOGGER.info("Closing receiptScreen.");
-					}
+					// 스토리모드에는 필요없는 화면인 것 같아서 제거
+//					if (gameState.getLevel() <= 8 && gameState.getLivesRemaining() > 0) {
+//						LOGGER.info("loading receiptScreen");
+//						currentScreen = new ReceiptScreen(width, height, FPS, roundState, gameState);
+//
+//						LOGGER.info("Starting " + WIDTH + "x" + HEIGHT + " receipt screen at " + FPS + " fps.");
+//						frame.setScreen(currentScreen);
+//						LOGGER.info("Closing receiptScreen.");
+//					}
 					if (achievementManager != null) {
 						achievementManager.updateAchievements(currentScreen);
 					}
