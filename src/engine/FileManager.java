@@ -915,7 +915,7 @@ public final class FileManager {
 			outputStream = new FileOutputStream(upgradeFile);
 			properties.store(new OutputStreamWriter(outputStream, Charset.forName("UTF-8")), "Upgrade Statuses");
 
-			logger.info("Saving upgrade statuses.");
+//			logger.info("Saving upgrade statuses.");
 
 		} finally {
 			if (outputStream != null) {
@@ -942,9 +942,12 @@ public final class FileManager {
 			} else {
 				logger.warning("upgrade_default.properties not found. Using hardcoded default values.");
 				defaultProperties.setProperty("coin_acquisition_multiplier", "1.0");
-				defaultProperties.setProperty("attack_speed", "750");
-				defaultProperties.setProperty("movement_speed", "2");
+				defaultProperties.setProperty("attack_speed", "600");
+				defaultProperties.setProperty("movement_speed", "3.5");
+				defaultProperties.setProperty("bullet_damage", "1");
 				defaultProperties.setProperty("bullet_num", "1");
+				defaultProperties.setProperty("bullet_speed", "10");
+				defaultProperties.setProperty("ship_shoot360", "false");
 
 				//inventory team
 				defaultProperties.setProperty("speed_LevelCount", "1");

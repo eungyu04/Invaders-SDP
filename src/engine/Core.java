@@ -16,6 +16,7 @@ import CtrlS.UpgradeManager;
 import Sound_Operator.SoundManager;
 import clove.Statistics;
 import entity.EnemyShip;
+import inventory_develop.StoryModeTrait;
 import level_design.Background;
 import CtrlS.RoundState;
 import CtrlS.ReceiptScreen;
@@ -213,6 +214,11 @@ public final class Core {
 				sm.playES("start_button_ES");
 				sm.playBGM("inGame_bgm");
 
+				try {
+					getUpgradeManager().resetUpgrades();		// storyMode에서 업그레이드되었던 부분 초기화
+					getUpgradeManager().setShipShoot360(true);	// 360도 발사만 가능하게
+				} catch (IOException e) {throw new RuntimeException(e);}
+
 				do {
 					// One extra live every few levels.
 					boolean bonusLife = gameState.getLevel()
@@ -333,7 +339,9 @@ public final class Core {
 				// Sound Operator - 배경음악 시작
 				//+음악추가
 				long roundStartTime = System.currentTimeMillis();
-
+				
+				// StoryModeTrait생성 - player의 특성이 기본값으로 변경됨(StatusConfig.properties)
+				StoryModeTrait storyModeTrait = new StoryModeTrait();	
 
 				do {
 					boolean bonusLife = gameState.getLevel()
@@ -378,6 +386,17 @@ public final class Core {
 						LOGGER.info("RoundTime Saving");
 					} catch (IOException e) {
 						LOGGER.info("Failed to Save RoundTime");
+					}
+
+					// 특성 선택 화면 추가 예정
+					int index = 0;	// 임시
+					String[] traits = storyModeTrait.getRandomTraits(gameState.getLevel());
+					if (gameState.getLevel() == 4) {
+						storyModeTrait.setSelectedTraits(traits[0]);
+						storyModeTrait.setSelectedTraits(traits[1]);
+						storyModeTrait.setSelectedTraits(traits[2]);
+					} else {
+						storyModeTrait.setSelectedTraits(traits[index]);
 					}
 
 					// Show receiptScreen

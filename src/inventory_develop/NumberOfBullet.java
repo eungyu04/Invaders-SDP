@@ -17,9 +17,11 @@ public class NumberOfBullet{
     private static final int OFFSET_X_TWOBULLETS = 15;
     private static final int OFFSET_X_THREEBULLETS = 12;
 
+    /** Bulet damage */
+    private static int bulletDamage = 1;
     /** Bullet levels */
-    private static int bulletLevel = 1;
-    /** PiercingBullet levles */
+    private static int bulletCount = 1;
+    /** PiercingBullet levels */
     private static int piercingbulletLevel = 1;
     private final int PierceMax = 3;
 
@@ -28,9 +30,10 @@ public class NumberOfBullet{
      */
     public NumberOfBullet() {
         try {
-            bulletLevel = Core.getUpgradeManager().getBulletNum();
-            if (bulletLevel > 3){
-                bulletLevel = 3;
+            bulletDamage = Core.getUpgradeManager().getBulletDamage();
+            bulletCount = Core.getUpgradeManager().getBulletNum();
+            if (bulletCount > 3){
+                bulletCount = 3;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -41,26 +44,26 @@ public class NumberOfBullet{
      *
      * @return
      */
-    public Set<PiercingBullet> addBullet(int positionX, int positionY, int speedX, int speedY, boolean canShootBomb, int bulletType, double angle, int damage) {
+    public Set<PiercingBullet> addBullet(int positionX, int positionY, int speedX, int speedY, boolean canShootBomb, int bulletType, double angle) {
         Set<PiercingBullet> bullets = new HashSet<>();
 
         if (canShootBomb) {
-            bullets.add(PiercingBulletPool.getPiercingBullet(positionX, positionY, speedX, speedY, 1, bulletType, angle, damage));
+            bullets.add(PiercingBulletPool.getPiercingBullet(positionX, positionY, speedX, speedY, 1, bulletType, angle, bulletDamage));
             return bullets;
         }
 
-        switch (bulletLevel) {
+        switch (bulletCount) {
             case 1:
-                bullets.add(PiercingBulletPool.getPiercingBullet(positionX, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, damage));
+                bullets.add(PiercingBulletPool.getPiercingBullet(positionX, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, bulletDamage));
                 break;
             case 2:
-                bullets.add(PiercingBulletPool.getPiercingBullet(positionX - OFFSET_X_TWOBULLETS + 5, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, damage));
-                bullets.add(PiercingBulletPool.getPiercingBullet(positionX + OFFSET_X_TWOBULLETS - 5, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, damage));
+                bullets.add(PiercingBulletPool.getPiercingBullet(positionX - OFFSET_X_TWOBULLETS + 5, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, bulletDamage));
+                bullets.add(PiercingBulletPool.getPiercingBullet(positionX + OFFSET_X_TWOBULLETS - 5, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, bulletDamage));
                 break;
             case 3:
-                bullets.add(PiercingBulletPool.getPiercingBullet(positionX + OFFSET_X_THREEBULLETS, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, damage));
-                bullets.add(PiercingBulletPool.getPiercingBullet(positionX, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, damage));
-                bullets.add(PiercingBulletPool.getPiercingBullet(positionX - OFFSET_X_THREEBULLETS, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, damage));
+                bullets.add(PiercingBulletPool.getPiercingBullet(positionX + OFFSET_X_THREEBULLETS, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, bulletDamage));
+                bullets.add(PiercingBulletPool.getPiercingBullet(positionX, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, bulletDamage));
+                bullets.add(PiercingBulletPool.getPiercingBullet(positionX - OFFSET_X_THREEBULLETS, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, bulletDamage));
                 break;
         }
 

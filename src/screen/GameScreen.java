@@ -357,7 +357,7 @@ public class GameScreen extends Screen {
 				this.ship.setAngle(angle);
 
 				if (inputManager.isKeyDown(KeyEvent.VK_SPACE) || inputManager.isMouseButtonDown(MouseEvent.BUTTON1))
-					if (this.returnCode == 2 && this.ship.shoot360(this.bullets)) {	// 무한모드일 때 작동(임시로 일반모드일 때 작동하게 설정)
+					if (this.ship.getCanShoot360() && this.ship.shoot360(this.bullets)) {	// 무한모드일 때 작동(임시로 일반모드일 때 작동하게 설정)
 						this.bulletsShot++;
 						this.fire_id++;
 						this.logger.info("Bullet's fire_id is " + fire_id);
@@ -497,7 +497,7 @@ public class GameScreen extends Screen {
 		DrawManagerImpl.drawRect(0, 0, this.width, SEPARATION_LINE_HEIGHT, Color.BLACK);
 		DrawManagerImpl.drawRect(0, this.height - 70, this.width, 70, Color.BLACK); // by Saeum Jung - TeamHUD
 
-		if (returnCode == 2) {    // 임시
+		if (this.ship.getCanShoot360()) {    // 임시
 			drawManager.drawRotateEntity(this.ship, this.ship.getPositionX(),
 					this.ship.getPositionY(), this.ship.getAngle());
 		} else {
@@ -520,7 +520,7 @@ public class GameScreen extends Screen {
 
 
 		for (PiercingBullet bullet : this.bullets)
-			if ((returnCode == 2 && bullet.getBulletType() == 0) || bullet.getBulletType() == 1)
+			if ((this.ship.getCanShoot360() && bullet.getBulletType() == 0) || bullet.getBulletType() == 1)
 				drawManager.drawRotateEntity(bullet, bullet.getPositionX(),
 								bullet.getPositionY(), bullet.getAngle());
 			else
