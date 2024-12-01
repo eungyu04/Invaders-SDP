@@ -88,7 +88,7 @@ public class ScoreScreen extends Screen {
 	 *            Current game state.
 	 */
 	public ScoreScreen(final int width, final int height, final int fps,
-			final GameState gameState) {
+			final GameState gameState, int returncode) {
 		super(width, height, fps);
 
 		this.score = gameState.getScore();
@@ -104,6 +104,7 @@ public class ScoreScreen extends Screen {
 		this.gameState = gameState; // Team-Ctrl-S(Currency)
 		this.level = gameState.getLevel(); //Team Clove
 		this.statistics = new Statistics(); //Team Clove
+		this.returnCode = returncode;
 
 		// 모드에 따라 게임 클리어 조건을 다르게 설정
 		int maxLevel = (returnCode == 4) ? MAX_HIGH_SCORE_NUM_STORY : MAX_HIGH_SCORE_NUM;
@@ -161,12 +162,12 @@ public class ScoreScreen extends Screen {
 				saveRecentScore(); // Team Clove
 			} else if (inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
 				// Play again.
-				System.out.println(this.isTwoPlayerMode());
-				if (this.isTwoPlayerMode()){
-					this.returnCode = 4;
-				} else {
-					this.returnCode = 2;
-				}
+//				System.out.println(this.isTwoPlayerMode());
+//				if (this.isTwoPlayerMode()){
+//					this.returnCode = 4;
+//				} else {
+//					this.returnCode = 2;
+//				}
 				this.isRunning = false;
 				if (this.isNewRecord) {
 					saveScore();
