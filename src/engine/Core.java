@@ -15,6 +15,7 @@ import CtrlS.ReceiptScreen;
 import CtrlS.UpgradeManager;
 import Sound_Operator.SoundManager;
 import clove.Statistics;
+import entity.EnemyShip;
 import level_design.Background;
 import CtrlS.RoundState;
 import CtrlS.ReceiptScreen;
@@ -133,6 +134,7 @@ public final class Core {
 			consoleHandler.setFormatter(new MinimalFormatter());
 			// Sound Operator
 			sm = SoundManager.getInstance();
+			EnemyShip.setSoundManager(sm);
 
 			LOGGER.addHandler(fileHandler);
 			LOGGER.addHandler(consoleHandler);

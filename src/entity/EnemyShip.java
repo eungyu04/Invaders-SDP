@@ -219,8 +219,6 @@ public class EnemyShip extends Entity {
 	 */
 	public final void destroy() {
 		this.isDestroyed = true;
-		// Sound Operator
-		sm = SoundManager.getInstance();
 		if(this.spriteType == SpriteType.EnemyShipSpecial){
 			sm.playES("special_enemy_die");
 		}
@@ -335,5 +333,9 @@ public class EnemyShip extends Entity {
 	}
 	public int getMaxhp() {
 		return Maxhp;
+	}
+	// for test
+	public static void setSoundManager(SoundManager sm) {
+		EnemyShip.sm = sm;
 	}
 }
