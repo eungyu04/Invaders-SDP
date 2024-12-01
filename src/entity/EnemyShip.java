@@ -230,15 +230,15 @@ public class EnemyShip extends Entity {
 		// story mode enemy
 		if (this.spriteType == SpriteType.EnemyShipD1 || this.spriteType == SpriteType.EnemyShipD2){
 			this.spriteType = SpriteType.ExplosionD3;
-			sm.playES("story_enemy_die");	// 임시
+			sm.playES("basic_enemy_die");	// 임시
 		}
 		else if(this.spriteType == SpriteType.EnemyShipE1 || this.spriteType == SpriteType.EnemyShipE2){
 			this.spriteType = SpriteType.ExplosionE3;
-			sm.playES("story_enemy_die");	// 임시
+			sm.playES("basic_enemy_die");	// 임시
 		}
 		else if(this.spriteType == SpriteType.EnemyShipF1 || this.spriteType == SpriteType.EnemyShipF2) {
 			this.spriteType = SpriteType.ExplosionF3;	// 임시
-			sm.playES("story_enemy_die");	// 임시
+			sm.playES("basic_enemy_die");	// 임시
 		} else {
 			this.spriteType = SpriteType.Explosion;
 			sm.playES("basic_enemy_die");
