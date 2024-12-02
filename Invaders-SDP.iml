@@ -9,6 +9,8 @@
     </content>
     <orderEntry type="jdk" jdkName="22" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="mockito.core" level="project" />
+    <orderEntry type="library" exported="" name="mockito.inline" level="project" />
     <orderEntry type="library" exported="" name="au.dius.pact.jvm.consumer.junit5" level="project" />
   </component>
 </module>
