@@ -308,17 +308,36 @@ public final class Core {
 				LOGGER.info("Starting Story mode cutscenes");
 				DrawManager drawManager = DrawManager.getInstance();
 
-				BufferedImage[] cutsceneImages = new BufferedImage[8];
-				for (int i = 0; i < 8; i++) {
+				BufferedImage[] firstSetImages = new BufferedImage[5];
+				for (int i = 0; i < 5; i++) {
 					InputStream imageStream = Background.getStoryModeBackgroundImageStream(i + 1);
 					try {
-						cutsceneImages[i] = ImageIO.read(imageStream);
+						firstSetImages[i] = ImageIO.read(imageStream);
+					} catch (IOException e) {
+						throw new RuntimeException("Failed to load cutscene image " + (i + 1), e);
+					}
+				}
+				BufferedImage[] secondSetImages = new BufferedImage[3];
+				for (int i = 5; i < 8; i++) {
+					InputStream imageStream = Background.getStoryModeBackgroundImageStream(i + 1);
+					try {
+						secondSetImages[i - 5] = ImageIO.read(imageStream);
+					} catch (IOException e) {
+						throw new RuntimeException("Failed to load cutscene image " + (i + 1), e);
+					}
+				}
+				BufferedImage[] thirdSetImages = new BufferedImage[2];
+				for (int i = 8; i < 10; i++) {
+					InputStream imageStream = Background.getStoryModeBackgroundImageStream(i + 1);
+					try {
+						thirdSetImages[i - 8] = ImageIO.read(imageStream);
 					} catch (IOException e) {
 						throw new RuntimeException("Failed to load cutscene image " + (i + 1), e);
 					}
 				}
 
-				for (BufferedImage cutsceneImage : cutsceneImages) {
+				// First cutscene
+				for (BufferedImage cutsceneImage : firstSetImages) {
 					DrawManager.getInstance().initDrawing(currentScreen);
 					DrawManager.backBufferGraphics.drawImage(cutsceneImage, 0, 0, frame.getWidth(), frame.getHeight(), null);
 					DrawManager.getInstance().completeDrawing(currentScreen);
@@ -362,14 +381,14 @@ public final class Core {
 
 					roundState = new RoundState(prevState, gameState);
 
-					// Show TraitScreen
-					if (gameState.getLevel() <= 7 && gameState.getLivesRemaining() > 0) {
-						String[] traits = storyModeTrait.getRandomTraits(gameState.getLevel());
-						LOGGER.info("loading traitScreen");
-						currentScreen = new TraitScreen(width, height, FPS, gameState, storyModeTrait, traits);
-						frame.setScreen(currentScreen);
-						LOGGER.info("Closing traitScreen.");
-					}
+//					// Show TraitScreen - 오류
+//					if (gameState.getLevel() <= 7 && gameState.getLivesRemaining() > 0) {
+//						String[] traits = storyModeTrait.getRandomTraits(gameState.getLevel());	// 오류발생
+//						LOGGER.info("loading traitScreen");
+//						currentScreen = new TraitScreen(width, height, FPS, gameState, storyModeTrait, traits);
+//						frame.setScreen(currentScreen);
+//						LOGGER.info("Closing traitScreen.");
+//					}
 
 					// Add playtime parameter
 					gameState = new GameState(gameState.getLevel() + 1,
@@ -386,6 +405,40 @@ public final class Core {
 					LOGGER.info("Round Coin: " + roundState.getRoundCoin());
 					LOGGER.info("Round Hit Rate: " + roundState.getRoundHitRate());
 					LOGGER.info("Round Time: " + roundState.getRoundTime());
+
+					// Secend cutscene()
+					if (gameState.getLevel() == 5 && gameState.getLivesRemaining() > 0) {
+						LOGGER.info("Displaying cutscenes 6-8 for rounds after 4");
+						for (BufferedImage cutsceneImage : secondSetImages) {
+							DrawManager.getInstance().initDrawing(currentScreen);
+							DrawManager.backBufferGraphics.drawImage(cutsceneImage, 0, 0, frame.getWidth(), frame.getHeight(), null);
+							DrawManager.getInstance().completeDrawing(currentScreen);
+
+							try {
+								Thread.sleep(2000);
+							} catch (InterruptedException e) {
+								Thread.currentThread().interrupt();
+								LOGGER.warning("Cutscene interrupted");
+							}
+						}
+					}
+
+					// Third cutscene()
+					if (gameState.getLivesRemaining() > 0 && gameState.getLevel() == 9) {
+						LOGGER.info("Displaying cutscenes 9-10 for completing all rounds");
+						for (BufferedImage cutsceneImage : thirdSetImages) {
+							DrawManager.getInstance().initDrawing(currentScreen);
+							DrawManager.backBufferGraphics.drawImage(cutsceneImage, 0, 0, frame.getWidth(), frame.getHeight(), null);
+							DrawManager.getInstance().completeDrawing(currentScreen);
+
+							try {
+								Thread.sleep(2000);
+							} catch (InterruptedException e) {
+								Thread.currentThread().interrupt();
+								LOGGER.warning("Cutscene interrupted");
+							}
+						}
+					}
 
 					try {
 						statistics.addTotalPlayTime(roundState.getRoundTime());
@@ -406,9 +459,10 @@ public final class Core {
 //						frame.setScreen(currentScreen);
 //						LOGGER.info("Closing receiptScreen.");
 //					}
-					if (achievementManager != null) {
-						achievementManager.updateAchievements(currentScreen);
-					}
+					// 오류예상
+//					if (achievementManager != null) {
+//						achievementManager.updateAchievements(currentScreen);
+//					}
 
 				} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= 8);
@@ -423,7 +477,8 @@ public final class Core {
 							+ gameState.getLivesRemaining() + " lives remaining, "
 							+ gameState.getBulletsShot() + " bullets shot and "
 							+ gameState.getShipsDestroyed() + " ships destroyed.");
-					currentScreen = new ScoreScreen(width, height, FPS, gameState, returnCode);
+					// StoryScoreScreen and EndingCredit(if Boss Clear)
+					currentScreen = new StoryScoreScreen(width, height, FPS, gameState);
 					returnCode = frame.setScreen(currentScreen);
 					LOGGER.info("Closing score screen.");
 				break;

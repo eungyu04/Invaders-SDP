@@ -90,6 +90,8 @@ public class Background {
         storyModePainting.add("/Storybackgrounds/S6.png");
         storyModePainting.add("/Storybackgrounds/S7.png");
         storyModePainting.add("/Storybackgrounds/S8.png");
+        storyModePainting.add("/Storybackgrounds/S9.png");
+        storyModePainting.add("/Storybackgrounds/S10.png");
     }
     // Static method to get background image stream
     public static InputStream getBackgroundImageStream(int levelIndex, int returncode) {

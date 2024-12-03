@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import HUDTeam.DrawManagerImpl;
 import entity.Coin;
 import inventory_develop.Bomb;
 import inventory_develop.StoryModeTrait;
+import screen.GameScreen;
 import screen.Screen;
 import entity.Entity;
 
@@ -844,12 +846,20 @@ public class DrawManager {
 		backBufferGraphics.setColor(Color.BLACK);
 		backBufferGraphics.fillRect(0, screen.getHeight() / 2 - rectHeight / 2,
 				rectWidth, rectHeight);
-		backBufferGraphics.setColor(Color.GREEN);
+		if (level == 4 || level == 8) { // 중간 보스(4) 또는 최종 보스(8)
+			backBufferGraphics.setColor(Color.RED); // 보스 레벨은 빨간색
+		} else {
+			backBufferGraphics.setColor(Color.GREEN); // 일반 레벨은 녹색
+		}
 		if (number >= 4)
 			// Adjust the numbers here to match the appropriate boss levels.
-			if (level == 3) { // Edited by team Enemy // ex) (level == 3 || level == 6 || level == 9)
-				drawCenteredBigString(screen, "BOSS",
+			if (level == 4) { // Edited by team Enemy // ex) (level == 3 || level == 6 || level == 9)
+				drawCenteredBigString(screen, " MIDDLE BOSS",
 						screen.getHeight() / 2 + fontBigMetrics.getHeight() / 3);
+			} else if (level == 8) {
+				drawCenteredBigString(screen, "FINAL BOSS ",
+						screen.getHeight() / 2
+								+ fontBigMetrics.getHeight() / 3);
 			} else if (!bonusLife) {
 				drawCenteredBigString(screen, "Level " + level,
 						screen.getHeight() / 2
@@ -1059,6 +1069,119 @@ public class DrawManager {
 			backBufferGraphics.drawImage(backgroundImage, horizontalOffset, verticalOffset, null);
 		}
 	}
+
+	/**
+	 * Show ReceiptScreen
+	 *
+	 * @param screen
+	 *            Screen to draw on.
+	 */
+	public void drawStoryGameOver(final Screen screen, final GameState gameState) {
+		String StoryModeString = "Story Mode";
+		String BossClearString = "Final Boss Clear!";
+		String GameOverString = "Game Over!";
+		String TimeString = "Time";
+		String InstructionsString;
+		if (gameState.getLivesRemaining() > 0) {
+			InstructionsString = "Press Space to Continue Ending Credit";
+		} else {
+			InstructionsString = "PRESS SPACE TO PLAY AGAIN, ESCAPE TO EXIT";
+		}
+
+
+		backBufferGraphics.setColor(Color.WHITE);
+		drawCenteredBigString(screen, StoryModeString, screen.getHeight() * 2 / 10);
+
+		if (gameState.getLivesRemaining() > 0) {
+			backBufferGraphics.setColor(Color.GREEN);
+			drawCenteredBigString(screen, BossClearString, screen.getHeight() * 4 / 10);
+		} else {
+			backBufferGraphics.setColor(Color.GREEN);
+			drawCenteredBigString(screen, GameOverString, screen.getHeight() * 4 / 10);
+		}
+
+		backBufferGraphics.setColor(Color.WHITE);
+		drawCenteredBigString(screen, TimeString, screen.getHeight() * 5 / 10);
+
+		DecimalFormat df = new DecimalFormat("00");
+		int m = (gameState.getTime()) / 60;
+		int s = (gameState.getTime()) % 60;
+		backBufferGraphics.setColor(Color.WHITE);
+		drawCenteredBigString(screen, df.format(m) + " : " + df.format(s), screen.getHeight() * 12 / 20);
+
+		backBufferGraphics.setColor(Color.GRAY);
+		drawCenteredRegularString(screen, InstructionsString,
+				screen.getHeight() / 2 + fontRegularMetrics.getHeight() * 13);
+	}
+
+	/**
+	 * Show ReceiptScreen
+	 *
+	 * @param screen
+	 *            Screen to draw on.
+	 */
+	/**
+	 * Draws the ending credit with scrolling effect.
+	 *
+	 * @param screen Screen to draw on.
+	 */
+	private boolean hasDisplayedEndingCredit = false;
+	public void drawEndingCredit(final Screen screen) {
+		String InstructionsString = "PRESS SPACE TO PLAY AGAIN, ESCAPE TO EXIT";
+		if (hasDisplayedEndingCredit) {
+			return;
+		}
+		String title = "Ending Credit";
+		List<String> credits = List.of(
+				"Lee Seungjin",
+				"Lee Eungyu",
+				"Joo Younghoon",
+				"Kim Minhwan",
+				"Kim Jeongmin",
+				"Lee Chaehyun",
+				"Thank you for playing the game!"
+		);
+
+
+		int startingY = screen.getHeight();
+		int speed = 2;
+		int lineHeight = fontRegularMetrics.getHeight() + 10;
+
+
+		while (startingY + credits.size() * lineHeight > 0) {
+			backBufferGraphics.setColor(Color.BLACK);
+			backBufferGraphics.fillRect(0, 0, screen.getWidth(), screen.getHeight());
+
+
+			backBufferGraphics.setColor(Color.GREEN);
+			drawCenteredBigString(screen, title, screen.getHeight() / 8);
+
+			backBufferGraphics.setColor(Color.WHITE);
+			for (int i = 0; i < credits.size(); i++) {
+				int yPosition = startingY + i * lineHeight;
+				if (yPosition > 0 && yPosition < screen.getHeight()) {
+					drawCenteredRegularString(screen, credits.get(i), yPosition);
+				}
+			}
+
+
+			completeDrawing(screen);
+
+
+			startingY -= speed;
+
+			// 딜레이 (60 FPS 기준)
+			try {
+				Thread.sleep(16);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				break;
+			}
+		}
+		hasDisplayedEndingCredit = true;
+	}
+
+
 
 	public void loadCutsceneBackground(int index) {
 		InputStream imageStream = Background.getStoryModeBackgroundImageStream(index);
