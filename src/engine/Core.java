@@ -1,6 +1,8 @@
 package engine;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
@@ -16,15 +18,11 @@ import CtrlS.UpgradeManager;
 import Sound_Operator.SoundManager;
 import clove.Statistics;
 import entity.EnemyShip;
+import inventory_develop.StoryModeTrait;
 import level_design.Background;
-import CtrlS.RoundState;
-import CtrlS.ReceiptScreen;
-import Sound_Operator.SoundManager;
 import clove.AchievementManager;
 import screen.*;
-import twoplayermode.TwoPlayerMode;
-import java.awt.image.BufferedImage;
-import java.io.InputStream;
+
 import javax.imageio.ImageIO;
 
 
@@ -213,6 +211,11 @@ public final class Core {
 				sm.playES("start_button_ES");
 				sm.playBGM("inGame_bgm");
 
+				try {
+					getUpgradeManager().resetUpgrades();		// storyMode에서 업그레이드되었던 부분 초기화
+					getUpgradeManager().setShipShoot360(true);	// 360도 발사만 가능하게
+				} catch (IOException e) {throw new RuntimeException(e);}
+
 				do {
 					// One extra live every few levels.
 					boolean bonusLife = gameState.getLevel()
@@ -290,7 +293,7 @@ public final class Core {
 						+ gameState.getLivesRemaining() + " lives remaining, "
 						+ gameState.getBulletsShot() + " bullets shot and "
 						+ gameState.getShipsDestroyed() + " ships destroyed.");
-				currentScreen = new ScoreScreen(width, height, FPS, gameState);
+				currentScreen = new ScoreScreen(width, height, FPS, gameState, returnCode);
 				returnCode = frame.setScreen(currentScreen);
 				LOGGER.info("Closing score screen.");
 				break;
@@ -337,7 +340,9 @@ public final class Core {
 				playStoryModeBGM(gameState.getLevel());
 				//+음악추가
 				long roundStartTime = System.currentTimeMillis();
-
+				
+				// StoryModeTrait생성 - player의 특성이 기본값으로 변경됨(StatusConfig.properties)
+				StoryModeTrait storyModeTrait = new StoryModeTrait();	
 
 				do {
 					boolean bonusLife = gameState.getLevel()
@@ -361,6 +366,15 @@ public final class Core {
 
 					roundState = new RoundState(prevState, gameState);
 
+					// Show TraitScreen
+					if (gameState.getLevel() <= 7 && gameState.getLivesRemaining() > 0) {
+						String[] traits = storyModeTrait.getRandomTraits(gameState.getLevel());
+						LOGGER.info("loading traitScreen");
+						currentScreen = new TraitScreen(width, height, FPS, gameState, storyModeTrait, traits);
+						frame.setScreen(currentScreen);
+						LOGGER.info("Closing traitScreen.");
+					}
+
 					// Add playtime parameter
 					gameState = new GameState(gameState.getLevel() + 1,
 							gameState.getScore(),
@@ -383,20 +397,20 @@ public final class Core {
 					} catch (IOException e) {
 						LOGGER.info("Failed to Save RoundTime");
 					}
+          soundManager.stopAllBGM(); // 이전 BGM 중지
+					playStoryModeBGM(gameState.getLevel());
+          
 					// Show receiptScreen
 					// If it is not the last round and the game is not over
-					if (gameState.getLevel() <= 8 && gameState.getLivesRemaining() > 0) {
-						soundManager.stopAllBGM();
-						soundManager.playBGM("nextstage_bgm");
-
-						LOGGER.info("loading receiptScreen");
-						currentScreen = new ReceiptScreen(width, height, FPS, roundState, gameState);
-
-						LOGGER.info("Starting " + WIDTH + "x" + HEIGHT + " receipt screen at " + FPS + " fps.");
-						frame.setScreen(currentScreen);
-						LOGGER.info("Closing receiptScreen.");
-						playStoryModeBGM(gameState.getLevel());
-					}
+					// 스토리모드에는 필요없는 화면인 것 같아서 제거
+//					if (gameState.getLevel() <= 8 && gameState.getLivesRemaining() > 0) {
+//						LOGGER.info("loading receiptScreen");
+//						currentScreen = new ReceiptScreen(width, height, FPS, roundState, gameState);
+//
+//						LOGGER.info("Starting " + WIDTH + "x" + HEIGHT + " receipt screen at " + FPS + " fps.");
+//						frame.setScreen(currentScreen);
+//						LOGGER.info("Closing receiptScreen.");
+//					}
 					if (achievementManager != null) {
 						achievementManager.updateAchievements(currentScreen);
 					}
@@ -421,7 +435,7 @@ public final class Core {
 							+ gameState.getLivesRemaining() + " lives remaining, "
 							+ gameState.getBulletsShot() + " bullets shot and "
 							+ gameState.getShipsDestroyed() + " ships destroyed.");
-					currentScreen = new ScoreScreen(width, height, FPS, gameState);
+					currentScreen = new ScoreScreen(width, height, FPS, gameState, returnCode);
 					returnCode = frame.setScreen(currentScreen);
 					LOGGER.info("Closing score screen.");
 				break;

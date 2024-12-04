@@ -5,8 +5,12 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/res" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
     </content>
     <orderEntry type="jdk" jdkName="22" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" scope="TEST" name="junit.jupiter.api" level="project" />
+    <orderEntry type="library" exported="" name="mockito.core" level="project" />
+    <orderEntry type="library" exported="" name="mockito.inline" level="project" />
   </component>
 </module>
