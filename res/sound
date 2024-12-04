@@ -1,6 +1,12 @@
 bgm;inGame_bgm;pixelated-drive-228439.wav;-7
 bgm;mainMenu_bgm;705061__xcreenplay__choatic-arcade-clash.wav;-2
 bgm;highScore_bgm;465902__zagi2__retro-techno.wav;-2
+bgm;storyMode_bgm;storyGame1-3,5-7.wav;-5.0
+bgm;storyMode_bgm;storyGame8.wav;-5.0
+bgm;storyMode_bgm;storyGame4.wav;-5.0
+bgm;storyMode_bgm;gameover.wav;-5.0
+bgm;storyMode_bgm;endingcredits.wav;-5.0
+bgm;storyMode_bgm;nextstage_screen.wav;-5.0
 es;menuSelect_es;752736__etheraudio__square-blip-non-fade.wav;-2
 es;ally_airship_damage;ally_airship_damage.wav;6.0
 es;ally_airship_destroy_explosion;ally_airship_explosion.wav;3.0

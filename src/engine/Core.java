@@ -302,35 +302,39 @@ public final class Core {
 
 			case 4:
 				// Story modes.
-				LOGGER.info("Starting Story mode cutscenes");
-				DrawManager drawManager = DrawManager.getInstance();
-
-				BufferedImage[] cutsceneImages = new BufferedImage[8];
-				for (int i = 0; i < 8; i++) {
-					InputStream imageStream = Background.getStoryModeBackgroundImageStream(i + 1);
-					try {
-						cutsceneImages[i] = ImageIO.read(imageStream);
-					} catch (IOException e) {
-						throw new RuntimeException("Failed to load cutscene image " + (i + 1), e);
-					}
-				}
-
-				for (BufferedImage cutsceneImage : cutsceneImages) {
-					DrawManager.getInstance().initDrawing(currentScreen);
-					DrawManager.backBufferGraphics.drawImage(cutsceneImage, 0, 0, frame.getWidth(), frame.getHeight(), null);
-					DrawManager.getInstance().completeDrawing(currentScreen);
-
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-						Thread.currentThread().interrupt();
-						LOGGER.warning("Cutscene interrupted");
-					}
-				}
+//				LOGGER.info("Starting Story mode cutscenes");
+//				DrawManager drawManager = DrawManager.getInstance();
+//
+//				BufferedImage[] cutsceneImages = new BufferedImage[8];
+//				for (int i = 0; i < 8; i++) {
+//					InputStream imageStream = Background.getStoryModeBackgroundImageStream(i + 1);
+//					try {
+//						cutsceneImages[i] = ImageIO.read(imageStream);
+//					} catch (IOException e) {
+//						throw new RuntimeException("Failed to load cutscene image " + (i + 1), e);
+//					}
+//				}
+//
+//				for (BufferedImage cutsceneImage : cutsceneImages) {
+//					DrawManager.getInstance().initDrawing(currentScreen);
+//					DrawManager.backBufferGraphics.drawImage(cutsceneImage, 0, 0, frame.getWidth(), frame.getHeight(), null);
+//					DrawManager.getInstance().completeDrawing(currentScreen);
+//
+//					try {
+//						Thread.sleep(2000);
+//					} catch (InterruptedException e) {
+//						Thread.currentThread().interrupt();
+//						LOGGER.warning("Cutscene interrupted");
+//					}
+//				}
 
 
 				LOGGER.info("Starting Story mode game");
 				// Sound Operator - 배경음악 시작
+				SoundManager soundManager = SoundManager.getInstance();
+				soundManager.stopAllBGM();
+
+				playStoryModeBGM(gameState.getLevel());
 				//+음악추가
 				long roundStartTime = System.currentTimeMillis();
 
@@ -379,16 +383,19 @@ public final class Core {
 					} catch (IOException e) {
 						LOGGER.info("Failed to Save RoundTime");
 					}
-
 					// Show receiptScreen
 					// If it is not the last round and the game is not over
 					if (gameState.getLevel() <= 8 && gameState.getLivesRemaining() > 0) {
+						soundManager.stopAllBGM();
+						soundManager.playBGM("nextstage_bgm");
+
 						LOGGER.info("loading receiptScreen");
 						currentScreen = new ReceiptScreen(width, height, FPS, roundState, gameState);
 
 						LOGGER.info("Starting " + WIDTH + "x" + HEIGHT + " receipt screen at " + FPS + " fps.");
 						frame.setScreen(currentScreen);
 						LOGGER.info("Closing receiptScreen.");
+						playStoryModeBGM(gameState.getLevel());
 					}
 					if (achievementManager != null) {
 						achievementManager.updateAchievements(currentScreen);
@@ -400,6 +407,13 @@ public final class Core {
 
 					LOGGER.info("Stop InGameBGM");
 					// Sound Operator - 배경음악 종료
+				 	soundManager.stopStoryModeBGM();
+					if (gameState.getLivesRemaining() <= 0){
+						soundManager.stopAllBGM();
+						soundManager.playBGM("game_over_bgm");}
+					else{
+						soundManager.stopAllBGM();
+						soundManager.playBGM("endingcredits_bgm");}
 					//+음악추가
 
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT + " score screen at " + FPS + " fps, with a score of "
@@ -625,5 +639,28 @@ public final class Core {
 	// Team-Ctrl-S(Currency)
 	public static UpgradeManager getUpgradeManager() {
 		return UpgradeManager.getInstance();
+	}
+	private static void playStoryModeBGM(int level) {
+		SoundManager soundManager = SoundManager.getInstance();
+
+		switch (level) {
+			case 8:
+			case 2:
+			case 3:
+			case 5:
+			case 6:
+			case 7:
+				soundManager.playBGM("storyMode_bgm1-3,5-7");
+				break;
+			case 4:
+				soundManager.playBGM("storyMode_bgm_4");
+				break;
+			case 1:
+				soundManager.playBGM("storyMode_bgm_8");
+				break;
+			default:
+				soundManager.stopAllBGM();
+				break;
+		}
 	}
 }

@@ -66,6 +66,18 @@ public class SoundManager {
                     idy += 1;
                 }
             }
+            if (!BGMs.containsKey("storyMode_bgm1-3,5-7"))
+                this.preloadBGM("storyMode_bgm1-3,5-7", "res/Sound.assets/BGM/storyGame1-3,5-7.wav", -5.0f);
+            if (!BGMs.containsKey("storyMode_bgm_4"))
+                this.preloadBGM("storyMode_bgm_4", "res/Sound.assets/BGM/storyGame4.wav", -5.0f);
+            if (!BGMs.containsKey("storyMode_bgm_8"))
+                this.preloadBGM("storyMode_bgm_8", "res/Sound.assets/BGM/storyGame8.wav", -5.0f);
+            if (!BGMs.containsKey("game_over_bgm"))
+                this.preloadBGM("game_over_bgm", "res/Sound.assets/BGM/gameover.wav", -5.0f);
+            if (!BGMs.containsKey("endingcredits_bgm"))
+                this.preloadBGM("endingcredits_bgm", "res/Sound.assets/BGM/endingcredits.wav", -5.0f);
+            if (!BGMs.containsKey("nextstage_bgm"))
+                this.preloadBGM("nextstage_bgm", "res/Sound.assets/BGM/nextstage_screen.wav", -5.0f);
         } catch (IOException e) {
             logger.info(String.valueOf(e));
         }
@@ -248,5 +260,12 @@ public class SoundManager {
             }
             playES("ally_airship_destroy_die");
         }).start();
+    }
+    public void stopStoryModeBGM() {
+        try {
+            stopAllBGM(); // 모든 BGM을 중지
+        } catch (Exception e) {
+            logger.info("Failed to stop Story Mode BGM: " + e.getMessage());
+        }
     }
 }
