@@ -368,11 +368,16 @@ public final class Core {
 
 					// Show TraitScreen
 					if (gameState.getLevel() <= 7 && gameState.getLivesRemaining() > 0) {
+						soundManager.stopAllBGM();
+						soundManager.playBGM("Select_characteristics_bgm");
 						String[] traits = storyModeTrait.getRandomTraits(gameState.getLevel());
 						LOGGER.info("loading traitScreen");
 						currentScreen = new TraitScreen(width, height, FPS, gameState, storyModeTrait, traits);
 						frame.setScreen(currentScreen);
 						LOGGER.info("Closing traitScreen.");
+
+						soundManager.stopAllBGM();
+						playStoryModeBGM(gameState.getLevel());
 					}
 
 					// Add playtime parameter
@@ -397,7 +402,7 @@ public final class Core {
 					} catch (IOException e) {
 						LOGGER.info("Failed to Save RoundTime");
 					}
-          soundManager.stopAllBGM(); // 이전 BGM 중지
+          			soundManager.stopAllBGM(); // 이전 BGM 중지
 					playStoryModeBGM(gameState.getLevel());
           
 					// Show receiptScreen
@@ -658,7 +663,7 @@ public final class Core {
 		SoundManager soundManager = SoundManager.getInstance();
 
 		switch (level) {
-			case 8:
+			case 1:
 			case 2:
 			case 3:
 			case 5:
@@ -669,7 +674,7 @@ public final class Core {
 			case 4:
 				soundManager.playBGM("storyMode_bgm_4");
 				break;
-			case 1:
+			case 8:
 				soundManager.playBGM("storyMode_bgm_8");
 				break;
 			default:

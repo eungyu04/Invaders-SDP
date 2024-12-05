@@ -76,8 +76,8 @@ public class SoundManager {
                 this.preloadBGM("game_over_bgm", "res/Sound.assets/BGM/gameover.wav", -5.0f);
             if (!BGMs.containsKey("endingcredits_bgm"))
                 this.preloadBGM("endingcredits_bgm", "res/Sound.assets/BGM/endingcredits.wav", -5.0f);
-            if (!BGMs.containsKey("nextstage_bgm"))
-                this.preloadBGM("nextstage_bgm", "res/Sound.assets/BGM/nextstage_screen.wav", -5.0f);
+            if (!BGMs.containsKey("Select_characteristics_bgm"))
+                this.preloadBGM("Select_characteristics_bgm", "res/Sound.assets/BGM/Select_characteristics.wav", -5.0f);
         } catch (IOException e) {
             logger.info(String.valueOf(e));
         }
