@@ -38,6 +38,8 @@ public class Bullet extends Entity {
 	protected int BulletType;
 	protected double angle;
 	private int damage;
+	private static String gameType;
+	private static int level;
 
 	/**
 	 * Constructor, establishes the bullet's properties.
@@ -90,6 +92,17 @@ public class Bullet extends Entity {
 			this.width = 20;
 			this.height = 32;
 		}
+		else if (BulletType == 4) {
+			this.spriteType = SpriteType.bossBullet;
+		}
+	}
+	
+	public static void setGameType(String type) {
+		gameType = type;
+	}
+
+	public static void setLevel(int Level) {
+		level = Level;
 	}
 
 	/**

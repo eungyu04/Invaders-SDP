@@ -25,6 +25,10 @@ public class EnemyShip extends Entity {
 	private static final int D_TYPE_POINTS = 10;
 	private static final int E_TYPE_POINTS = 20;
 	private static final int F_TYPE_POINTS = 30;
+	/** Point value of a type MIDDLE boss. */
+	private static final int MIDDLE_BOSS_POINTS = 50;
+	/** Point value of a type FINAL boss. */
+	private static final int FINAL_BOSS_POINTS = 80;
 	/** Point value of a type Explosive enemy. */
 	private static final int EXPLOSIVE_TYPE_POINTS = 50; //Edited by Enemy
 	/** Point value of a bonus enemy. */
@@ -45,7 +49,7 @@ public class EnemyShip extends Entity {
 	/** Checks if the ship is bombed */
 	private boolean isChainExploded;
 	/** Values of the ship, in points, when destroyed. */
-	private int pointValue;
+	private static int pointValue;
 
 	// Sound Operator
 	private static SoundManager sm;
@@ -94,6 +98,12 @@ public class EnemyShip extends Entity {
 			case EnemyShipC2:
 				this.pointValue = C_TYPE_POINTS;
 				break;
+			case middleBoss:
+				this.pointValue = MIDDLE_BOSS_POINTS;
+				break;
+			case finalBoss:
+				this.pointValue = FINAL_BOSS_POINTS;
+				break;
 			case ExplosiveEnemyShip1: //Edited by Enemy
 			case ExplosiveEnemyShip2:
 				super.setColor(new Color(237, 28, 36)); //set ExplosiveEnemyShip Color
@@ -141,8 +151,8 @@ public class EnemyShip extends Entity {
 	 *
 	 * @return Value of the ship.
 	 */
-	public final int getPointValue() {
-		return this.pointValue;
+	public static int getPointValue() {
+		return pointValue;
 	}
 
 	/**
@@ -250,7 +260,6 @@ public class EnemyShip extends Entity {
 	public final boolean isDestroyed() {
 		return this.isDestroyed;
 	}
-
 
 	/** Constructor for original EnemyShip that did not have hp.
 	 * That enemyShip is moved to a constructor with the hp default of 1*/

@@ -82,7 +82,7 @@ public final class Core {
 			new GameSettings(15, 1500, 550, 1500);
 	/** Difficulty settings for Story mode level 4. */
 	private static final GameSettings SETTINGS_LEVEL_S4 =
-			new GameSettings(15, 1500, 500, 1500);
+			new GameSettings(1, 0, 0, 700); // Middle Boss Level
 	/** Difficulty settings for Story mode level 5. */
 	private static final GameSettings SETTINGS_LEVEL_S5 =
 			new GameSettings(15, 1500, 500, 1000);
@@ -94,7 +94,7 @@ public final class Core {
 			new GameSettings(15, 1500, 450, 500);
 	/** Difficulty settings for Story mode level 8. */
 	private static final GameSettings SETTINGS_LEVEL_S8 =
-			new GameSettings(15, 1500, 1000, 2000);
+			new GameSettings(1, 0, 0, 500); // Final Boss Level
 
 
 	/** Frame to draw the screen on. */
@@ -193,7 +193,7 @@ public final class Core {
 			// Add playtime parameter - Soomin Lee / TeamHUD
 			// Add hitCount parameter - Ctrl S
 			// Add coinItemsCollected parameter - Ctrl S
-			gameState = new GameState(1, 0
+			gameState = new GameState(returnCode, 1, 0
 					, MAX_LIVES, 0,0, 0, 0, 0, 0, 0, 0);
 			switch (returnCode) {
 			case 1:
@@ -241,7 +241,8 @@ public final class Core {
 					roundState = new RoundState(prevState, gameState);
 
 					// Add playtime parameter - Soomin Lee / TeamHUD
-					gameState = new GameState(gameState.getLevel() + 1,
+					gameState = new GameState(returnCode,
+							gameState.getLevel() + 1,
 							gameState.getScore(),
 							gameState.getLivesRemaining(),
 							gameState.getLivesTwoRemaining(),
@@ -405,7 +406,8 @@ public final class Core {
  					}
 
 					// Add playtime parameter
-					gameState = new GameState(gameState.getLevel() + 1,
+					gameState = new GameState(returnCode,
+							gameState.getLevel() + 1,
 							gameState.getScore(),
 							gameState.getLivesRemaining(),
 							gameState.getLivesTwoRemaining(),

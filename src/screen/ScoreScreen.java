@@ -168,6 +168,7 @@ public class ScoreScreen extends Screen {
 //				} else {
 //					this.returnCode = 2;
 //				}
+				this.returnCode = gameState.getReturnCode();	//??
 				this.isRunning = false;
 				if (this.isNewRecord) {
 					saveScore();

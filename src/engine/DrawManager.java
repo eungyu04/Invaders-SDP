@@ -66,16 +66,12 @@ public class DrawManager {
 	private Background background;
 	private BufferedImage backgroundImage;
 
-	private int yOffset = 0;
-
 	/** Sprite types mapped to their images. */
 	private static Map<SpriteType, boolean[][]> spriteMap;
 	private static Map<SpriteType, BufferedImage> spriteMapImage;
 
 	/** Sprite types. */
 	public static enum SpriteType {
-		/** Story mode background image */
-		BackgroundSImage,
 		/** Player ship. */
 		Ship,
 		/** Destroyed player ship. */
@@ -86,6 +82,8 @@ public class DrawManager {
 		EnemyBullet,
 		EnemyBulletSlime,
 		EnemyBulletSkull,
+		/** Boss bullet. */
+		bossBullet,
 		/** First enemy ship - first form. */
 		EnemyShipA1,
 		/** First enemy ship - second form. */
@@ -98,6 +96,10 @@ public class DrawManager {
 		EnemyShipC1,
 		/** Third enemy ship - second form. */
 		EnemyShipC2,
+		/** The middle boss in the story mode level 4 */
+		middleBoss,
+		/** The final boss in the story mode level 8 */
+		finalBoss,
 		/** First explosive enemy ship - first form. */
 		ExplosiveEnemyShip1, // Edited by Enemy
 		/** First explosive enemy ship - second form. */
@@ -138,8 +140,9 @@ public class DrawManager {
 		AddSign,
 		/** Gem - Added by CtrlS */
 		Gem,
-        ItemSpeedUp, ItemSpeedSlow, Obstacle
+        ItemSpeedUp, ItemSpeedSlow, Obstacle,
 
+        fire
 	};
 
 	/**
@@ -215,6 +218,7 @@ public class DrawManager {
 			spriteMapImage.put(SpriteType.EnemyBullet, fileManager.loadImage("enemybullet.png"));
 			spriteMapImage.put(SpriteType.EnemyBulletSlime, fileManager.loadImage("enemybulletSlime.png"));
 			spriteMapImage.put(SpriteType.EnemyBulletSkull, fileManager.loadImage("enemybulletSkull.png"));
+			spriteMapImage.put(SpriteType.bossBullet, fileManager.loadImage("bossbullet.png"));
 			spriteMapImage.put(SpriteType.ItemBomb, fileManager.loadImage("bomb.png"));
 			spriteMapImage.put(SpriteType.ShipBarrierStatus, fileManager.loadImage("shipbarrierstatus.png"));
 			spriteMapImage.put(SpriteType.EnemyShipD1, fileManager.loadImage("enemyshipD1.png"));
@@ -226,7 +230,9 @@ public class DrawManager {
 			spriteMapImage.put(SpriteType.EnemyShipF1, fileManager.loadImage("enemyshipF1.png"));
 			spriteMapImage.put(SpriteType.EnemyShipF2, fileManager.loadImage("enemyshipF2.png"));
 			spriteMapImage.put(SpriteType.ExplosionF3, fileManager.loadImage("explosionF3.png"));
-
+			spriteMapImage.put(SpriteType.middleBoss, fileManager.loadImage("middleBoss.png"));
+			spriteMapImage.put(SpriteType.finalBoss, fileManager.loadImage("finalBoss.png"));
+            spriteMapImage.put(SpriteType.fire, fileManager.loadImage("Fire.png"));
 		} catch (IOException e) {
 			logger.warning("Loading failed.");
 		}
@@ -337,8 +343,6 @@ public class DrawManager {
 		BufferedImage rotateImage = fileManager.rotateImage(image, angle);
 
 		backBufferGraphics.drawImage(rotateImage, positionX, positionY, null);
-
-
 	}
 
 	/**

@@ -10,6 +10,7 @@ import clove.ScoreManager;
  */
 public class GameState {
 
+	private int returnCode;
 	/** Current game level. */
 	private int level;
 	/** Current score. */
@@ -64,9 +65,10 @@ public class GameState {
 	 * @param hitCount
 	 * 		   Current hitCount. // Team-Ctrl-S(Currency)
 	 */
-	public GameState(final int level, final int score,
+	public GameState(final int returnCode, final int level, final int score,
 					 final int livesRemaining, final int livestwoRemaining, final int bulletsShot,
 					 final int shipsDestroyed, final int playTime, final int coin, final int gem, final int hitCount, final int coinItemsCollected) {
+		this.returnCode = returnCode;
 		this.level = level;
 		this.score = score;
 		this.livesRemaining = livesRemaining;
@@ -182,4 +184,6 @@ public class GameState {
 	 */
 	// Team-Ctrl-S(Currency)
 	public int getCoinItemsCollected() { return coinItemsCollected; }
+
+	public int getReturnCode() { return returnCode; }
 }

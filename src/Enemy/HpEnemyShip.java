@@ -68,6 +68,4 @@ public class HpEnemyShip {
         if(!enemyShip.getColor().equals(Color.magenta))
             enemyShip.setColor(determineColor(hp));
     }
-
-
 }
