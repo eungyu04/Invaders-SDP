@@ -107,13 +107,13 @@ public class ItemManager {
                     sm.playES("get_item");
                     break;
                 case ItemBarrier:
-                    Item2.activatebarrier();
+                    Item2.activateBarrier();
                     //Sound_Operator
                     sm = SoundManager.getInstance();
                     sm.playES("get_item");
                     break;
                 case ItemHeart:
-                    Item2.activeheart(gameScreen);
+                    Item2.activeHeart(gameScreen);
                     //Sound_Operator
                     sm = SoundManager.getInstance();
                     sm.playES("get_item");
@@ -122,7 +122,7 @@ public class ItemManager {
                     feverTimeItem.activate();
                     break;
                 case ItemPierce:
-                    numberOfBullet.pierceup();
+                    numberOfBullet.pierceUp();
                     ship.increaseBulletSpeedY();
                     //Sound_Operator
                     sm = SoundManager.getInstance();

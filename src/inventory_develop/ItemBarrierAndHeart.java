@@ -28,29 +28,29 @@ public class ItemBarrierAndHeart {
 
             if (currentTime - this.barrierActivationTime >= barrier_DURATION) {
                 ship.setSpriteType(DrawManager.SpriteType.Ship);
-                deactivatebarrier();    // deactive barrier
+                deactivateBarrier();    // deactivate barrier
             }
         } else {    // When barrier is not active, call the ship's update()
             ship.update();
         }
     }
 
-    public void activatebarrier() {
+    public void activateBarrier() {
         this.barrierActive = true;
         this.barrierActivationTime = System.currentTimeMillis();
     }
 
-    public void deactivatebarrier() {
+    public void deactivateBarrier() {
         this.barrierActive = false;
         this.logger.info("barrier effect ends");
     }
 
-    public boolean isbarrierActive() {
+    public boolean isBarrierActive() {
         return barrierActive;
     }
 
     //heart
-    public void activeheart(GameScreen gameScreen) {
+    public void activeHeart(GameScreen gameScreen) {
         if (gameScreen.getLives() < MAX_LIVES) {
             gameScreen.setLives(gameScreen.getLives() + 1);
         }

@@ -121,7 +121,7 @@ public class Background {
     public int getVerticalOffset(int returnCode, int level) {
         int scrollLimit = backgroundHeight - screenHeight;
 
-        if (scrollLimit == -verticalOffset) {
+        if (scrollLimit <= -verticalOffset + scrollSpeedVertical) {
             scrollSpeedVertical = 0;
         }
 
@@ -134,7 +134,6 @@ public class Background {
         } else {
             verticalOffset -= scrollSpeedVertical;
         }
-        offsetUpdateInterval = 0;
 
         return verticalOffset;
     }

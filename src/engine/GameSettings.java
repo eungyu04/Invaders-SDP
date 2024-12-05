@@ -15,14 +15,15 @@ public class GameSettings {
 	/** Speed of the enemies, function of the remaining number. */
 	private int baseSpeed;
 	/** Frequency of enemy shootings, +/- 30%. */
-	private int shootingFrecuency;
+	private static int shootingFrequency;
 	/** Frequency of enemy. */
-	private int enemyFrecuency;
+	public int enemyFrequency;
 	/** Level Design team modification
 	 * Number of enemy ships waves during the level **/
 	private int wavesNumber;
 
 	private String gametype;
+	private int level;
 
 	/**
 	 * Constructor.
@@ -33,33 +34,33 @@ public class GameSettings {
 	 *            Height of the level's enemy formation.
 	 * @param baseSpeed
 	 *            Speed of the enemies.
-	 * @param shootingFrecuency
-	 *            Frecuency of enemy shootings, +/- 30%.
+	 * @param shootingFrequency
+	 *            Frequency of enemy shootings, +/- 30%.
 	 * @param wavesNumber
 	 * 				Number of waves in the level (Added by the Level Design team)
 	 */
 	public GameSettings(final int formationWidth, final int formationHeight,
-			final int baseSpeed, final int shootingFrecuency, final int wavesNumber) {
+			final int baseSpeed, final int shootingFrequency, int wavesNumber) {
 		this.formationWidth = formationWidth;
 		this.formationHeight = formationHeight;
 		this.baseSpeed = baseSpeed;
-		this.shootingFrecuency = shootingFrecuency;
+		this.shootingFrequency = shootingFrequency;
 
 		/** Added by the Level Design team **/
 		this.wavesNumber = wavesNumber;
 		this.gametype = "Normal";
 	}
 
-	public GameSettings(final int formationWidth, final int enemyFrecuency,
-						final int baseSpeed, final int shootingFrecuency) {
+	public GameSettings(final int formationWidth, final int enemyFrequency,
+						final int baseSpeed, final int shootingFrequency) {
 		this.formationWidth = 1;
 		this.formationHeight = formationWidth;
-		this.enemyFrecuency = enemyFrecuency;
+		this.enemyFrequency = enemyFrequency;
 		this.baseSpeed = baseSpeed;
-		this.shootingFrecuency = shootingFrecuency;
+		this.shootingFrequency = shootingFrequency;
 
 		/** Added by the Level Design team **/
-		this.wavesNumber = 1;
+
 		this.gametype = "Story";
 	}
 
@@ -85,10 +86,14 @@ public class GameSettings {
 	}
 
 	/**
-	 * @return the shootingFrecuency
+	 * @return the shootingFrequency
 	 */
-	public final int getShootingFrecuency() {
-		return shootingFrecuency;
+	public final int getShootingFrequency() {
+		return shootingFrequency;
+	}
+
+	public static void setShootingFrequency(int shooting_frequency) {
+		shootingFrequency = shooting_frequency;
 	}
 
 	/**
@@ -99,12 +104,19 @@ public class GameSettings {
 		return wavesNumber;
 	}
 
-	public int getEnemyFrecuency(){
-		return enemyFrecuency;
+	public int getEnemyFrequency(){
+		return enemyFrequency;
 	}
 
-	public String getGametype(){
+	public String getGameType(){
 		return gametype;
 	}
 
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	public int getLevel() {
+		return level;
+	}
 }

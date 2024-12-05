@@ -14,13 +14,7 @@ import Enemy.*;
 import HUDTeam.DrawAchievementHud;
 import HUDTeam.DrawManagerImpl;
 import engine.*;
-import entity.Bullet;
-import entity.BulletPool;
-import entity.EnemyShip;
-import entity.EnemyShipFormation;
-import entity.Entity;
-import entity.Obstacle;
-import entity.Ship;
+import entity.*;
 // shield and heart recovery
 import inventory_develop.*;
 // Sound Operator
@@ -49,6 +43,10 @@ public class GameScreen extends Screen {
 	private static final int BONUS_SHIP_VARIANCE = 10000;
 	/** Time until bonus ship explosion disappears. */
 	private static final int BONUS_SHIP_EXPLOSION = 500;
+	/** Time until middle boss explosion disappears. */
+	private static final int MIDDLE_BOSS_EXPLOSION = 500;
+	/** Time until final boss explosion disappears. */
+	private static final int FINAL_BOSS_EXPLOSION = 500;
 	/** Time from finishing the level to screen change. */
 	private static final int SCREEN_CHANGE_INTERVAL = 1500;
 	/** Height of the interface separation line. */
@@ -66,10 +64,18 @@ public class GameScreen extends Screen {
 	public Ship player2;
 	/** Bonus enemy ship that appears sometimes. */
 	private EnemyShip enemyShipSpecial;
+	/** middle boss */
+	private Boss midBoss;
+	/** final boss */
+	private Boss finBoss;
 	/** Minimum time between bonus ship appearances. */
 	private Cooldown enemyShipSpecialCooldown;
 	/** Time until bonus ship explosion disappears. */
 	private Cooldown enemyShipSpecialExplosionCooldown;
+	/** Time until middle boss explosion disappears. */
+	private Cooldown middleBossExplosionCooldown;
+	/** Time until final boss explosion disappears. */
+	private Cooldown finalBossExplosionCooldown;
 	/** Time from finishing the level to screen change. */
 	private Cooldown screenFinishedCooldown;
 	/** Set of all bullets fired by on screen ships. */
@@ -86,7 +92,7 @@ public class GameScreen extends Screen {
 	/** Player lives left. */
 	private int lives;
 	/** player2 lives left.*/
-	public int livestwo;
+	public int livesTwo;
 	/** Total bullets shot by the player. */
 	private int bulletsShot;
 	/** Total ships destroyed by the player. */
@@ -94,7 +100,7 @@ public class GameScreen extends Screen {
 	/** Moment the game starts. */
 	private long gameStartTime;
 	/** Checks if the level is finished. */
-	private boolean levelFinished;
+	private static boolean levelFinished;
 	/** Checks if a bonus life is received. */
 	private boolean bonusLife;
 	/**
@@ -137,6 +143,8 @@ public class GameScreen extends Screen {
 	private int hitCount;
 	/** Unique id for shot of bullets **/ //CtrlS
 	private int fire_id;
+	/** Unique id for shot of previous bullets **/
+	private int fire_id_pre;
 	/** Set of fire_id **/
 	private Set<Integer> processedFireBullet;
 
@@ -150,7 +158,7 @@ public class GameScreen extends Screen {
 	private Statistics statistics; //Team Clove
 	private AchievementConditions achievementConditions;
 	private int fastKill;
-
+	private int feverSpecialScore;
 	/** CtrlS: Count the number of coin collected in game */
 	private int coinItemsCollected;
 
@@ -186,9 +194,9 @@ public class GameScreen extends Screen {
 		this.lives = gameState.getLivesRemaining();
 		if (this.bonusLife)
 			this.lives++;
-		this.livestwo = gameState.getLivesTwoRemaining();
+		this.livesTwo = gameState.getLivesTwoRemaining();
 		if (this.bonusLife)
-			this.livestwo++;
+			this.livesTwo++;
 		this.bulletsShot = gameState.getBulletsShot();
 		this.shipsDestroyed = gameState.getShipsDestroyed();
 		this.item = new ItemBarrierAndHeart();   // team Inventory
@@ -213,6 +221,8 @@ public class GameScreen extends Screen {
 		this.achievementConditions = new AchievementConditions();
 		this.coinItemsCollected = gameState.getCoinItemsCollected(); // CtrlS
 		this.returnCode = returnCode;
+
+		levelFinished = false;
 	}
 
 	/**
@@ -223,11 +233,14 @@ public class GameScreen extends Screen {
 		/** initialize background **/
 		drawManager.loadBackground(this.level, this.returnCode);
 
+		this.gameSettings.setLevel(level);
 		enemyShipFormation = new EnemyShipFormation(this.gameSettings);
 		enemyShipFormation.setSoundManager(sm);
 		enemyShipFormation.setScoreManager(this.scoreManager);//add by team Enemy
 		enemyShipFormation.attach(this);
-		this.ship = new Ship(this.width / 2, this.height - 30, Color.RED); // add by team HUD
+		this.ship = new Ship(this.width / 2 - 12, this.height - 30, Color.RED); // add by team HUD
+		this.midBoss = enemyShipFormation.getBoss();
+		this.finBoss = enemyShipFormation.getBoss();
 
 		/** initialize itemManager */
 		this.itemManager = new ItemManager(this.height, drawManager, this); //by Enemy team
@@ -247,6 +260,8 @@ public class GameScreen extends Screen {
 		this.enemyShipSpecialCooldown.reset();
 		this.enemyShipSpecialExplosionCooldown = Core
 				.getCooldown(BONUS_SHIP_EXPLOSION);
+		this.middleBossExplosionCooldown = Core.getCooldown(MIDDLE_BOSS_EXPLOSION);
+		this.finalBossExplosionCooldown = Core.getCooldown(FINAL_BOSS_EXPLOSION);
 		this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
 		this.bullets = new HashSet<PiercingBullet>(); // Edited by Enemy
 
@@ -288,7 +303,7 @@ public class GameScreen extends Screen {
 	protected void update() {
 		super.update();
 
-		if (this.inputDelay.checkFinished() && !this.levelFinished) {
+		if (this.inputDelay.checkFinished() && !levelFinished) {
 			// --- OBSTACLES
 			if (this.obstacleSpawnCooldown.checkFinished()) {
 				// Adjust spawn amount based on the level
@@ -344,7 +359,7 @@ public class GameScreen extends Screen {
 				if (moveDown && !isDownBorder) {
 					this.ship.moveDown();
 				}
-				
+
 				// 마우스 추적(화면 밖으로 나가도 추적하고 싶으면 사용 - 거의 사용X 일듯 나중에 지우기)
 //				Point mousePosition = MouseInfo.getPointerInfo().getLocation();
 //				SwingUtilities.convertPointFromScreen(mousePosition, drawManager.getFrame());
@@ -374,8 +389,8 @@ public class GameScreen extends Screen {
 					this.enemyShipSpecial.move(2, 0);
 				else if (this.enemyShipSpecialExplosionCooldown.checkFinished())
 					this.enemyShipSpecial = null;
-
 			}
+
 			if (this.enemyShipSpecial == null
 					&& this.enemyShipSpecialCooldown.checkFinished()) {
 				this.enemyShipSpecial = new EnemyShip();
@@ -385,17 +400,31 @@ public class GameScreen extends Screen {
 				sm.playES("UFO_come_up");
 				this.logger.info("A special ship appears");
 			}
+
 			if (this.enemyShipSpecial != null
 					&& this.enemyShipSpecial.getPositionX() > this.width) {
 				this.enemyShipSpecial = null;
 				this.logger.info("The special ship has escaped");
 			}
 
+
+			if (returnCode == 4 && level == 4 && levelFinished) {
+				this.midBoss = null;
+				levelFinished = false;
+			}
+
+
+			// Boss's fires
+			if (midBoss != null)
+				midBoss.update();
+			if (finBoss != null)
+				finBoss.update();
+
 			this.item.updateBarrierAndShip(this.ship);   // team Inventory
 			this.speedItem.update();         // team Inventory
 			this.feverTimeItem.update();
 
-			this.enemyShipFormation.setShipposition(this.ship.getPositionX(), this.ship.getPositionY());
+			this.enemyShipFormation.setShipPosition(this.ship.getPositionX(), this.ship.getPositionY());
 			this.enemyShipFormation.update();
 			this.enemyShipFormation.shoot(this.bullets);
 		}
@@ -450,17 +479,17 @@ public class GameScreen extends Screen {
 		* Checks if the intended number of waves for this level was destroyed
 		* **/
 		if ((getRemainingEnemies() == 0
-		&& !this.levelFinished
-		&& waveCounter == this.gameSettings.getWavesNumber()
-		&& this.returnCode != 4)
-		|| (this.lives == 0)
-		|| isRoundClearedByTime()
+				&& !levelFinished
+				&& waveCounter == this.gameSettings.getWavesNumber()
+				&& this.returnCode != 4)
+				|| (this.lives == 0)
+				|| (level != 4 && level != 8 && isRoundCleared())
 		) {
-			this.levelFinished = true;
+			levelFinished = true;
 			//this.screenFinishedCooldown.reset(); It works now -- With love, Level Design Team
 		}
 
-		if (this.levelFinished && this.screenFinishedCooldown.checkFinished()) {
+		if (levelFinished && this.screenFinishedCooldown.checkFinished()) {
 			//this.logger.info("Final Playtime: " + playTime + " seconds");    //clove
 			achievementConditions.checkNoDeathAchievements(lives);
 			achievementConditions.score(score);
@@ -514,10 +543,18 @@ public class GameScreen extends Screen {
 					this.enemyShipSpecial.getPositionX(),
 					this.enemyShipSpecial.getPositionY());
 
-		enemyShipFormation.draw();
+		if ( level != 4 && level != 8) {
+			enemyShipFormation.draw();
+		} else {
+			enemyShipFormation.draw_Story_Boss();
+			if (midBoss != null)
+				midBoss.drawFire();
+			if (finBoss != null)
+				finBoss.drawFire();
+		}
 
 		DrawManagerImpl.drawSpeed(this, ship.getSpeed()); // Ko jesung / HUD team
-		DrawManagerImpl.drawSeparatorLine(this,  this.height-65); // Ko jesung / HUD team
+		DrawManagerImpl.drawSeparatorLine(this,  this.height - 65); // Ko jesung / HUD team
 
 
 		for (PiercingBullet bullet : this.bullets)
@@ -525,24 +562,24 @@ public class GameScreen extends Screen {
 				drawManager.drawRotateEntity(bullet, bullet.getPositionX(),
 								bullet.getPositionY(), bullet.getAngle());
 			else
-				drawManager.drawEntity(bullet, bullet.getPositionX(),
+				DrawManager.drawEntity(bullet, bullet.getPositionX(),
 						bullet.getPositionY());
 
-		this.itemManager.drawItems(); //by Enemy team
+		itemManager.drawItems(); //by Enemy team
 
-		// --- OBSTACLES - Draw Obstaacles
-		if (!this.levelFinished) {
+		// --- OBSTACLES - Draw Obstacles
+		if (!levelFinished) {
 			for (Obstacle obstacle : this.obstacles) {
-				drawManager.drawEntity(obstacle, obstacle.getPositionX(), obstacle.getPositionY());
+				DrawManager.drawEntity(obstacle, obstacle.getPositionX(), obstacle.getPositionY());
 			}
 		}
 
 
 		// Interface.
-//		drawManager.drawScore(this, this.scoreManager.getAccumulatedScore());    //clove -> edit by jesung ko - TeamHUD(to udjust score)
+//		drawManager.drawScore(this, this.scoreManager.getAccumulatedScore());    //clove -> edit by jesung ko - TeamHUD(to adjust score)
 //		drawManager.drawScore(this, this.score); // by jesung ko - TeamHUD
 		DrawManagerImpl.drawScore2(this,this.score); // by jesung ko - TeamHUD
-		drawManager.drawLives(this, this.lives);	
+		drawManager.drawLives(this, this.lives);
 		drawManager.drawHorizontalLine(this, SEPARATION_LINE_HEIGHT - 1);
 		DrawManagerImpl.drawRemainingEnemies(this, getRemainingEnemies()); // by HUD team SeungYun
 		DrawManagerImpl.drawLevel(this, this.level);
@@ -558,8 +595,8 @@ public class GameScreen extends Screen {
 		if(player2 != null){
 			DrawManagerImpl.drawBulletSpeed2P(this, player2.getBulletSpeedY());
 			DrawManagerImpl.drawSpeed2P(this, player2.getSpeed());
-			DrawManagerImpl.drawLives2P(this, ((TwoPlayerMode) this).getLivestwo());
-			if (((TwoPlayerMode) this).getLivestwo() == 0) {
+			DrawManagerImpl.drawLives2P(this, ((TwoPlayerMode) this).getLivesTwo());
+			if (((TwoPlayerMode) this).getLivesTwo() == 0) {
 				player2 = null;
 			}
 		} // by HUD team HyunWoo
@@ -634,45 +671,45 @@ public class GameScreen extends Screen {
 	/**
 	 * Manages collisions between bullets and ships. -original code
 	 */
-	private void manageCollisions() {
-		Set<Bullet> recyclable = new HashSet<Bullet>();
-		for (Bullet bullet : this.bullets)
-			if (bullet.getSpeedY() > 0) {
-				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
-					recyclable.add(bullet);
-					if (!this.ship.isDestroyed() && !this.item.isbarrierActive()) {   // team Inventory
-						this.ship.destroy();
-						this.lives--;
-						this.logger.info("Hit on player ship, " + this.lives
-								+ " lives remaining.");
-					}
-				}
-			} else {
-				for (EnemyShip enemyShip : this.enemyShipFormation)
-					if (!enemyShip.isDestroyed()
-							&& checkCollision(bullet, enemyShip)) {
-						this.scoreManager.addScore(enemyShip.getPointValue());    //clove
-						this.shipsDestroyed++;
-						// CtrlS - increase the hitCount for 1 kill
-						this.hitCount++;
-						this.enemyShipFormation.destroy(enemyShip);
-						recyclable.add(bullet);
-					}
-				if (this.enemyShipSpecial != null
-						&& !this.enemyShipSpecial.isDestroyed()
-						&& checkCollision(bullet, this.enemyShipSpecial)) {
-					this.scoreManager.addScore(this.enemyShipSpecial.getPointValue());    //clove
-					this.shipsDestroyed++;
-					// CtrlS - increase the hitCount for 1 kill
-					this.hitCount++;
-					this.enemyShipSpecial.destroy();
-					this.enemyShipSpecialExplosionCooldown.reset();
-					recyclable.add(bullet);
-				}
-			}
-		this.bullets.removeAll(recyclable);
-		BulletPool.recycle(recyclable);
-	}
+//	private void manageCollisions() {
+//		Set<Bullet> recyclable = new HashSet<Bullet>();
+//		for (Bullet bullet : this.bullets)
+//			if (bullet.getSpeedY() > 0) {
+//				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
+//					recyclable.add(bullet);
+//					if (!this.ship.isDestroyed() && !this.item.isBarrierActive()) {   // team Inventory
+//						this.ship.destroy();
+//						this.lives--;
+//						this.logger.info("Hit on player ship, " + this.lives
+//								+ " lives remaining.");
+//					}
+//				}
+//			} else {
+//				for (EnemyShip enemyShip : this.enemyShipFormation)
+//					if (!enemyShip.isDestroyed()
+//							&& checkCollision(bullet, enemyShip)) {
+//						this.scoreManager.addScore(enemyShip.getPointValue());    //clove
+//						this.shipsDestroyed++;
+//						// CtrlS - increase the hitCount for 1 kill
+//						this.hitCount++;
+//						this.enemyShipFormation.destroy(enemyShip);
+//						recyclable.add(bullet);
+//					}
+//				if (this.enemyShipSpecial != null
+//						&& !this.enemyShipSpecial.isDestroyed()
+//						&& checkCollision(bullet, this.enemyShipSpecial)) {
+//					this.scoreManager.addScore(this.enemyShipSpecial.getPointValue());    //clove
+//					this.shipsDestroyed++;
+//					// CtrlS - increase the hitCount for 1 kill
+//					this.hitCount++;
+//					this.enemyShipSpecial.destroy();
+//					this.enemyShipSpecialExplosionCooldown.reset();
+//					recyclable.add(bullet);
+//				}
+//			}
+//		this.bullets.removeAll(recyclable);
+//		BulletPool.recycle(recyclable);
+//	}
 
 
 	/**
@@ -703,7 +740,7 @@ public class GameScreen extends Screen {
 			if (!enemyShip.isDestroyed() && checkCollision(this.ship, enemyShip)) {
 				if (this.ship.isInvincible()) {
 					System.out.println("Collision ignored due to invincibility.");
-				} else if (this.item.isbarrierActive()) {
+				} else if (this.item.isBarrierActive()) {
 					this.ship.activateFrozen();
 					adjustShipPositionAfterCollision(this.ship, enemyShip);
 					System.out.println("Collision blocked by shield.");
@@ -729,13 +766,19 @@ public class GameScreen extends Screen {
 			}
 		}
 		Set<PiercingBullet> recyclable = new HashSet<PiercingBullet>();
+
 		for (PiercingBullet bullet : this.bullets)
-			if (bullet.getBulletType() != 0) {
-				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
+			if (bullet.getBulletType() != 0) { // 적 총알
+				if (checkCollision(bullet, this.ship) && !levelFinished) {
 					recyclable.add(bullet);
-					if (!this.ship.isDestroyed() && !this.item.isbarrierActive()) {   // team Inventory
+
+					if (!this.ship.isDestroyed() && !this.item.isBarrierActive()) {   // team Inventory
 						this.ship.destroy();
 						this.lives--;
+						if (returnCode == 4) {
+							if (level == 4 && midBoss != null) { midBoss.lifeSteal(); }
+							else if (level == 8 && finBoss != null) { finBoss.lifeSteal(); }
+						}
 						this.logger.info("Hit on player ship, " + this.lives
 								+ " lives remaining.");
 
@@ -746,59 +789,141 @@ public class GameScreen extends Screen {
 						}
 					}
 				}
-			} else {
+			} else { // 아군 총알
 				// CtrlS - set fire_id of bullet.
 				bullet.setFire_id(fire_id);
-				for (EnemyShip enemyShip : this.enemyShipFormation) {
-					if (!enemyShip.isDestroyed()
-							&& checkCollision(bullet, enemyShip)
-							&& (bullet.getPreviousEnemy() != enemyShip)) {
-						int CntAndPnt[] = this.enemyShipFormation._destroy(bullet, enemyShip, false);    // team Inventory
-						this.shipsDestroyed += CntAndPnt[0];
-						int feverScore = CntAndPnt[0]; //TEAM CLOVE //Edited by team Enemy
+				if (returnCode != 4 || (level != 4 && level != 8) ) {
+					for (EnemyShip enemyShip : this.enemyShipFormation) {
+						if (!enemyShip.isDestroyed()
+								&& checkCollision(bullet, enemyShip)) {
+							int[] CntAndPnt = this.enemyShipFormation._destroy(bullet, enemyShip, false);    // team Inventory
+							this.shipsDestroyed += CntAndPnt[0];
+							int feverScore = CntAndPnt[0]; //TEAM CLOVE //Edited by team Enemy
 
-						if(enemyShip.getHp() <= 0) {
-							//inventory_f fever time is activated, the score is doubled.
-							if(feverTimeItem.isActive()) {
-								feverScore = feverScore * 10;
+							if (enemyShip.getHp() <= 0) {
+								//inventory_f fever time is activated, the score is doubled.
+								if (feverTimeItem.isActive()) {
+									feverScore = feverScore * 10;
+								}
+								this.shipsDestroyed++;
 							}
+
+							this.scoreManager.addScore(feverScore); //clove
+							this.score += CntAndPnt[1];
+
+							// CtrlS - If collision occur then check the bullet can process
+							if (!processedFireBullet.contains(bullet.getFire_id())) {
+								// CtrlS - increase hitCount if the bullet can count
+								if (bullet.isCheckCount()) {
+									hitCount++;
+									bullet.setCheckCount(false);
+									this.logger.info("Hit count!");
+									processedFireBullet.add(bullet.getFire_id()); // mark this bullet_id is processed.
+								}
+							}
+
+							bullet.onCollision(enemyShip); // Handle bullet collision with enemy ship
+
+							// Check PiercingBullet piercing count and add to recyclable if necessary
+							if (bullet.getPiercingCount() <= 0) {
+								//Ctrl-S : set true of CheckCount if the bullet is planned to recycle.
+								bullet.setCheckCount(true);
+								recyclable.add(bullet);
+							}
+						}
+						// Added by team Enemy.
+						// Enemy killed by Explosive enemy gives points too
+						if (enemyShip.isChainExploded()) {
+							if (enemyShip.getColor() == Color.MAGENTA) {
+								this.itemManager.dropItem(enemyShip, 1, 1);
+							}
+							this.score += enemyShip.getPointValue();
 							this.shipsDestroyed++;
+							enemyShip.setChainExploded(false); // resets enemy's chain explosion state.
+						}
+					}
+				} else if (level == 4) { // 스토리 모드 중간 보스 레벨
+					if (this.midBoss != null
+							&& !midBoss.isBossDead()
+							&& checkCollision(bullet, this.midBoss)) {
+
+						if (fire_id >= fire_id_pre + 1) {
+							midBoss.takeDamage(1); // 일단 아군에 의한 데미지는 1로 두었습니다.
+							fire_id_pre = fire_id;
+							midBoss.damageSound();
+							recyclable.add(bullet);
 						}
 
-            			this.scoreManager.addScore(feverScore); //clove
-            			this.score += CntAndPnt[1];
+						if (!midBoss.isEnraged()) {
+							midBoss.enragedMode();
+						}
 
-						// CtrlS - If collision occur then check the bullet can process
+						if (midBoss.isEnraged()) {
+							midBoss.calmDown();
+						}
+
+						int feverSpecialScore = EnemyShip.getPointValue();
+
+						if (feverTimeItem.isActive()) {
+							feverSpecialScore *= 10;
+						}
+
 						if (!processedFireBullet.contains(bullet.getFire_id())) {
-							// CtrlS - increase hitCount if the bullet can count
 							if (bullet.isCheckCount()) {
 								hitCount++;
 								bullet.setCheckCount(false);
 								this.logger.info("Hit count!");
-								processedFireBullet.add(bullet.getFire_id()); // mark this bullet_id is processed.
 							}
 						}
 
-						bullet.onCollision(enemyShip); // Handle bullet collision with enemy ship
-
-						// Check PiercingBullet piercing count and add to recyclable if necessary
+						bullet.onCollision(this.midBoss);
 						if (bullet.getPiercingCount() <= 0) {
-							//Ctrl-S : set true of CheckCount if the bullet is planned to recycle.
 							bullet.setCheckCount(true);
 							recyclable.add(bullet);
 						}
 					}
-					// Added by team Enemy.
-					// Enemy killed by Explosive enemy gives points too
-					if (enemyShip.isChainExploded()) {
-						if (enemyShip.getColor() == Color.MAGENTA) {
-							this.itemManager.dropItem(enemyShip, 1, 1);
+				} else { // 스토리 모드 최종 보스 레벨
+					if (this.finBoss != null
+							&& !finBoss.isBossDead()
+							&& checkCollision(bullet, this.finBoss)) {
+
+						if (fire_id_pre != fire_id) {
+							finBoss.takeDamage(1); // 일단 아군에 의한 데미지는 1로 두었습니다.
+							fire_id_pre = fire_id;
+							finBoss.damageSound();
+							recyclable.add(bullet);
 						}
-						this.score += enemyShip.getPointValue();
-						this.shipsDestroyed++;
-						enemyShip.setChainExploded(false); // resets enemy's chain explosion state.
+
+						if (!finBoss.isEnraged()) {
+							finBoss.enragedMode();
+						}
+
+						if (finBoss.isEnraged()) {
+							finBoss.calmDown();
+						}
+
+						feverSpecialScore = EnemyShip.getPointValue();
+
+						if (feverTimeItem.isActive()) {
+							feverSpecialScore *= 10;
+						}
+
+						if (!processedFireBullet.contains(bullet.getFire_id())) {
+							if (bullet.isCheckCount()) {
+								hitCount++;
+								bullet.setCheckCount(false);
+								this.logger.info("Hit count!");
+							}
+						}
+
+						bullet.onCollision(this.finBoss);
+						if (bullet.getPiercingCount() <= 0) {
+							bullet.setCheckCount(true);
+							recyclable.add(bullet);
+						}
 					}
 				}
+
 				if (this.enemyShipSpecial != null
 						&& !this.enemyShipSpecial.isDestroyed()
 						&& checkCollision(bullet, this.enemyShipSpecial)) {
@@ -831,7 +956,7 @@ public class GameScreen extends Screen {
 					}
 
 					//// Drop item to 100%
-					this.itemManager.dropItem(enemyShipSpecial,1,2);
+					itemManager.dropItem(enemyShipSpecial,1,2);
 				}
 
 				for (Obstacle obstacle : this.obstacles) {
@@ -849,7 +974,7 @@ public class GameScreen extends Screen {
 		for (Obstacle obstacle : this.obstacles) {
 			if (!obstacle.isDestroyed() && checkCollision(this.ship, obstacle)) {
 				//Obstacles ignored when barrier activated_team inventory
-				if (!this.item.isbarrierActive()) {
+				if (!this.item.isBarrierActive()) {
 					this.lives--;
 					if (!this.ship.isDestroyed()) {
 						this.ship.destroy();  // Optionally, destroy the ship or apply other effects.
@@ -862,6 +987,25 @@ public class GameScreen extends Screen {
 				}
 
 				break;  // Stop further collisions if the ship is destroyed.
+			}
+		}
+		if (returnCode == 4 && this.level == 4) {
+			if(midBoss.collision(this.ship)) {
+				if (!this.item.isBarrierActive()) {
+					this.lives--;
+					if (!this.ship.isDestroyed()) {
+						this.ship.destroy();
+					}
+				}
+			}
+		} else if (returnCode == 4 && this.level == 8) {
+			if(finBoss.collision(this.ship)) {
+				if (!this.item.isBarrierActive()) {
+					this.lives--;
+					if (!this.ship.isDestroyed()) {
+						this.ship.destroy();
+					}
+				}
 			}
 		}
 
@@ -879,7 +1023,23 @@ public class GameScreen extends Screen {
 		}
 		itemManager.removeAllReItems();
 
+		if (midBoss != null && midBoss.getCurrentHp() <= 0) {
+			this.scoreManager.addScore(feverSpecialScore);
+			this.shipsDestroyed++;
+			this.midBoss.destroy(); // 사망 사운드
+			this.midBoss = null;
+			this.middleBossExplosionCooldown.reset();
+			levelFinished = true;
+		}
 
+		if (finBoss != null && finBoss.getCurrentHp() <= 0) {
+			this.scoreManager.addScore(feverSpecialScore);
+			this.shipsDestroyed++;
+			this.finBoss.destroy(); // 사망 사운드
+			this.finBoss = null;
+			this.finalBossExplosionCooldown.reset();
+			levelFinished = true;
+		}
 	}
 
 
@@ -919,7 +1079,7 @@ public class GameScreen extends Screen {
 	 * @return Current game state.
 	 */
 	public final GameState getGameState() {
-		return new GameState(this.level, this.scoreManager.getAccumulatedScore(), this.lives,this.livestwo,
+		return new GameState(returnCode, this.level, this.scoreManager.getAccumulatedScore(), this.lives,this.livesTwo,
 				this.bulletsShot, this.shipsDestroyed, this.playTime, this.coin, this.gem, this.hitCount, this.coinItemsCollected); // Team-Ctrl-S(Currency)
 	}
 	public int getLives() {
@@ -960,7 +1120,12 @@ public class GameScreen extends Screen {
 	public SpeedItem getSpeedItem() {
 		return this.speedItem;
 	}
-	public boolean isRoundClearedByTime() {
-		return (returnCode == 4) && (playTime - playTimePre >= 15);
+
+	public boolean isRoundCleared() {
+		return returnCode == 4 && ( playTime - playTimePre >= 3);
+	}
+
+	public static boolean isLevelFinished() {
+		return levelFinished;
 	}
 }

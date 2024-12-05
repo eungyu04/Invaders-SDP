@@ -3,9 +3,7 @@ package Enemy;
 import java.awt.Color;
 
 import engine.DrawManager;
-import entity.Bullet;
-import entity.EnemyShip;
-import entity.Entity;
+import entity.*;
 
 /**
  * The PiercingBullet class extends the Bullet class to implement a bullet
@@ -47,7 +45,14 @@ public class PiercingBullet extends Bullet {
         if (this.piercingCount > 0) {
             this.previousEnemy = entity;
         }
-        HpEnemyShip.hit((EnemyShip)entity, this);
+
+        if (entity instanceof EnemyShip) {
+            HpEnemyShip.hit((EnemyShip)entity, this);
+        } else if (entity instanceof MiddleBoss) {
+            ((MiddleBoss)entity).takeDamage(this.getDamage());
+        } else if (entity instanceof FinalBoss) {
+            ((FinalBoss)entity).takeDamage(this.getDamage());
+        }
     }
 
     /**

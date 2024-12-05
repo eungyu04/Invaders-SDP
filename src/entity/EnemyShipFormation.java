@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 import javax.swing.Timer;
 
@@ -14,18 +13,16 @@ import Enemy.*;
 import HUDTeam.DrawManagerImpl;
 import Sound_Operator.SoundManager;
 import clove.ScoreManager;
+import engine.*;
 import inventory_develop.Bomb;
 import inventory_develop.SpeedItem;
 import screen.Screen;
-import engine.Cooldown;
-import engine.Core;
-import engine.DrawManager;
 import engine.DrawManager.SpriteType;
-import engine.GameSettings;
+
 import static java.lang.Math.*;
 import Enemy.PiercingBulletPool;
 //Sound_Operator
-import Sound_Operator.SoundManager;
+
 
 /**
  * Groups enemy ships into a formation that moves together.
@@ -34,7 +31,7 @@ import Sound_Operator.SoundManager;
  *
  */
 public class EnemyShipFormation implements Iterable<EnemyShip> {
-	private boolean isCircle = false;
+	private boolean isCircle;
 	// Sound Operator
 	private static SoundManager sm;
 	/** Number of iteration of movement */
@@ -44,6 +41,10 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	private static final int INIT_POS_X = 60;
 	/** Initial position in the y-axis. */
 	private static final int INIT_POS_Y = 100;
+	/** Boss position in the x-axis. */
+	private static int bossX;
+	/** Boss position in the y-axis. */
+	private static int bossY;
 	/** Distance between ships. */
 	private static final int SEPARATION_DISTANCE = 60;
 	private static final int SEPARATION_DISTANCE_CIRCLE = 70;
@@ -52,7 +53,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	private int MINIRADIUS= 0;
 	private double angle;
 
-	/** Proportion of C-type ships. */
+
+    /** Proportion of C-type ships. */
 	private static final double PROPORTION_C = 0.2;
 	/** Proportion of B-type ships. */
 	private static final double PROPORTION_B = 0.4;
@@ -82,6 +84,10 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 	/** List of enemy ships forming the formation. */
 	private List<List<EnemyShip>> enemyShips;
+	/** List of boss forming the formation. */
+	private List<List<MiddleBoss>> middleBossList;
+	/** List of boss forming the formation. */
+	private List<List<FinalBoss>> finalBossList;
 	/** Minimum time between shots. */
 	private List<SpeedItem> activeSpeedItems;
 	private List<Cooldown> shootingCooldown;
@@ -113,19 +119,27 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/** Position in the y-axis of the upper left corner of the formation. */
 	private int positionY;
 	/** Position in the x-axis of player ship. */
-	private int shippositionX;
+	private int shipPositionX;
 	/** Position in the y-axis of player ship. */
-	private int shippositionY;
+	private int shipPositionY;
 	/** Width of one ship. */
 	private int shipWidth;
 	/** Height of one ship. */
 	private int shipHeight;
 	/** List of ships that are able to shoot. */
 	private List<EnemyShip> shooters;
+	private List<MiddleBoss> middle_boss_shooting;
+	private List<FinalBoss> final_boss_shooting;
 	/** Number of not destroyed ships. */
 	private int shipCount;
+	/** level of the mode */
+	private int level;
+	/** middle Boss */
+	private MiddleBoss middleBoss;
+	/** final Boss */
+	private FinalBoss finalBoss;
 
-	private int enemyFrecuency;
+	private int enemyFrequency;
 	private String gametype;
 
 	private ScoreManager scoreManager; //add by team Enemy
@@ -163,26 +177,30 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.drawManager = Core.getDrawManager();
 		this.logger = Core.getLogger();
 		this.enemyShips = new ArrayList<>();
+		this.middleBossList = new ArrayList<>();
+		this.finalBossList = new ArrayList<>();
 		this.activeSpeedItems = new ArrayList<>();
 		this.currentDirection = Direction.RIGHT;
 		this.movementInterval = 0;
 		this.nShipsWide = gameSettings.getFormationWidth();
 		this.nShipsHigh = gameSettings.getFormationHeight();
-		this.shootingInterval = gameSettings.getShootingFrecuency();
-		this.shootingVariance = (int) (gameSettings.getShootingFrecuency()
+		this.shootingInterval = gameSettings.getShootingFrequency();
+		this.shootingVariance = (int) (gameSettings.getShootingFrequency()
 				* SHOOTING_VARIANCE);
 		this.baseSpeed = gameSettings.getBaseSpeed();
-		this.enemyFrecuency = gameSettings.getEnemyFrecuency();
-		this.gametype = gameSettings.getGametype();
+		this.enemyFrequency = gameSettings.getEnemyFrequency();
+		this.gametype = gameSettings.getGameType();
+		this.level = gameSettings.getLevel();
 
-		if (gametype.equals("Story") || gametype.equals("Normal")){
+		if (!(gametype.equals("Story") || gametype.equals("Normal"))){
 			Core.getLogger().warning("game type is wrong type");
 		}
-
 		this.movementSpeed = this.baseSpeed;
 		this.positionX = INIT_POS_X;
 		this.positionY = INIT_POS_Y;
 		this.shooters = new ArrayList<>();
+		this.middle_boss_shooting = new ArrayList<>();
+		this.final_boss_shooting = new ArrayList<>();
 		this.shootingCooldown = new ArrayList<>();
 		this.shipCount = 0;
 		index_x = 0;
@@ -190,13 +208,13 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		Random rand= new Random();
 		int n = rand.nextInt(2);
 		if(n%2==1 && (Objects.equals(gametype, "Normal"))){ isCircle=true;
-			this.logger.info("cercle"+ 2);
+			this.logger.info("circle"+ 2);
 		}
 		else isCircle=false;
 
 		if(isCircle){
-			RADIUS=gameSettings.getFormationHeight()*6;
-			MINIRADIUS= gameSettings.getFormationHeight()*2;}
+			RADIUS=gameSettings.getFormationHeight() * 6;
+			MINIRADIUS= gameSettings.getFormationHeight() * 2;}
 
 		this.logger.info("Initializing " + nShipsWide + "x" + nShipsHigh
 				+ " ship formation in (" + positionX + "," + positionY + ")");
@@ -204,23 +222,31 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		// Each sub-list is a column on the formation.
 		for (int i = 0; i < this.nShipsWide; i++){
 			this.enemyShips.add(new ArrayList<>());
-			}
+		}
 
 		if (Objects.equals(gametype, "Normal")) {
 			setEnemyShips();
 		}
 		else if (Objects.equals(gametype, "Story")){
-			set_Story_Enemy();
+			if (this.level == 4 || this.level == 8) {
+				set_Story_Boss(this.level, gameSettings);
+			} else {
+				set_Story_Enemy();
+			}
 		}
 
-		this.shipWidth = this.enemyShips.get(0).get(0).getWidth();
-		this.shipHeight = this.enemyShips.get(0).get(0).getHeight();
+		if (this.level != 4 && this.level != 8) {
+			this.shipWidth = this.enemyShips.get(0).get(0).getWidth();
+			this.shipHeight = this.enemyShips.get(0).get(0).getHeight();
 
-		this.width = (this.nShipsWide - 1) * SEPARATION_DISTANCE
-				+ this.shipWidth;
-		this.height = (this.nShipsHigh - 1) * SEPARATION_DISTANCE
-				+ this.shipHeight;
+			this.width = (this.nShipsWide - 1) * SEPARATION_DISTANCE
+					+ this.shipWidth;
+			this.height = (this.nShipsHigh - 1) * SEPARATION_DISTANCE
+					+ this.shipHeight;
+		}
 
+		Bullet.setGameType(gametype);
+		Bullet.setLevel(level);
 	}
 
 	private void setEnemyShips(){
@@ -232,10 +258,10 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 			int x;
 			int y;
 			for (int i = 0; i < this.nShipsHigh; i++) {
-				double angle = 2* PI * i / this.nShipsHigh;
+				double angle = 2 * PI * i / this.nShipsHigh;
 
 				if (i / (float) this.nShipsHigh < PROPORTION_C)
-					if (shipCount == (nShipsHigh*1)+1 ||shipCount == (nShipsHigh*3)+1) //Edited by Enemy
+					if (shipCount == (nShipsHigh * 1)+1 ||shipCount == (nShipsHigh*3)+1) //Edited by Enemy
 						spriteType = SpriteType.ExplosiveEnemyShip1;
 					else if (i / (float) this.nShipsHigh < PROPORTION_C)
 						spriteType = SpriteType.EnemyShipC1;
@@ -251,7 +277,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 					y = positionY+ i*SEPARATION_DISTANCE;
 				}
 
-				if(shipCount == nShipsHigh*(nShipsWide/2))
+				if(shipCount == nShipsHigh * (nShipsWide / 2))
 					hp = 2; // Edited by Enemy, It just an example to insert EnemyShip that hp is 2.
 
 				column.add(new EnemyShip(x, y, spriteType, hp, this.enemyShips.indexOf(column), i));// Edited by Enemy
@@ -259,7 +285,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				this.shooters.add(column.get(column.size() - 1));
 				this.shootingCooldown.add(Core.getVariableCooldown(shootingInterval + 2000,
 						shootingVariance));
-
+				
 				hp = 1;// Edited by Enemy
 			}
 		}
@@ -309,6 +335,27 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		}
 	}
 
+	private void set_Story_Boss(int level, GameSettings gameSettings) {
+		bossY = INIT_POS_Y;
+		this.shipCount = 1;
+
+		if (level == 4) {
+			middleBoss = new MiddleBoss(level, gameSettings);
+		    List<MiddleBoss> middleBossColumn = new ArrayList<>();
+			middleBossColumn.add(middleBoss);
+			this.middleBossList.add(middleBossColumn);
+    		this.middle_boss_shooting.add(middleBoss);
+		} else {
+			List<FinalBoss> finalBossColumn = new ArrayList<>();
+			finalBoss = new FinalBoss(level, gameSettings);
+			finalBossColumn.add(finalBoss);
+			this.finalBossList.add(finalBossColumn);
+			this.final_boss_shooting.add(finalBoss);
+		}
+
+		this.shootingCooldown.add(Core.getVariableCooldown(shootingInterval, shootingVariance));
+	}
+
 	/**
 	 * Associates the formation to a given screen.
 	 *
@@ -330,6 +377,22 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				DrawManagerImpl.drawEnemyHp(screen, enemyShip);
 			}
 	}
+
+	/**
+	 * Draws Boss.
+	 */
+	public final void draw_Story_Boss() {
+		if (level == 4){
+			MiddleBoss boss = middleBossList.get(0).get(0);
+			boss.setSpriteType(SpriteType.middleBoss);
+			drawManager.drawEntity(boss, boss.getPositionX(), boss.getPositionY());
+		} else {
+			FinalBoss boss = finalBossList.get(0).get(0);
+			boss.setSpriteType(SpriteType.finalBoss);
+			drawManager.drawEntity(boss, boss.getPositionX(), boss.getPositionY());
+		}
+	}
+
 	/**
 	 * Updates the position of the ships.
 	 */
@@ -337,13 +400,14 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 		if (Objects.equals(gametype, "Story")){
 			if(this.enemyCooldown == null) {
-				this.enemyCooldown = Core.getCooldown(enemyFrecuency);
+				this.enemyCooldown = Core.getCooldown(enemyFrequency);
 				this.enemyCooldown.reset();
 			}
-
 			if (this.enemyCooldown.checkFinished()) {
-				this.enemyCooldown.reset();
-				set_Story_Enemy();
+				if ( !(this.level == 4 || this.level == 8) ) {
+					this.enemyCooldown.reset();
+					set_Story_Enemy();
+				}
 			}
 		}
 
@@ -435,7 +499,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				column.removeAll(destroyed);
 			}
 			double angle = (PI/this.nShipsHigh);
-			int temp=0;
+			int temp;
 			iteration++;
 			for (List<EnemyShip> column : this.enemyShips){
 				temp=0;
@@ -451,10 +515,12 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 						distanceY = 0;
 					}
 
-					enemyShip.move(
-							distanceX,
-							distanceY
-					);
+					if (!(gametype.equals("Story") && (level == 4 || level == 8))) {
+						enemyShip.move(
+								distanceX,
+								distanceY
+						);
+					}
 					enemyShip.update();
 					temp++;
 				}
@@ -513,46 +579,114 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 */
 	public final void shoot(final Set<PiercingBullet> bullets) { // Edited by Enemy
 		// For now, only ships in the bottom row are able to shoot.
-		for (Cooldown shoot : this.shootingCooldown){
-			if (!shooters.isEmpty() && shoot.checkFinished()){
-				EnemyShip shooter = this.shooters.get(shootingCooldown.indexOf(shoot));
+		for (Cooldown shoot : this.shootingCooldown) {
+			if (!gametype.equals("Story") || !(level == 4 || level == 8)) {
+				if (!shooters.isEmpty() && shoot.checkFinished()) {
+					EnemyShip shooter = this.shooters.get(shootingCooldown.indexOf(shoot));
+					shoot.reset();
+
+					// 몹 종류에 따른 공격방식 설정, 이 부분은 나중에 다른 값들이랑 같이 따로 클래스를 생성할 수도 있습니다.
+					double speed;
+					int bulletNum;	// 총알 갯수
+					int bulletType;	// 총알 타입(bullet의 spriteType설정을 위해)
+
+					// type 1) 속도 보통, 총알 3개
+					if (shooter.getSpriteType() == SpriteType.EnemyShipD1 || shooter.getSpriteType() == SpriteType.EnemyShipD2){  //임시 기믹 변경 예정
+						angle = 1.5708;
+						speed = BULLET_SPEED;
+						bulletNum = 3;
+						bulletType = 2;
+					}
+					// type 2) 속도 느림, 총알 5개
+					else if (shooter.getSpriteType() == SpriteType.EnemyShipE1 || shooter.getSpriteType() == SpriteType.EnemyShipE2){
+						angle = 1.5708;
+						speed = (double) (BULLET_SPEED * 2) / 3;
+						bulletNum = 5;
+						bulletType = 2;
+					}
+					// type 3) 속도 빠름, 총알 1개
+					else if (shooter.getSpriteType() == SpriteType.EnemyShipF1 || shooter.getSpriteType() == SpriteType.EnemyShipF2){
+						angle = Math.atan2(shipPositionY - shooter.getPositionY(), shipPositionX - shooter.getPositionX());
+						speed = (double) (BULLET_SPEED * 3) / 2;
+						bulletNum = 1;
+						bulletType = 3;
+					}
+					else {
+						angle = 1.5708;
+						speed = BULLET_SPEED;
+						bulletNum = 1;
+						bulletType = 1;
+					}
+
+					shootByType(bullets, shooter, speed, bulletNum, bulletType);
+				}
+			} else if (( !middle_boss_shooting.isEmpty() || !final_boss_shooting.isEmpty() ) && shoot.checkFinished()) {
 				shoot.reset();
 
-				// 몹 종류에 따른 공격방식 설정, 이 부분은 나중에 다른 값들이랑 같이 따로 클래스를 생성할 수도 있습니다.
-				double speed;
-				int bulletNum;	// 총알 갯수
-				int bulletType;	// 총알 타입(bullet의 spriteType설정을 위해)
+				int middleBoss_left_hand_x = 260;
+				int middleBoss_left_hand_y = 170;
+				int middleBoss_right_hand_x = 345;
+				int middleBoss_right_hand_y = 170;
 
-				// type 1) 속도 보통, 총알 3개
-				if (shooter.getSpriteType() == SpriteType.EnemyShipD1 || shooter.getSpriteType() == SpriteType.EnemyShipD2){  //임시 기믹 변경 예정
-					angle = 1.5708;
-					speed = BULLET_SPEED;
-					bulletNum = 3;
-					bulletType = 2;
-				}
-				// type 2) 속도 느림, 총알 5개
-				else if (shooter.getSpriteType() == SpriteType.EnemyShipE1 || shooter.getSpriteType() == SpriteType.EnemyShipE2){
-					angle = 1.5708;
-					speed = (double) (BULLET_SPEED * 2) / 3;
-					bulletNum = 5;
-					bulletType = 2;
-				}
-				// type 3) 속도 빠름, 총알 1개
-				else if (shooter.getSpriteType() == SpriteType.EnemyShipF1 || shooter.getSpriteType() == SpriteType.EnemyShipF2){
-					angle = Math.atan2(shippositionY - shooter.getPositionY(), shippositionX - shooter.getPositionX());
-					speed = (double) (BULLET_SPEED * 3) / 2;
-					bulletNum = 1;
-					bulletType = 3;
-				}
-				else {
-					angle = 1.5708;
-					speed = BULLET_SPEED;
-					bulletNum = 1;
-					bulletType = 1;
-				}
+				int finalBoss_left_hand_x = 240;
+				int finalBoss_left_hand_y = 190;
+				int finalBoss_right_hand_x = 365;
+				int finalBoss_right_hand_y = 190;
 
-				shootByType(bullets, shooter, speed, bulletNum, bulletType);
+				double angle1 = Math.atan2(shipPositionY - middleBoss_left_hand_y,
+						shipPositionX - middleBoss_left_hand_x);
+                double angle2 = Math.atan2(shipPositionY - middleBoss_right_hand_y,
+						shipPositionX - middleBoss_right_hand_x);
+				double angle3 = Math.atan2(shipPositionY - finalBoss_left_hand_y,
+						shipPositionX - finalBoss_left_hand_x);
+				double angle4 = Math.atan2(shipPositionY - finalBoss_right_hand_y,
+						shipPositionX - finalBoss_right_hand_x);
 
+
+				if (this.level == 4) {
+					sm.playES("middleBoss_Shot"); // 보스 총소리 차별화가 필요할 거 같네요
+
+					Boss boss = middleBoss;
+
+					bullets.add(PiercingBulletPool.getPiercingBullet(
+							middleBoss_left_hand_x, middleBoss_left_hand_y,
+							(int) (BULLET_SPEED * Math.cos(angle1)),
+							(int) (BULLET_SPEED * Math.sin(angle1)),
+							0, 4,
+                            angle1, 1));
+
+					bullets.add(PiercingBulletPool.getPiercingBullet(
+							middleBoss_right_hand_x, middleBoss_right_hand_y,
+							(int) (BULLET_SPEED * Math.cos(angle2)),
+							(int) (BULLET_SPEED * Math.sin(angle2)),
+							0, 4,
+                            angle2, 1));
+					if (!boss.isRaining()) {
+						boss.rain_of_fire();
+					}
+				} else {	// this.level == 8
+				sm.playES("finalBoss_Shot");
+
+					Boss boss = finalBoss;
+
+					bullets.add(PiercingBulletPool.getPiercingBullet(
+							finalBoss_left_hand_x, finalBoss_left_hand_y,
+							(int) (BULLET_SPEED * Math.cos(angle3)),
+							(int) (BULLET_SPEED * Math.sin(angle3)),
+							0, 4,
+                            angle3, 1));
+
+					bullets.add(PiercingBulletPool.getPiercingBullet(
+							finalBoss_right_hand_x, finalBoss_right_hand_y,
+							(int) (BULLET_SPEED * Math.cos(angle4)),
+							(int) (BULLET_SPEED * Math.sin(angle4)),
+							0, 4,
+                            angle4, 1));
+
+					if (!boss.isRaining()) {
+						boss.rain_of_fire();
+					}
+				}
 			}
 		}
 	}
@@ -666,7 +800,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 									sm.playES("enemy_explosion");
 								}
 								point += destroyedShip.getPointValue();
-								int point_mob[]  =  explosive(destroyedShip.getX(), destroyedShip.getY(),
+								int[] point_mob =  explosive(destroyedShip.getX(), destroyedShip.getY(),
 										this.enemyShips.indexOf(column),i,this.enemyShips); // Edited by team Enemy
 								point += point_mob[0];
 								count += point_mob[1]+1;
@@ -797,15 +931,15 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 
 				while(true){
-					if(!targetShipQ.isEmpty()) {
+					if (!targetShipQ.isEmpty()) {
 						EnemyShip targetShip = targetShipQ.poll();
 						if(targetShip.getX() != -2){
 							_destroy(bullet,targetShip,true);
-						}else{
+						} else{
 							break;
 						}
 
-					}else{
+					} else{
 						break;
 					}
 				}
@@ -821,12 +955,20 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 		return new int[]{point, mob};
 	}
-	public final void BecomeCircle(boolean iscircle){
-		this.isCircle=iscircle;
+	public final void BecomeCircle(boolean isCircle){
+		this.isCircle = isCircle;
 	}
-	public void setShipposition(int shippositionX, int shippositionY){
-		this.shippositionX = shippositionX;
-		this.shippositionY = shippositionY;
+	public void setShipPosition(int shipPositionX, int shipPositionY){
+		this.shipPositionX = shipPositionX;
+		this.shipPositionY = shipPositionY;
+	}
+
+	public Boss getBoss() {
+		if (this.middleBoss != null)
+			return middleBoss;
+		else if (this.finalBoss != null)
+			return finalBoss;
+		return null;
 	}
 	// for test
 	public void setSoundManager(SoundManager soundManager) {

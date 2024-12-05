@@ -27,7 +27,7 @@ import Sound_Operator.SoundManager;
 public class TwoPlayerMode extends GameScreen {
 
 
-    public static int livestwo = 3;
+    public static int livesTwo = 3;
 
 
     public TwoPlayerMode(GameState gameState, GameSettings gameSettings, boolean bonusLife, int width, int height, int fps) {
@@ -82,9 +82,9 @@ public class TwoPlayerMode extends GameScreen {
                 recyclable.add(bullet);
                 if (!player2.isDestroyed()) {
                     player2.destroy();
-                    livestwo--;
-                    System.out.println("Player 2 hit, lives remaining: " + livestwo);
-                    if (livestwo <= 0) {
+                    livesTwo--;
+                    System.out.println("Player 2 hit, lives remaining: " + livesTwo);
+                    if (livesTwo <= 0) {
                         player2 = null; // Player 2가 파괴된 경우
                     }
                 }
@@ -99,14 +99,14 @@ public class TwoPlayerMode extends GameScreen {
         if(player2==null) return;
         for (Obstacle obstacle : obstacles) {
             if (!obstacle.isDestroyed() && checkCollision(player2, obstacle)) {
-                livestwo--;
+                livesTwo--;
                 if (!player2.isDestroyed()) {
                     player2.destroy(); // Player 2가 파괴됨
                 }
                 obstacle.destroy(); // 장애물 제거
-                System.out.println("Player 2 hit an obstacle, lives remaining: " + livestwo);
+                System.out.println("Player 2 hit an obstacle, lives remaining: " + livesTwo);
 
-                if (livestwo <= 0) {
+                if (livesTwo <= 0) {
                     player2 = null; // Player 2가 파괴된 경우
                 }
                 break;
@@ -128,12 +128,12 @@ public class TwoPlayerMode extends GameScreen {
     /**
      *
      * */
-    public static int getLivestwo() {
-        return livestwo;
+    public static int getLivesTwo() {
+        return livesTwo;
     }
 
-    public void setLivestwo(int livestwo) {
-        this.livestwo = livestwo;
+    public void setLivesTwo(int livesTwo) {
+        this.livesTwo = livesTwo;
     }
 
 }

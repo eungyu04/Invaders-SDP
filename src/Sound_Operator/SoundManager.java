@@ -96,6 +96,10 @@ public class SoundManager {
         return instance;
     }
 
+    public static void setInstance(SoundManager mockSoundManager) {
+        instance = mockSoundManager;
+    }
+
     public void stopAllBGM() {
         for (Clip c : BGMs.values()) {
             if (c != null)
