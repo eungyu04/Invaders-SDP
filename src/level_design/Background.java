@@ -49,9 +49,9 @@ public class Background {
         this.horizontalOffset = -screenWidth;
         this.verticalOffset = 0;
         this.scrollSpeedHorizontal = 3;
-        this.scrollSpeedVertical = 10;
+        this.scrollSpeedVertical = 1;
         this.offsetUpdateInterval = 0;
-        this.storyModeScrollSpeedVertical = 20;
+        this.storyModeScrollSpeedVertical = 3;
     }
 
     public static List<String> levelBackgrounds;
@@ -125,19 +125,16 @@ public class Background {
             scrollSpeedVertical = 0;
         }
 
-        if (offsetUpdateInterval % 3 == 0) {
-            if (returnCode == 4) {
-                if (!(level == 4 || level == 8)) {
-                    verticalOffset += scrollSpeedVertical;
-                } else {
-                    verticalOffset = 0;
-                }
+        if (returnCode == 4) {
+            if (!(level == 4 || level == 8)) {
+                verticalOffset += storyModeScrollSpeedVertical;
             } else {
-                verticalOffset -= scrollSpeedVertical;
+                verticalOffset = 0;
             }
-            offsetUpdateInterval = 0;
+        } else {
+            verticalOffset -= scrollSpeedVertical;
         }
-        offsetUpdateInterval++;
+        offsetUpdateInterval = 0;
 
         return verticalOffset;
     }
