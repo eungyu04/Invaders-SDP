@@ -287,7 +287,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				this.shipCount++;
 				this.shooters.add(column.get(column.size() - 1));
 
-				// 몹 종류에 따른 공격속도 설정, 이 부분은 나중에 다른 값들이랑 같이 따로 클래스를 생성할 수도 있습니다.
+				// 몹 종류에 따른 공격속도(interval) 설정, 이 부분은 나중에 다른 값들이랑 같이 따로 클래스를 생성할 수도 있습니다.
 				if (spriteType == SpriteType.EnemyShipF1){
 					this.shootingCooldown.add(Core.getVariableCooldown(shootingInterval + 2000,
 							shootingVariance));
@@ -519,37 +519,59 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				shoot.reset();
 
 				// 몹 종류에 따른 공격방식 설정, 이 부분은 나중에 다른 값들이랑 같이 따로 클래스를 생성할 수도 있습니다.
-				int bulletType;
+				double speed;
+				int bulletNum;	// 총알 갯수
+				int bulletType;	// 총알 타입(bullet의 spriteType설정을 위해)
+
+				// type 1) 속도 보통, 총알 3개
 				if (shooter.getSpriteType() == SpriteType.EnemyShipD1 || shooter.getSpriteType() == SpriteType.EnemyShipD2){  //임시 기믹 변경 예정
-					angle = Math.atan2(shippositionY - shooter.getPositionY(), shippositionX - shooter.getPositionX());
+					angle = 1.5708;
+					speed = BULLET_SPEED;
+					bulletNum = 3;
 					bulletType = 2;
 				}
+				// type 2) 속도 느림, 총알 5개
 				else if (shooter.getSpriteType() == SpriteType.EnemyShipE1 || shooter.getSpriteType() == SpriteType.EnemyShipE2){
-					angle = Math.atan2(shippositionY - shooter.getPositionY(), shippositionX - shooter.getPositionX());
+					angle = 1.5708;
+					speed = (double) (BULLET_SPEED * 2) / 3;
+					bulletNum = 5;
 					bulletType = 2;
 				}
+				// type 3) 속도 빠름, 총알 1개
 				else if (shooter.getSpriteType() == SpriteType.EnemyShipF1 || shooter.getSpriteType() == SpriteType.EnemyShipF2){
 					angle = Math.atan2(shippositionY - shooter.getPositionY(), shippositionX - shooter.getPositionX());
+					speed = (double) (BULLET_SPEED * 3) / 2;
+					bulletNum = 1;
 					bulletType = 3;
 				}
 				else {
-					bulletType = 1;
 					angle = 1.5708;
+					speed = BULLET_SPEED;
+					bulletNum = 1;
+					bulletType = 1;
 				}
 
-				sm = SoundManager.getInstance();
-				sm.playES("Enemy_Gun_Shot_1_ES");
-				bullets.add(PiercingBulletPool.getPiercingBullet( // Edited by Enemy
-						shooter.getPositionX() + shooter.width / 2,
-						shooter.getPositionY(),
-						(int) (BULLET_SPEED * Math.cos(angle)),
-						(int) (BULLET_SPEED * Math.sin(angle)),
-						0,
-						bulletType,
-						angle,
-						1)); // Edited by Enemy
+				shootByType(bullets, shooter, speed, bulletNum, bulletType);
 
 			}
+		}
+	}
+
+	private void shootByType(final Set<PiercingBullet> bullets, EnemyShip shooter, double speed, int bulletNum, int bulletType) {
+		sm.playES("Enemy_Gun_Shot_1_ES");
+
+		for (int i = 0; i < bulletNum; i++) {
+			double adjustedAngle = angle - (Math.toRadians(25) * (bulletNum / 2 - i)); // bullet의 개수에 따라 대칭적으로 각도 조절
+
+			bullets.add(PiercingBulletPool.getPiercingBullet(
+					shooter.getPositionX() + shooter.width / 2,
+					shooter.getPositionY(),
+					(int) (speed * Math.cos(adjustedAngle)),
+					(int) (speed * Math.sin(adjustedAngle)),
+					0,
+					bulletType,
+					adjustedAngle,
+					1)); // Edited by Enemy
 		}
 	}
 
@@ -641,7 +663,6 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 								//Sound_Operator
 								if (destroyedShip.isDestroyed()) {
 
-									sm = SoundManager.getInstance();
 									sm.playES("enemy_explosion");
 								}
 								point += destroyedShip.getPointValue();
@@ -805,5 +826,18 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	public void setShipposition(int shippositionX, int shippositionY){
 		this.shippositionX = shippositionX;
 		this.shippositionY = shippositionY;
+	}
+	// for test
+	public void setSoundManager(SoundManager soundManager) {
+		sm = soundManager;
+		if (sm == null) {
+			sm = SoundManager.getInstance();
+		}
+	}
+	public List<Cooldown> getShootingCooldown() {
+		return shootingCooldown;
+	}
+	public List<EnemyShip> getShooters() {
+		return shooters;
 	}
 }

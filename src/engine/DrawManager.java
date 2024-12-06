@@ -1138,8 +1138,8 @@ public class DrawManager {
 		String title = "Ending Credit";
 		List<String> credits = List.of(
 				"Lee Seungjin",
-				"Lee Eungyu",
-				"Joo Younghoon",
+				"Lee Eunkyu",
+				"Ju Yeonghun",
 				"Kim Minhwan",
 				"Kim Jeongmin",
 				"Lee Chaehyun",
