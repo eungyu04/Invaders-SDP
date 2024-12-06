@@ -16,6 +16,7 @@ public class NumberOfBullet{
     /** Offset to ensure bullets don't overlap when fired together. */
     private static final int OFFSET_X_TWOBULLETS = 15;
     private static final int OFFSET_X_THREEBULLETS = 12;
+    private static final int OFFSET_X_FIVEBULLETS = 8;
 
     /** Bulet damage */
     private static int bulletDamage = 1;
@@ -32,8 +33,8 @@ public class NumberOfBullet{
         try {
             bulletDamage = Core.getUpgradeManager().getBulletDamage();
             bulletCount = Core.getUpgradeManager().getBulletNum();
-            if (bulletCount > 3){
-                bulletCount = 3;
+            if (bulletCount > 5){
+                bulletCount = 5;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -64,6 +65,13 @@ public class NumberOfBullet{
                 bullets.add(PiercingBulletPool.getPiercingBullet(positionX + OFFSET_X_THREEBULLETS, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, bulletDamage));
                 bullets.add(PiercingBulletPool.getPiercingBullet(positionX, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, bulletDamage));
                 bullets.add(PiercingBulletPool.getPiercingBullet(positionX - OFFSET_X_THREEBULLETS, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, bulletDamage));
+                break;
+            case 5:
+                bullets.add(PiercingBulletPool.getPiercingBullet(positionX - OFFSET_X_FIVEBULLETS * 2, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, bulletDamage));
+                bullets.add(PiercingBulletPool.getPiercingBullet(positionX - OFFSET_X_FIVEBULLETS, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, bulletDamage));
+                bullets.add(PiercingBulletPool.getPiercingBullet(positionX, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, bulletDamage));
+                bullets.add(PiercingBulletPool.getPiercingBullet(positionX + OFFSET_X_FIVEBULLETS, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, bulletDamage));
+                bullets.add(PiercingBulletPool.getPiercingBullet(positionX + OFFSET_X_FIVEBULLETS * 2, positionY, speedX, speedY, piercingbulletLevel, bulletType, angle, bulletDamage));
                 break;
         }
 

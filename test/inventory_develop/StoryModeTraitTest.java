@@ -1,15 +1,20 @@
 package inventory_develop;
 
+import CtrlS.UpgradeManager;
+import engine.Core;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.*;
 
 public class StoryModeTraitTest {
+    // StoryModeTrait 테스트 -> UpgradeManager에 대한 테스트는 새로운 클래스에 작성
     StoryModeTrait storyModeTrait;
 
     @BeforeEach
@@ -103,22 +108,4 @@ public class StoryModeTraitTest {
         assertDoesNotThrow(() -> { storyModeTrait.upgradeSelectedTraits("ShipShoot360");});
         assertThrows(NullPointerException.class, () -> storyModeTrait.upgradeSelectedTraits("ShipShoot360")); //없음
     }
-
-//    @Test
-//    @DisplayName("update 메서드 동작 테스트")
-//    void updateMethodTest() throws IOException {
-//        Core coreMock = mock(Core.class);
-//        UpgradeManager upgradeManagerMock = mock(UpgradeManager.class);
-//        when(coreMock.getUpgradeManager()).thenReturn(upgradeManagerMock);
-//        Core.setInstance(coreMock);
-//
-//        // Update 호출
-//        storyModeTrait.update();
-//
-//        // UpgradeManager가 올바르게 호출되었는지 검증
-//        verify(upgradeManagerMock).setBulletDamage(1);
-//        verify(upgradeManagerMock).setBulletNum(1);
-//        verify(upgradeManagerMock).setBulletSpeed(5);
-//        verify(upgradeManagerMock).setMovementSpeed(3.5);
-//    }
 }

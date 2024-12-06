@@ -385,19 +385,19 @@ public final class Core {
 
 					roundState = new RoundState(prevState, gameState);
 
-					// Show TraitScreen
-// 					if (gameState.getLevel() <= 7 && gameState.getLivesRemaining() > 0) {
-// 						soundManager.stopAllBGM();
-// 						soundManager.playBGM("Select_characteristics_bgm");
-// 						String[] traits = storyModeTrait.getRandomTraits(gameState.getLevel());
-// 						LOGGER.info("loading traitScreen");
-// 						currentScreen = new TraitScreen(width, height, FPS, gameState, storyModeTrait, traits);
-// 						frame.setScreen(currentScreen);
-// 						LOGGER.info("Closing traitScreen.");
+//					 Show TraitScreen
+ 					if (gameState.getLevel() <= 7 && gameState.getLivesRemaining() > 0) {
+ 						soundManager.stopAllBGM();
+ 						soundManager.playBGM("Select_characteristics_bgm");
+ 						String[] traits = storyModeTrait.getRandomTraits(gameState.getLevel());
+ 						LOGGER.info("loading traitScreen");
+ 						currentScreen = new TraitScreen(width, height, FPS, gameState, storyModeTrait, traits);
+ 						frame.setScreen(currentScreen);
+ 						LOGGER.info("Closing traitScreen.");
 
-// 						soundManager.stopAllBGM();
-// 						playStoryModeBGM(gameState.getLevel());
-// 					}
+ 						soundManager.stopAllBGM();
+ 						playStoryModeBGM(gameState.getLevel());
+ 					}
 
 					// Add playtime parameter
 					gameState = new GameState(gameState.getLevel() + 1,

@@ -19,7 +19,7 @@ public class PlayerGrowth {
         try {
             moveSpeed = Core.getUpgradeManager().getMovementSpeed();
             bulletSpeed = Core.getUpgradeManager().getBulletSpeed();
-            shootingDelay = Core.getUpgradeManager().getAttackSpeed();
+            shootingDelay = Core.getUpgradeManager().getBulletInterval();
             canShoot360 = Core.getUpgradeManager().getShipShoot360();
         } catch (IOException e) {
             throw new RuntimeException(e);

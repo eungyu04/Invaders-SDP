@@ -21,11 +21,11 @@ public final class UpgradeManager {
 
     // Upgrade keys
     private static final String COIN_ACQUISITION_MULTIPLIER = "coin_acquisition_multiplier";
-    private static final String ATTACK_SPEED = "attack_speed";
     // Upgrade keys - StoryModeTrait
     private static final String BULLET_DAMAGE = "bullet_damage";
     private static final String BULLET_NUM = "bullet_num";
     private static final String BULLET_SPEED = "bullet_speed";
+    private static final String BULLET_INTERVAL = "bullet_interval";
     private static final String MOVEMENT_SPEED = "movement_speed";
     private static final String SHIP_SHOOT360 = "ship_shoot360";
 
@@ -108,9 +108,15 @@ public final class UpgradeManager {
      * @return The current attack speed.
      * @throws IOException In case of loading problems.
      */
-    public int getAttackSpeed() throws IOException {
+    public int getBulletInterval() throws IOException {
         Properties properties = fileManager.loadUpgradeStatus();
-        return Integer.parseInt(properties.getProperty(ATTACK_SPEED, "1"));
+        return Integer.parseInt(properties.getProperty(BULLET_INTERVAL, "1"));
+    }
+
+    public void setBulletInterval(int bulletInterval) throws IOException {
+        Properties properties = fileManager.loadUpgradeStatus();
+        properties.setProperty(BULLET_INTERVAL, Integer.toString(bulletInterval));
+        fileManager.saveUpgradeStatus(properties);
     }
 
     /**
@@ -118,13 +124,14 @@ public final class UpgradeManager {
      *
      * @throws IOException In case of saving problems.
      */
-    public void addAttackSpeed() throws IOException {
-        int currentValue = getAttackSpeed();
-        currentValue += shipStatus.getSuootingInIn();
-        Properties properties = fileManager.loadUpgradeStatus();
-        properties.setProperty(ATTACK_SPEED, Integer.toString(currentValue));
-        fileManager.saveUpgradeStatus(properties);
-    }
+//    Don't Use
+//    public void addAttackSpeed() throws IOException {
+//        int currentValue = getAttackSpeed();
+//        currentValue += shipStatus.getSuootingInIn();
+//        Properties properties = fileManager.loadUpgradeStatus();
+//        properties.setProperty(ATTACK_SPEED, Integer.toString(currentValue));
+//        fileManager.saveUpgradeStatus(properties);
+//    }
 
     // Methods for movement speed
 
