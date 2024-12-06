@@ -12,8 +12,8 @@ public class StoryScoreScreen extends Screen {
     private final GameState gameState;
 
     private Cooldown selectionCooldown;
-    private boolean currentScoreScreen = true;
-    private boolean currentCreditScreen = false;
+    private boolean currentScoreScreen;
+    private boolean currentCreditScreen;
 
     /**
      * Constructor, establishes the properties of the screen.
@@ -28,6 +28,8 @@ public class StoryScoreScreen extends Screen {
     public StoryScoreScreen(final int width, final int height, final int fps, GameState gameState) {
         super(width, height, fps);
 
+        this.currentScoreScreen = true;
+        this.currentCreditScreen = false;
 
         this.selectionCooldown = Core.getCooldown(SELECTION_TIME);
         this.selectionCooldown.reset();
@@ -55,20 +57,24 @@ public class StoryScoreScreen extends Screen {
         draw();
         if (currentScoreScreen && this.selectionCooldown.checkFinished()) {
             if (gameState.getLevel() == 9 && inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
+                // 1-1. 8레벨 클리어 (space 누르면 엔딩 크레딧)
                 if (gameState.getLivesRemaining() > 0) {
                     currentScoreScreen = false;
                     currentCreditScreen = true;
                     this.selectionCooldown.reset();
+                    // 2. 8레벨 게임 오버 (space 누르면 메인 화면)
                 } else {
                     this.returnCode = 1;
                     this.isRunning = false;
                 }
             }
             if (gameState.getLevel() != 9 ) {
+                // 3. 1~7레벨 (space 누르면 게임 재시작)
                 if (inputManager.isKeyDown(KeyEvent.VK_SPACE)) {//&& inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
                     this.returnCode = 4;
                     this.isRunning = false;
                 }
+                // 4. 1~7레벨 (esc 누르면 메인 화면)
                 else if (inputManager.isKeyDown(KeyEvent.VK_ESCAPE)) {
                     this.returnCode = 1;
                     this.isRunning = false;
@@ -76,6 +82,7 @@ public class StoryScoreScreen extends Screen {
             }
         }
 
+        // 1-2. 8레벨 클리어 후 엔딩 크레딧 (space 또는 esc 누르면 메인 화면)
         if (currentCreditScreen && this.selectionCooldown.checkFinished()) {
             if ((inputManager.isKeyDown(KeyEvent.VK_SPACE)
                     || inputManager.isKeyDown(KeyEvent.VK_ESCAPE))) {
@@ -100,5 +107,16 @@ public class StoryScoreScreen extends Screen {
 
         super.drawPost();
         drawManager.completeDrawing(this);
+    }
+
+    // for test
+    protected boolean getCurrentScoreScreen() {
+        return currentScoreScreen;
+    }
+    protected boolean getcurrentCreditScreen() {
+        return currentCreditScreen;
+    }
+    protected void setSelectionCooldown(Cooldown selectionCooldown) {
+        this.selectionCooldown = selectionCooldown;
     }
 }
