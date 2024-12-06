@@ -224,6 +224,7 @@ public class GameScreen extends Screen {
 		drawManager.loadBackground(this.level, this.returnCode);
 
 		enemyShipFormation = new EnemyShipFormation(this.gameSettings);
+		enemyShipFormation.setSoundManager(sm);
 		enemyShipFormation.setScoreManager(this.scoreManager);//add by team Enemy
 		enemyShipFormation.attach(this);
 		this.ship = new Ship(this.width / 2, this.height - 30, Color.RED); // add by team HUD
