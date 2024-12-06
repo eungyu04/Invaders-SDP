@@ -402,9 +402,10 @@ public final class Core {
 					} catch (IOException e) {
 						LOGGER.info("Failed to Save RoundTime");
 					}
+					if (gameState.getLivesRemaining() <= 0 || gameState.getLevel() > 8)
+						break;
           			soundManager.stopAllBGM(); // 이전 BGM 중지
 					playStoryModeBGM(gameState.getLevel());
-          
 					// Show receiptScreen
 					// If it is not the last round and the game is not over
 					// 스토리모드에는 필요없는 화면인 것 같아서 제거
@@ -426,12 +427,12 @@ public final class Core {
 
 					LOGGER.info("Stop InGameBGM");
 					// Sound Operator - 배경음악 종료
-				 	soundManager.stopStoryModeBGM();
+				 	soundManager.stopAllBGM();
 					if (gameState.getLivesRemaining() <= 0){
-						soundManager.stopAllBGM();
+						//soundManager.stopAllBGM();
 						soundManager.playBGM("game_over_bgm");}
 					else{
-						soundManager.stopAllBGM();
+						//soundManager.stopAllBGM();
 						soundManager.playBGM("endingcredits_bgm");}
 					//+음악추가
 
