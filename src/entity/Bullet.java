@@ -53,7 +53,7 @@ public class Bullet extends Entity {
 	 *            direction - positive is down.
 	 */
 	public Bullet(final int positionX, final int positionY, final int speedX, final int speedY, final int bulletType, final double angle, final int damage) {
-		super(positionX, positionY, 3 * 2, 5 * 2, Color.WHITE);
+		super(positionX, positionY, 5 * 2, 14 * 2, Color.WHITE);
 		// CtrlS
 		this.checkCount = true;
 		// CtrlS
@@ -77,8 +77,19 @@ public class Bullet extends Entity {
 			else
 				this.spriteType = SpriteType.Bullet;
 		}
-		else
+		else if (BulletType == 1) {
 			this.spriteType = SpriteType.EnemyBullet;
+		}
+		else if (BulletType == 2) {
+			this.spriteType = SpriteType.EnemyBulletSlime;
+			this.width = 18;
+			this.height = 18;
+		}
+		else if (BulletType == 3) {
+			this.spriteType = SpriteType.EnemyBulletSkull;
+			this.width = 20;
+			this.height = 32;
+		}
 	}
 
 	/**

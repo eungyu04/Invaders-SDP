@@ -519,16 +519,21 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				shoot.reset();
 
 				// 몹 종류에 따른 공격방식 설정, 이 부분은 나중에 다른 값들이랑 같이 따로 클래스를 생성할 수도 있습니다.
-				if (shooter.getSpriteType() == SpriteType.EnemyShipD1){  //임시 기믹 변경 예정
+				int bulletType;
+				if (shooter.getSpriteType() == SpriteType.EnemyShipD1 || shooter.getSpriteType() == SpriteType.EnemyShipD2){  //임시 기믹 변경 예정
 					angle = Math.atan2(shippositionY - shooter.getPositionY(), shippositionX - shooter.getPositionX());
+					bulletType = 2;
 				}
-				else if (shooter.getSpriteType() == SpriteType.EnemyShipE1){
+				else if (shooter.getSpriteType() == SpriteType.EnemyShipE1 || shooter.getSpriteType() == SpriteType.EnemyShipE2){
 					angle = Math.atan2(shippositionY - shooter.getPositionY(), shippositionX - shooter.getPositionX());
+					bulletType = 2;
 				}
-				else if (shooter.getSpriteType() == SpriteType.EnemyShipF1){
+				else if (shooter.getSpriteType() == SpriteType.EnemyShipF1 || shooter.getSpriteType() == SpriteType.EnemyShipF2){
 					angle = Math.atan2(shippositionY - shooter.getPositionY(), shippositionX - shooter.getPositionX());
+					bulletType = 3;
 				}
 				else {
+					bulletType = 1;
 					angle = 1.5708;
 				}
 
@@ -540,7 +545,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 						(int) (BULLET_SPEED * Math.cos(angle)),
 						(int) (BULLET_SPEED * Math.sin(angle)),
 						0,
-						1,
+						bulletType,
 						angle,
 						1)); // Edited by Enemy
 

@@ -520,7 +520,7 @@ public class GameScreen extends Screen {
 
 
 		for (PiercingBullet bullet : this.bullets)
-			if ((this.ship.getCanShoot360() && bullet.getBulletType() == 0) || bullet.getBulletType() == 1)
+			if (this.ship.getCanShoot360() || bullet.getBulletType() != 0)
 				drawManager.drawRotateEntity(bullet, bullet.getPositionX(),
 								bullet.getPositionY(), bullet.getAngle());
 			else
