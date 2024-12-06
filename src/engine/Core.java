@@ -353,6 +353,10 @@ public final class Core {
 
 				LOGGER.info("Starting Story mode game");
 				// Sound Operator - 배경음악 시작
+				SoundManager soundManager = SoundManager.getInstance();
+				soundManager.stopAllBGM();
+
+				playStoryModeBGM(gameState.getLevel());
 				//+음악추가
 				long roundStartTime = System.currentTimeMillis();
 				
@@ -381,14 +385,19 @@ public final class Core {
 
 					roundState = new RoundState(prevState, gameState);
 
-//					// Show TraitScreen - 오류
-//					if (gameState.getLevel() <= 7 && gameState.getLivesRemaining() > 0) {
-//						String[] traits = storyModeTrait.getRandomTraits(gameState.getLevel());	// 오류발생
-//						LOGGER.info("loading traitScreen");
-//						currentScreen = new TraitScreen(width, height, FPS, gameState, storyModeTrait, traits);
-//						frame.setScreen(currentScreen);
-//						LOGGER.info("Closing traitScreen.");
-//					}
+					// Show TraitScreen
+// 					if (gameState.getLevel() <= 7 && gameState.getLivesRemaining() > 0) {
+// 						soundManager.stopAllBGM();
+// 						soundManager.playBGM("Select_characteristics_bgm");
+// 						String[] traits = storyModeTrait.getRandomTraits(gameState.getLevel());
+// 						LOGGER.info("loading traitScreen");
+// 						currentScreen = new TraitScreen(width, height, FPS, gameState, storyModeTrait, traits);
+// 						frame.setScreen(currentScreen);
+// 						LOGGER.info("Closing traitScreen.");
+
+// 						soundManager.stopAllBGM();
+// 						playStoryModeBGM(gameState.getLevel());
+// 					}
 
 					// Add playtime parameter
 					gameState = new GameState(gameState.getLevel() + 1,
@@ -446,8 +455,10 @@ public final class Core {
 					} catch (IOException e) {
 						LOGGER.info("Failed to Save RoundTime");
 					}
-
-
+					if (gameState.getLivesRemaining() <= 0 || gameState.getLevel() > 8)
+						break;
+          			soundManager.stopAllBGM(); // 이전 BGM 중지
+					playStoryModeBGM(gameState.getLevel());
 					// Show receiptScreen
 					// If it is not the last round and the game is not over
 					// 스토리모드에는 필요없는 화면인 것 같아서 제거
@@ -459,7 +470,6 @@ public final class Core {
 //						frame.setScreen(currentScreen);
 //						LOGGER.info("Closing receiptScreen.");
 //					}
-					// 오류예상
 //					if (achievementManager != null) {
 //						achievementManager.updateAchievements(currentScreen);
 //					}
@@ -470,6 +480,13 @@ public final class Core {
 
 					LOGGER.info("Stop InGameBGM");
 					// Sound Operator - 배경음악 종료
+				 	soundManager.stopAllBGM();
+					if (gameState.getLivesRemaining() <= 0){
+						//soundManager.stopAllBGM();
+						soundManager.playBGM("game_over_bgm");}
+					else{
+						//soundManager.stopAllBGM();
+						soundManager.playBGM("endingcredits_bgm");}
 					//+음악추가
 
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT + " score screen at " + FPS + " fps, with a score of "
@@ -696,5 +713,28 @@ public final class Core {
 	// Team-Ctrl-S(Currency)
 	public static UpgradeManager getUpgradeManager() {
 		return UpgradeManager.getInstance();
+	}
+	private static void playStoryModeBGM(int level) {
+		SoundManager soundManager = SoundManager.getInstance();
+
+		switch (level) {
+			case 1:
+			case 2:
+			case 3:
+			case 5:
+			case 6:
+			case 7:
+				soundManager.playBGM("storyMode_bgm1-3,5-7");
+				break;
+			case 4:
+				soundManager.playBGM("storyMode_bgm_4");
+				break;
+			case 8:
+				soundManager.playBGM("storyMode_bgm_8");
+				break;
+			default:
+				soundManager.stopAllBGM();
+				break;
+		}
 	}
 }
