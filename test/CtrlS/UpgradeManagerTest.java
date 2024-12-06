@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class UpgradeManagerTest {
+    // UpgradeManager의 Properties에 대한 getter, setter 체크 테스트
 
     @Mock
     private FileManager fileManagerMock;
@@ -32,6 +33,7 @@ class UpgradeManagerTest {
         initialProperties.setProperty("bullet_damage", "1");
         initialProperties.setProperty("bullet_num", "1");
         initialProperties.setProperty("bullet_speed", "10");
+        initialProperties.setProperty("bullet_interval", "800");
         initialProperties.setProperty("movement_speed", "3.5");
         initialProperties.setProperty("ship_shoot360", "false");
 
@@ -87,6 +89,20 @@ class UpgradeManagerTest {
 
         verify(fileManagerMock, times(1)).saveUpgradeStatus(any(Properties.class));
         assertEquals("15", initialProperties.getProperty("bullet_speed"), "Bullet speed should be updated to 15");
+    }
+
+    @Test
+    void testGetBulletInterval() throws IOException {
+        int bulletInterval = upgradeManager.getBulletInterval();
+        assertEquals(800, bulletInterval, "Bullet interval should be initialized to 800");
+    }
+
+    @Test
+    void testSetBulletInterval() throws IOException {
+        upgradeManager.setBulletInterval(700);
+
+        verify(fileManagerMock, times(1)).saveUpgradeStatus(any(Properties.class));
+        assertEquals("700", initialProperties.getProperty("bullet_interval"), "Bullet interval should be updated to ");
     }
 
     @Test

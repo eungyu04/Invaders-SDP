@@ -16,6 +16,8 @@ public class StoryModeTrait {
             = Map.of("basic", 1, "common", 2, "rare", 3,"epic", 5);
     private final Map<String, Integer> trait_BulletSpeed
             = Map.of("basic", 5, "common", 7, "rare",  10,"epic", 15);
+    private final Map<String, Integer> trait_BulletInterval
+            = Map.of("basic", 800, "common", 700, "rare",  550,"epic", 350);
     private final Map<String, Double> trait_ShipSpeed
             = Map.of("basic", 3.5, "common", 4.0, "rare", 5.0,"epic",6.0);
     private final Map<String, Boolean> trait_ShipShoot360
@@ -30,6 +32,7 @@ public class StoryModeTrait {
         traits.put("BulletDamage", "basic");
         traits.put("BulletCount", "basic");
         traits.put("BulletSpeed", "basic");
+        traits.put("BulletInterval", "basic");
         traits.put("ShipSpeed", "basic");
         traits.put("ShipShoot360", "common");   // 360도 발사는 rare에만 있기 때문에 초기 값을 common으로 지정
 
@@ -123,6 +126,7 @@ public class StoryModeTrait {
         int newBulletDamage = trait_BulletDamage.get(traits.get("BulletDamage"));
         int newBulletCount = trait_BulletCount.get(traits.get("BulletCount"));
         int newBulletSpeed = trait_BulletSpeed.get(traits.get("BulletSpeed"));
+        int newBulletInterval = trait_BulletInterval.get(traits.get("BulletInterval"));
         double newShipSpeed = trait_ShipSpeed.get(traits.get("ShipSpeed"));
         boolean newShipShoot360 = trait_ShipShoot360.get(traits.get("ShipShoot360"));
 
@@ -130,6 +134,7 @@ public class StoryModeTrait {
             Core.getUpgradeManager().setBulletDamage(newBulletDamage);  // NumberOfBullet
             Core.getUpgradeManager().setBulletNum(newBulletCount);      // NumberOfBullet
             Core.getUpgradeManager().setBulletSpeed(newBulletSpeed);    // Ship -> 이것도 NumberOfBullet으로 옮기고 싶지만 총알 속도가 올라가는 아이템이 있으니 나중에
+            Core.getUpgradeManager().setBulletInterval(newBulletInterval);    // Ship
             Core.getUpgradeManager().setMovementSpeed(newShipSpeed);    // Ship
             Core.getUpgradeManager().setShipShoot360(newShipShoot360);    //360도발사 Ship or GameScreen
         } catch (IOException e) {
