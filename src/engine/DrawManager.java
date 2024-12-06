@@ -84,6 +84,8 @@ public class DrawManager {
 		Bullet,
 		/** Enemy bullet. */
 		EnemyBullet,
+		EnemyBulletSlime,
+		EnemyBulletSkull,
 		/** First enemy ship - first form. */
 		EnemyShipA1,
 		/** First enemy ship - second form. */
@@ -211,6 +213,8 @@ public class DrawManager {
 			spriteMapImage.put(SpriteType.ShipDestroyed, fileManager.loadImage("shipdestroyed.png"));
 			spriteMapImage.put(SpriteType.Bullet, fileManager.loadImage("bullet.png"));
 			spriteMapImage.put(SpriteType.EnemyBullet, fileManager.loadImage("enemybullet.png"));
+			spriteMapImage.put(SpriteType.EnemyBulletSlime, fileManager.loadImage("enemybulletSlime.png"));
+			spriteMapImage.put(SpriteType.EnemyBulletSkull, fileManager.loadImage("enemybulletSkull.png"));
 			spriteMapImage.put(SpriteType.ItemBomb, fileManager.loadImage("bomb.png"));
 			spriteMapImage.put(SpriteType.ShipBarrierStatus, fileManager.loadImage("shipbarrierstatus.png"));
 			spriteMapImage.put(SpriteType.EnemyShipD1, fileManager.loadImage("enemyshipD1.png"));
