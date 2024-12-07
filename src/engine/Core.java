@@ -307,6 +307,8 @@ public final class Core {
 				// Story modes.
 				LOGGER.info("Starting Story mode cutscenes");
 				DrawManager drawManager = DrawManager.getInstance();
+//				SoundManager soundManager = SoundManager.getInstance();
+//				soundManager.playBGM("Select_cutscenes1-8_bgm");
 
 				BufferedImage[] firstSetImages = new BufferedImage[5];
 				for (int i = 0; i < 5; i++) {
@@ -335,6 +337,8 @@ public final class Core {
 						throw new RuntimeException("Failed to load cutscene image " + (i + 1), e);
 					}
 				}
+				SoundManager soundManager = SoundManager.getInstance();
+				soundManager.playBGM("First_cutscene_bgm");
 
 				// First cutscene
 				for (BufferedImage cutsceneImage : firstSetImages) {
@@ -349,11 +353,12 @@ public final class Core {
 						LOGGER.warning("Cutscene interrupted");
 					}
 				}
+				soundManager.stopAllBGM();
 
 
 				LOGGER.info("Starting Story mode game");
 				// Sound Operator - 배경음악 시작
-				SoundManager soundManager = SoundManager.getInstance();
+				//SoundManager soundManager = SoundManager.getInstance();
 				soundManager.stopAllBGM();
 
 				playStoryModeBGM(gameState.getLevel());
@@ -418,6 +423,8 @@ public final class Core {
 					// Secend cutscene()
 					if (gameState.getLevel() == 5 && gameState.getLivesRemaining() > 0) {
 						LOGGER.info("Displaying cutscenes 6-8 for rounds after 4");
+						soundManager.stopAllBGM();
+						soundManager.playBGM("Second_cutscene_bgm");
 						for (BufferedImage cutsceneImage : secondSetImages) {
 							DrawManager.getInstance().initDrawing(currentScreen);
 							DrawManager.backBufferGraphics.drawImage(cutsceneImage, 0, 0, frame.getWidth(), frame.getHeight(), null);
@@ -431,10 +438,14 @@ public final class Core {
 							}
 						}
 					}
+					soundManager.stopAllBGM();
+					playStoryModeBGM(gameState.getLevel());
 
 					// Third cutscene()
 					if (gameState.getLivesRemaining() > 0 && gameState.getLevel() == 9) {
 						LOGGER.info("Displaying cutscenes 9-10 for completing all rounds");
+						soundManager.stopAllBGM();
+						soundManager.playBGM("Third_cutscene_bgm");
 						for (BufferedImage cutsceneImage : thirdSetImages) {
 							DrawManager.getInstance().initDrawing(currentScreen);
 							DrawManager.backBufferGraphics.drawImage(cutsceneImage, 0, 0, frame.getWidth(), frame.getHeight(), null);
@@ -448,6 +459,8 @@ public final class Core {
 							}
 						}
 					}
+					soundManager.stopAllBGM();
+					playStoryModeBGM(gameState.getLevel());
 
 					try {
 						statistics.addTotalPlayTime(roundState.getRoundTime());
@@ -480,13 +493,14 @@ public final class Core {
 
 					LOGGER.info("Stop InGameBGM");
 					// Sound Operator - 배경음악 종료
-				 	soundManager.stopAllBGM();
 					if (gameState.getLivesRemaining() <= 0){
-						//soundManager.stopAllBGM();
-						soundManager.playBGM("game_over_bgm");}
+						soundManager.stopAllBGM();
+						soundManager.playBGM("game_over_bgm");
+						LOGGER.info("Game Over - Playing game_over_bgm");}
 					else{
-						//soundManager.stopAllBGM();
-						soundManager.playBGM("endingcredits_bgm");}
+						soundManager.stopAllBGM();
+						soundManager.playBGM("endingcredits_bgm");
+						LOGGER.info("Game Complete - Playing endingcredits_bgm");}
 					//+음악추가
 
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT + " score screen at " + FPS + " fps, with a score of "

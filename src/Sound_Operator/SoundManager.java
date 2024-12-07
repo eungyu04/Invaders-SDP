@@ -78,6 +78,12 @@ public class SoundManager {
                 this.preloadBGM("endingcredits_bgm", "res/Sound.assets/BGM/endingcredits.wav", -5.0f);
             if (!BGMs.containsKey("Select_characteristics_bgm"))
                 this.preloadBGM("Select_characteristics_bgm", "res/Sound.assets/BGM/Select_characteristics.wav", -5.0f);
+            if (!BGMs.containsKey("First_cutscene_bgm"))
+                this.preloadBGM("First_cutscene_bgm", "res/Sound.assets/BGM/First_cutscene.wav", -5.0f);
+            if (!BGMs.containsKey("Second_cutscene_bgm"))
+                this.preloadBGM("Second_cutscene_bgm", "res/Sound.assets/BGM/Second_cutscene.wav", -5.0f);
+            if (!BGMs.containsKey("Third_cutscene_bgm"))
+                this.preloadBGM("Third_cutscene_bgm", "res/Sound.assets/BGM/Third_cutscene.wav", -5.0f);
         } catch (IOException e) {
             logger.info(String.valueOf(e));
         }
