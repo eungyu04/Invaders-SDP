@@ -471,7 +471,8 @@ public class DrawManager {
 		if (option2 == 0) mode = normalModeString;
 		if (option2 == 1) mode = infiniteModeString;
 
-		if (option == 2 || option == 3) {mode = "<- " + mode + " ->";}
+//		if (option == 2 || option == 3) {mode = "<- " + mode + " ->";} <<<<<<<<< 임시 비활성 (무한 모드 개발시 475줄과 변경 필요)
+		if (option == 2) {mode = normalModeString;}
 		drawCenteredRegularString(screen, mode, screen.getHeight()
 				/ 4 * 2); // adjusted Height
 
