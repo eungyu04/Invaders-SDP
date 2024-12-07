@@ -110,22 +110,22 @@ public class TitleScreen extends Screen {
 			}
 
 			// produced by Starter
-			if (returnCode == 2 || returnCode == 3) {
-				if (inputManager.isKeyDown(KeyEvent.VK_LEFT)
-						|| inputManager.isKeyDown(KeyEvent.VK_A)) {
-					moveMenuLeft();
-					this.selectionCooldown.reset();
-					// Sound Operator
-					SoundManager.getInstance().playES("menuSelect_es");
-				}
-				if (inputManager.isKeyDown(KeyEvent.VK_RIGHT)
-						|| inputManager.isKeyDown(KeyEvent.VK_D)) {
-					moveMenuRight();
-					this.selectionCooldown.reset();
-					// Sound Operator
-					SoundManager.getInstance().playES("menuSelect_es");
-				}
-			}
+//			if (returnCode == 2 || returnCode == 3) {       <<<<<<<<< 임시 비활성 (무한 모드 개발시 활성화 필요)
+//				if (inputManager.isKeyDown(KeyEvent.VK_LEFT)
+//						|| inputManager.isKeyDown(KeyEvent.VK_A)) {
+//					moveMenuLeft();
+//					this.selectionCooldown.reset();
+//					// Sound Operator
+//					SoundManager.getInstance().playES("menuSelect_es");
+//				}
+//				if (inputManager.isKeyDown(KeyEvent.VK_RIGHT)
+//						|| inputManager.isKeyDown(KeyEvent.VK_D)) {
+//					moveMenuRight();
+//					this.selectionCooldown.reset();
+//					// Sound Operator
+//					SoundManager.getInstance().playES("menuSelect_es");
+//				}
+//			}
 
 			if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
 				this.isRunning = false;

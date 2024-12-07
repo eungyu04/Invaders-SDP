@@ -692,7 +692,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 								break;
 						}
 						if (column.get(i).getColor().equals(Color.MAGENTA)) { //add by team enemy
-							this.itemManager.dropItem(destroyedShip, 1, 1);
+							if (!Objects.equals(gametype, "Story"))
+								this.itemManager.dropItem(destroyedShip, 1, 1);
 						}
 
 

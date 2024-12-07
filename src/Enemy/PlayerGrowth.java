@@ -7,7 +7,7 @@ public class PlayerGrowth {
 
     //Player's base stats
     private int health;          //Health
-    private static double moveSpeed = 1.5;       //Movement speed
+    private static double moveSpeed = 1.0;       //Movement speed
     private static int bulletSpeed = 15;     // Bullet speedY
     private static int shootingDelay = 750;   // Shooting delay
     private static boolean canShoot360;     // 360도로 쏠 수 있는지 없는지
