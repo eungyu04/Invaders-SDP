@@ -386,10 +386,12 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 			MiddleBoss boss = middleBossList.get(0).get(0);
 			boss.setSpriteType(SpriteType.middleBoss);
 			drawManager.drawEntity(boss, boss.getPositionX(), boss.getPositionY());
+			DrawManagerImpl.drawEnemyHp(screen, boss);
 		} else {
 			FinalBoss boss = finalBossList.get(0).get(0);
 			boss.setSpriteType(SpriteType.finalBoss);
 			drawManager.drawEntity(boss, boss.getPositionX(), boss.getPositionY());
+			DrawManagerImpl.drawEnemyHp(screen, boss);
 		}
 	}
 
@@ -591,21 +593,24 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 					int bulletType;	// 총알 타입(bullet의 spriteType설정을 위해)
 
 					// type 1) 속도 보통, 총알 3개
-					if (shooter.getSpriteType() == SpriteType.EnemyShipD1 || shooter.getSpriteType() == SpriteType.EnemyShipD2){  //임시 기믹 변경 예정
+					if (shooter.getSpriteType() == SpriteType.EnemyShipD1 || shooter.getSpriteType() == SpriteType.EnemyShipD2
+							|| shooter.getSpriteType() == SpriteType.ExplosionD3){  //임시 기믹 변경 예정
 						angle = 1.5708;
 						speed = BULLET_SPEED;
 						bulletNum = 3;
 						bulletType = 2;
 					}
 					// type 2) 속도 느림, 총알 5개
-					else if (shooter.getSpriteType() == SpriteType.EnemyShipE1 || shooter.getSpriteType() == SpriteType.EnemyShipE2){
+					else if (shooter.getSpriteType() == SpriteType.EnemyShipE1 || shooter.getSpriteType() == SpriteType.EnemyShipE2
+							|| shooter.getSpriteType() == SpriteType.ExplosionE3){
 						angle = 1.5708;
 						speed = (double) (BULLET_SPEED * 2) / 3;
 						bulletNum = 5;
 						bulletType = 2;
 					}
 					// type 3) 속도 빠름, 총알 1개
-					else if (shooter.getSpriteType() == SpriteType.EnemyShipF1 || shooter.getSpriteType() == SpriteType.EnemyShipF2){
+					else if (shooter.getSpriteType() == SpriteType.EnemyShipF1 || shooter.getSpriteType() == SpriteType.EnemyShipF2
+							|| shooter.getSpriteType() == SpriteType.ExplosionF3){
 						angle = Math.atan2(shipPositionY - shooter.getPositionY(), shipPositionX - shooter.getPositionX());
 						speed = (double) (BULLET_SPEED * 3) / 2;
 						bulletNum = 1;

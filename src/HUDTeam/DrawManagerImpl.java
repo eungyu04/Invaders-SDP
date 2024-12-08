@@ -1,6 +1,7 @@
 package HUDTeam;
 
 import engine.DrawManager;
+import entity.Boss;
 import entity.EnemyShip;
 import screen.GameScreen;
 import screen.Screen;
@@ -281,13 +282,35 @@ public class DrawManagerImpl extends DrawManager {
 
     }
 
-    public static void drawEnemyHp(final Screen screen, final EnemyShip enemyship) {
-        if (enemyship.getHp() < enemyship.getMaxhp()) {
+    public static void drawEnemyHp(final Screen screen, final Entity entity) {
+        EnemyShip enemyship = null;
+        Boss boss = null;
+
+        if (entity instanceof EnemyShip)
+            enemyship = (EnemyShip) entity;
+        else if (entity instanceof Boss)
+            boss = (Boss) entity;
+
+        if (entity instanceof EnemyShip && enemyship.getHp() < enemyship.getMaxhp()) {
             int x = enemyship.getPositionX() + 2;
             int y = enemyship.getPositionY() + enemyship.getHeight();
 
             int width = enemyship.getWidth() - 5;
             int currentHpWidth = (int) ((enemyship.getHp() / (double) enemyship.getMaxhp()) * width);
+            int height = 5;
+
+            backBufferGraphics.setColor(Color.black);
+            backBufferGraphics.fillRect(x, y, width, height);
+
+            backBufferGraphics.setColor(Color.RED);
+            backBufferGraphics.fillRect(x, y, currentHpWidth, height);
+        }
+        else if (entity instanceof Boss && boss.getCurrentHp() < boss.getMaxHp()) {
+            int x = boss.getPositionX() + 2;
+            int y = boss.getPositionY() + boss.getHeight();
+
+            int width = boss.getWidth() - 5;
+            int currentHpWidth = (int) ((boss.getCurrentHp() / (double) boss.getMaxHp()) * width);
             int height = 5;
 
             backBufferGraphics.setColor(Color.black);
