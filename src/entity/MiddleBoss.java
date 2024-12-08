@@ -11,6 +11,6 @@ public class MiddleBoss extends Boss {
     }
 
     public MiddleBoss(int level, GameSettings gameSettings) {
-        this(240, 100, 64 * 2, 120, level, gameSettings);
+        this(240, 100, 64 * 2, 100, level, gameSettings);
     }
 }

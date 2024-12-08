@@ -43,6 +43,7 @@ public abstract class Boss extends Entity {
     protected double angle2;
     protected int level;
     private boolean raining;
+    protected int attackSpeed;
 
     SoundManager sm; // = SoundManager.getInstance();
 
@@ -62,6 +63,7 @@ public abstract class Boss extends Entity {
         this.fireCount = 0;
         this.fireCount_hit = 0;
         this.fireCount_hit_prev = -1;
+        this.attackSpeed = gameSettings.getShootingFrequency();
 
         this.fireSet = new HashSet<>();
         this.fireCooldown = Core.getCooldown(100); // Minimum 0.5s
@@ -80,19 +82,21 @@ public abstract class Boss extends Entity {
     }
 
     public void enragedMode() {
-        if (this.currentHp <= maxHp * 0.3) {
-            int attackSpeed = gameSettings.getEnemyFrequency();
-            GameSettings.setShootingFrequency(attackSpeed / 2);
-            enraged = true;
-        }
+        GameSettings.setShootingFrequency(attackSpeed / 2);
+        enraged = true;
     }
 
     public void calmDown() {
-        if (this.currentHp > maxHp * 0.3) {
-            int attackSpeed = gameSettings.getEnemyFrequency();
-            enraged = false;
-            GameSettings.setShootingFrequency(attackSpeed);
-        }
+        GameSettings.setShootingFrequency(attackSpeed);
+        enraged = false;
+    }
+
+    public boolean isEnraged() {
+        return currentHp <= maxHp * 0.3;
+    }
+
+    public boolean enrage() {
+        return enraged;
     }
 
     public void rain_of_fire() {
@@ -169,10 +173,6 @@ public abstract class Boss extends Entity {
 
     public boolean isRaining() {
         return raining;
-    }
-
-    public boolean isEnraged() {
-        return currentHp <= maxHp * 0.3;
     }
 
     public int getCurrentHp() {

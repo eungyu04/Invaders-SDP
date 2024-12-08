@@ -854,15 +854,15 @@ public class GameScreen extends Screen {
 							recyclable.add(bullet);
 						}
 
-						if (!midBoss.isEnraged()) {
+						if (midBoss.isEnraged() && !midBoss.enrage()) {
 							midBoss.enragedMode();
 						}
 
-						if (midBoss.isEnraged()) {
+						if (!midBoss.isEnraged() && midBoss.enrage()){
 							midBoss.calmDown();
 						}
 
-						int feverSpecialScore = EnemyShip.getPointValue();
+						feverSpecialScore = EnemyShip.getPointValue();
 
 						if (feverTimeItem.isActive()) {
 							feverSpecialScore *= 10;
@@ -894,11 +894,11 @@ public class GameScreen extends Screen {
 							recyclable.add(bullet);
 						}
 
-						if (!finBoss.isEnraged()) {
+						if (finBoss.isEnraged()) {
 							finBoss.enragedMode();
 						}
 
-						if (finBoss.isEnraged()) {
+						if (!finBoss.isEnraged()) {
 							finBoss.calmDown();
 						}
 
@@ -1122,7 +1122,7 @@ public class GameScreen extends Screen {
 	}
 
 	public boolean isRoundCleared() {
-		return returnCode == 4 && ( playTime - playTimePre >= 3);
+		return returnCode == 4 && ( playTime - playTimePre >= 15);
 	}
 
 	public static boolean isLevelFinished() {
