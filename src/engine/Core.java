@@ -395,7 +395,21 @@ public final class Core {
  					if (gameState.getLevel() <= 7 && gameState.getLivesRemaining() > 0) {
  						soundManager.stopAllBGM();
  						soundManager.playBGM("Select_characteristics_bgm");
- 						String[] traits = storyModeTrait.getRandomTraits(gameState.getLevel());
+						String[] traits;
+						boolean shipShoot360 = false;
+						 if (gameState.getLevel() == 1) {
+							 traits = storyModeTrait.getRandomTraits(gameState.getLevel());
+							 for (String trait : traits) {
+								if (trait.equals("ShipShoot360")) {
+									shipShoot360 = true;
+									break;
+								}
+							 }
+							 if (!shipShoot360)
+								 traits[0] = "ShipShoot360";
+						 } else {
+							 traits = storyModeTrait.getRandomTraits(gameState.getLevel());
+						 }
  						LOGGER.info("loading traitScreen");
  						currentScreen = new TraitScreen(width, height, FPS, gameState, storyModeTrait, traits);
  						frame.setScreen(currentScreen);
