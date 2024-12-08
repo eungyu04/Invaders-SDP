@@ -1142,12 +1142,31 @@ public class DrawManager {
 		}
 		String title = "Ending Credit";
 		List<String> credits = List.of(
+				"The prince rescued the princess",
+				"and returned to the kingdom,",
+				" ",
+				"where they began a new life",
+				"blessed by the people",
+				" ",
+				"The kingdom regained peace and prosperity",
+				" ",
+				"and the two relied on each other,",
+				"enjoying their happy days",
+				" ",
+				"Yet, beyond the horizon,",
+				"a new adventure awaited them",
+				" ",
+				"To be continued...",
+				" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ",
+				"Team Inventory",
+				" ",
 				"Lee Seungjin",
 				"Lee Eunkyu",
 				"Ju Yeonghun",
 				"Kim Minhwan",
 				"Kim Jeongmin",
 				"Lee Chaehyun",
+				" ",
 				"Thank you for playing the game!"
 		);
 

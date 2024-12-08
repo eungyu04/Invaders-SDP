@@ -590,7 +590,8 @@ public class GameScreen extends Screen {
 		drawManager.drawItem(this); // HUD team - Jo Minseo
 		double percent = (System.currentTimeMillis() - playStartTime) > 0 ?
 			 (double) ((System.currentTimeMillis() - playStartTime) * 100) / (1000 * 15) : 0;
-		if(returnCode == 4) DrawManagerImpl.drawPercentage(this, percent);	// story모드 time에 따른 percent 적용 필요
+		if(returnCode == 4 & !(level == 4 || level == 8))
+			DrawManagerImpl.drawPercentage(this, percent);	// story모드 time에 따른 percent 적용 필요
 
 		if(player2 != null){
 			DrawManagerImpl.drawBulletSpeed2P(this, player2.getBulletSpeedY());
